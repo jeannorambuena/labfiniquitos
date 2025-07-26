@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.py text
+*.md text
+*.html text
+*.css text
+*.js text
+*.sql text
+*.sh text eol=lf
+*.bat text eol=crlf
