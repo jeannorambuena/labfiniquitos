@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio | Sistema de Apoyo Laboral{% endblock %}
+
+{% block content %}
+<!-- Cabecera destacada WOW -->
+<section class="py-4">
+  <div class="container-fluid px-0">
+    <div class="shadow-lg rounded-4 text-center text-white mx-auto" style="
+      max-width: 65%;
+      background: linear-gradient(135deg, #b94047, #d15b63);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255,255,255,0.15);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      padding: 3rem 2rem;
+      margin: 0 auto 2rem auto;
+    ">
+      <h1 class="fw-bold display-3 mb-0">Sistema de Apoyo Laboral</h1>
+    </div>
+  </div>
+</section>
+
+<!-- Recuadros funcionales -->
+<section class="container-fluid py-5">
+  <div class="row g-4 justify-content-center">
+    {% set modulos = [
+      {'color': 'bg-primary', 'titulo': 'Trabajador', 'desc': 'Gestión de personal y RRHH', 'svg': 'user', 'url': '/trabajadores'},
+      {'color': 'bg-success', 'titulo': 'Empresa', 'desc': 'Datos y responsables del empleador', 'svg': 'building', 'url': '/empleadores'},
+      {'color': 'bg-warning', 'titulo': 'Documentos', 'desc': 'Contratos, cartas y anexos legales', 'svg': 'document', 'url': '/documentos'},
+      {'color': 'bg-danger', 'titulo': 'Finiquitos', 'desc': 'Procesos automáticos de desvinculación', 'svg': 'scissors', 'url': '/finiquitos'}
+    ] %}
+
+    {% for m in modulos %}
+    <div class="col-12 col-sm-6 col-lg-3 col-xl-2">
+      <a href="{{ m.url }}" class="text-decoration-none">
+        <div class="card modulo-card modulo-card-hover border-0 text-center text-white {{ m.color }} shadow-lg p-4 rounded-4 overflow-hidden"
+             data-label="{{ m.titulo }}">
+          <div class="icon-container d-flex align-items-center justify-content-center mx-auto mb-3 rounded-circle shadow"
+               style="width: 90px; height: 90px; background-color: rgba(255,255,255,0.1);">
+            {% if m.svg == 'user' %}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+              <path fill-rule="evenodd" d="M18 8a6 6 0 11-12 0 6 6 0 0112 0zm-1.5 9.75a4.5 4.5 0 00-9 0 .75.75 0 11-1.5 0a6 6 0 1112 0 .75.75 0 11-1.5 0z" clip-rule="evenodd" />
+            </svg>
+            {% elif m.svg == 'building' %}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+              <path d="M4 21V3.75A.75.75 0 014.75 3h6.5a.75.75 0 01.75.75V7h7.25a.75.75 0 01.75.75V21H4z"/>
+            </svg>
+            {% elif m.svg == 'document' %}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+              <path d="M4.5 3.75A.75.75 0 015.25 3h8.19a.75.75 0 01.53.22l4.81 4.81a.75.75 0 01.22.53v11.69a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V3.75zM13.5 3.75V8a.75.75 0 00.75.75h4.25"/>
+            </svg>
+            {% elif m.svg == 'scissors' %}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+              <path d="M9 5.25a2.25 2.25 0 11-2.25-2.25A2.25 2.25 0 019 5.25zM9 18.75a2.25 2.25 0 11-2.25-2.25A2.25 2.25 0 019 18.75zM14.25 4.5L5.25 14.25M14.25 19.5L5.25 9.75"/>
+            </svg>
+            {% endif %}
+          </div>
+          <h5 class="fw-bold">{{ m.titulo }}</h5>
+          <p class="small opacity-75">{{ m.desc }}</p>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Ícono flotante Home -->
+<a href="/" id="homeIcon" title="Volver al inicio">🏠</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.modulo-card').forEach((card) => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'scaleY(1.15)';
+          card.style.boxShadow = '0 25px 50px rgba(0,0,0,0.2)';
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'scaleY(1)';
+          card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

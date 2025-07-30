@@ -1,0 +1,316 @@
+
+:root {
+  --primario: #3b82f6;
+  --primario-claro: #60a5fa;
+  --secundario: #64748b;
+  --acento: #f59e0b;
+  --fondo: #f8fafc;
+  --texto: #1e293b;
+  --sombra: rgba(0, 0, 0, 0.2);
+  --sombra-wow: rgba(0, 0, 0, 0.35);
+  --glass: rgba(255, 255, 255, 0.15);
+}
+
+body {
+  background-color: var(--fondo);
+  color: var(--texto);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 2rem;
+  margin: 0;
+}
+
+h1.display-5 {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px var(--sombra);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px var(--sombra-wow);
+}
+
+.btn-primary {
+  background-color: var(--primario);
+  border-color: var(--primario);
+}
+
+.btn-primary:hover {
+  background-color: var(--primario-claro);
+  border-color: var(--primario-claro);
+}
+
+.modulo-card {
+  transition: all 0.3s ease;
+  border-radius: 1.25rem;
+  min-height: 280px;
+  cursor: pointer;
+  position: relative;
+  overflow: visible !important;
+  transform-origin: top;
+}
+
+.modulo-card .icon-container {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.modulo-card:hover .icon-container {
+  transform: scale(1.1);
+}
+
+.modulo-card:hover {
+  transform: scaleY(1.8);
+  box-shadow: 0 12px 28px var(--sombra-wow);
+  background-color: #ffffffee;
+}
+
+/* Texto vertical rotado al hacer hover */
+.modulo-card::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.08);
+  letter-spacing: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.modulo-card:hover::after {
+  opacity: 1;
+}
+
+footer {
+  padding-bottom: 3rem;
+}
+
+.sidebar {
+  background-color: #1e1e2f;
+  width: 300px;
+  padding-top: 60px;
+  box-shadow: 4px 0 12px var(--sombra-wow);
+  transition: width 0.3s ease;
+}
+
+.sidebar:hover {
+  width: 350px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 22px 0;
+  padding: 0 24px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  border-radius: 8px;
+  padding: 10px;
+  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s;
+}
+
+.sidebar ul li a:hover {
+  background-color: var(--primario-claro);
+  color: #ffffff;
+  transform: translateX(8px);
+}
+
+.sidebar ul li a:hover span {
+  transform: scale(1.4) rotate(-2deg);
+  text-shadow: 0 0 8px var(--primario);
+}
+
+.sidebar ul li a span {
+  font-size: 22px;
+  margin-right: 14px;
+  transition: transform 0.3s ease;
+}
+
+.hamburger-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1060;
+  background: linear-gradient(135deg, var(--primario), var(--secundario));
+  color: white;
+  font-size: 24px;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px var(--sombra);
+  transition: all 0.3s ease;
+}
+
+.hamburger-button:hover {
+  background-color: var(--primario-claro);
+  filter: brightness(1.05);
+  box-shadow: 2px 2px 12px var(--sombra-wow);
+}
+
+#overlayMenu {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#overlayMenu.active {
+  display: block;
+}
+
+#toggleMenu {
+  background: linear-gradient(135deg, var(--primario), var(--secundario));
+  color: white;
+  font-weight: bold;
+  border-radius: 50px;
+  border: none;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 6px 16px var(--sombra);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px var(--sombra-wow);
+}
+
+.icono-xl {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-home {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 1060;
+  background: var(--acento);
+  color: white;
+  font-size: 22px;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 4px 10px var(--sombra);
+  transition: transform 0.2s ease;
+}
+
+.btn-home:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .modulo-card:hover {
+    transform: none !important;
+    box-shadow: 0 6px 20px var(--sombra);
+  }
+
+  .sidebar ul li {
+    margin: 16px 0;
+  }
+
+  .hamburger-button {
+    font-size: 20px;
+    padding: 8px 12px;
+  }
+}
+
+.encabezado-wow {
+  background: linear-gradient(135deg, #e87a90, #f3c6b8);
+  color: #ffffff;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  max-width: 1140px;
+  margin: 0 auto;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+/* FIX PARA PERMITIR CRECIMIENTO REAL */
+.col-12, .col-sm-6, .col-lg-3, .col-xl-2,
+.row, .container-fluid {
+  overflow: visible !important;
+}
+/* NUEVO: tarjeta tipo expansión vertical con texto rotado */
+.modulo-card-hover {
+  height: 240px;
+  transition: height 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.modulo-card-hover:hover {
+  height: 50vh; /* se expande casi toda la pantalla */
+  background-color: #ffffff;
+  transition: height 0.5s ease;
+}
+
+.modulo-card-hover .icon-container,
+.modulo-card-hover h5,
+.modulo-card-hover p {
+  transition: opacity 0.3s ease;
+}
+
+.modulo-card-hover:hover .icon-container,
+.modulo-card-hover:hover h5,
+.modulo-card-hover:hover p {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modulo-card-hover::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  font-size: 5rem; /* más grande */
+  font-weight: 900;
+  font-family: 'Inter', sans-serif;
+  color: #ffffff; /* blanco puro */
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 8px 16px rgba(0, 0, 0, 0.2); /* triple sombra para efecto 3D */
+  letter-spacing: 3px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+
+.modulo-card-hover:hover::after {
+  opacity: 1;
+}

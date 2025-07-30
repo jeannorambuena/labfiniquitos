@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Trabajador{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-4 shadow-sm">
+      <h2 class="text-center mb-4">Registrar Nuevo Trabajador</h2>
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+          {{ form.nombres.label(class="form-label") }}
+          {{ form.nombres(class="form-control", placeholder="Ej: Juan Alberto") }}
+          {% if form.nombres.errors %}
+            <div class="text-danger">{{ form.nombres.errors[0] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.apellidos.label(class="form-label") }}
+          {{ form.apellidos(class="form-control", placeholder="Ej: Rojas Díaz") }}
+          {% if form.apellidos.errors %}
+            <div class="text-danger">{{ form.apellidos.errors[0] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.rut.label(class="form-label") }}
+          {{ form.rut(class="form-control", placeholder="Ej: 12.345.678-9") }}
+          {% if form.rut.errors %}
+            <div class="text-danger">{{ form.rut.errors[0] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.cargo.label(class="form-label") }}
+          {{ form.cargo(class="form-control", placeholder="Ej: Chofer") }}
+          {% if form.cargo.errors %}
+            <div class="text-danger">{{ form.cargo.errors[0] }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-check form-switch mb-4">
+          {{ form.activo(class="form-check-input") }}
+          {{ form.activo.label(class="form-check-label") }}
+        </div>
+
+        <div class="d-grid">
+          {{ form.submit(class="btn btn-success btn-lg") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
