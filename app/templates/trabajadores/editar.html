@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Registrar Nuevo Trabajador{% endblock %}
+{% block title %}Editar Trabajador{% endblock %}
 
 {% block content %}
 <div class="container mt-4 d-flex justify-content-center">
   <div class="card shadow-lg border-0 rounded" style="max-width: 720px; width: 100%;">
     <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #2F4858;">
       <div class="d-flex align-items-center gap-3">
-        <i class="fas fa-user-plus text-white fa-lg"></i>
-        <h3 class="text-white mb-0">Registrar Nuevo Trabajador</h3>
+        <i class="fas fa-user-edit text-white fa-lg"></i>
+        <h3 class="text-white mb-0">Editar Trabajador</h3>
       </div>
       <a href="{{ url_for('trabajadores.index') }}" class="btn btn-light btn-sm">
         <i class="fas fa-arrow-left me-1"></i> Volver
@@ -16,7 +16,7 @@
     </div>
 
     <div class="card-body">
-      <form id="trabajador-form" action="{{ url_for('trabajadores.nuevo') }}" method="POST">
+      <form id="trabajador-form" action="" method="POST">
         {{ form.hidden_tag() }}
 
         <!-- Bloque RUT -->
@@ -93,7 +93,7 @@
         <!-- Botones de acción -->
         <div class="d-flex justify-content-center gap-3">
           <button type="submit" class="btn btn-success btn-lg">
-            <i class="fas fa-check me-1"></i> Guardar
+            <i class="fas fa-save me-1"></i> Guardar Cambios
           </button>
           <a href="{{ url_for('trabajadores.index') }}" class="btn btn-danger btn-lg">
             <i class="fas fa-times me-1"></i> Cancelar
@@ -103,66 +103,4 @@
     </div>
   </div>
 </div>
-
-<!-- Modales de validación de RUT -->
-<div class="modal fade" id="modalRutInvalido" tabindex="-1" aria-labelledby="modalRutInvalidoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="modalRutInvalidoLabel">RUT inválido</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        El RUT ingresado no es válido. Por favor, revise el número y el dígito verificador.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Aceptar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: RUT ya existe en la base de datos (mensaje actualizado) -->
-<div class="modal fade" id="modalRutExiste" tabindex="-1" aria-labelledby="modalRutExisteLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-warning text-dark">
-        <h5 class="modal-title" id="modalRutExisteLabel">RUT ya registrado</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body fs-5">
-        <i class="fas fa-exclamation-circle text-warning me-2"></i>
-        El RUT ingresado ya está registrado en el sistema.<br>
-        <strong>Si desea editar los datos de este trabajador, vaya a la lista de trabajadores y utilice la opción <span class="text-primary">Editar</span>.</strong><br>
-        No puede registrar nuevamente un trabajador con el mismo RUT.
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="modalRutExisteBtn" class="btn btn-warning" data-bs-dismiss="modal">Aceptar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: RUT válido y NO existe en la base de datos -->
-<div class="modal fade" id="modalRutNuevo" tabindex="-1" aria-labelledby="modalRutNuevoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="modalRutNuevoLabel">RUT válido</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        El RUT es válido y no existe en la base de datos.<br>
-        Puede crear el nuevo trabajador.
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="modalRutNuevoBtn" class="btn btn-success" data-bs-dismiss="modal">Aceptar</button>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-  <script src="{{ url_for('static', filename='js/trabajador.js') }}"></script>
 {% endblock %}

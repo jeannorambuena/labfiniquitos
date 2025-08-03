@@ -314,3 +314,12 @@ footer {
 .modulo-card-hover:hover::after {
   opacity: 1;
 }
+/* 🆕 FORMULARIOS AMPLIOS Y LEGIBLES */
+.formulario-amplio {
+  max-width: 960px;
+  width: 100%;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  padding: 2rem;
+}
+

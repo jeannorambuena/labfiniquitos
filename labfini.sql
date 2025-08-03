@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 01-08-2025 a las 11:17:08
+-- Tiempo de generación: 03-08-2025 a las 22:43:16
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `cartolaafp` (
   `periodo_fin` date DEFAULT NULL,
   `cotizaciones_pagadas` int DEFAULT NULL,
   `lagunas_previsionales` int DEFAULT NULL,
-  `archivo_cartola` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `archivo_cartola` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_carga` datetime DEFAULT (now()),
   PRIMARY KEY (`id`),
   KEY `fk_cartolaafp_trabajador` (`trabajador_id`)
@@ -69,9 +69,9 @@ CREATE TABLE IF NOT EXISTS `caso` (
   `trabajador_id` int DEFAULT NULL,
   `empleador_id` int DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
-  `estado` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `resumen` text COLLATE utf8mb4_unicode_ci,
-  `tipo` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `estado` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `resumen` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `tipo` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT (now()),
   PRIMARY KEY (`id`),
   KEY `fk_caso_trabajador` (`trabajador_id`),
@@ -92,14 +92,14 @@ CREATE TABLE IF NOT EXISTS `contrato` (
   `empleador_id` int DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_termino` date DEFAULT NULL,
-  `tipo_contrato` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cargo` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `jornada` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo_contrato` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cargo` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jornada` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sueldo_base` decimal(15,2) DEFAULT NULL,
   `porcentaje_viaje` decimal(5,2) DEFAULT NULL,
   `bonos` decimal(15,2) DEFAULT NULL,
-  `archivo_contrato` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `estado` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `archivo_contrato` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `estado` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT (now()),
   `fecha_actualizacion` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -119,12 +119,12 @@ CREATE TABLE IF NOT EXISTS `documentogenerado` (
   `trabajador_id` int DEFAULT NULL,
   `empleador_id` int DEFAULT NULL,
   `caso_id` int DEFAULT NULL,
-  `tipo_documento` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `destinatario` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `archivo` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo_documento` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `destinatario` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `archivo` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `monto_total` decimal(15,2) DEFAULT NULL,
   `fecha_generacion` datetime DEFAULT (now()),
-  `estado` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `estado` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `version` int DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `fk_documentogenerado_trabajador` (`trabajador_id`),
@@ -141,15 +141,16 @@ CREATE TABLE IF NOT EXISTS `documentogenerado` (
 DROP TABLE IF EXISTS `empleador`;
 CREATE TABLE IF NOT EXISTS `empleador` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `razon_social` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `rut` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `direccion` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `telefono` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `razon_social` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rut_cuerpo` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rut_dv` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `direccion` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `telefono` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT (now()),
   `fecha_actualizacion` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `rut` (`rut`)
+  UNIQUE KEY `rut_unico` (`rut_cuerpo`,`rut_dv`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -168,17 +169,17 @@ CREATE TABLE IF NOT EXISTS `finiquito` (
   `fecha_finiquito` date DEFAULT NULL,
   `fecha_inicio_contrato` date DEFAULT NULL,
   `fecha_termino_contrato` date DEFAULT NULL,
-  `tipo_termino` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipo_termino` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `monto_indemnizacion` decimal(15,2) DEFAULT NULL,
   `monto_vacaciones` decimal(15,2) DEFAULT NULL,
   `monto_semanacorrida` decimal(15,2) DEFAULT NULL,
   `monto_multas` decimal(15,2) DEFAULT NULL,
   `monto_total` decimal(15,2) DEFAULT NULL,
-  `moneda` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `moneda` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `valor_uf` decimal(15,4) DEFAULT NULL,
   `valor_utm` decimal(15,2) DEFAULT NULL,
   `extra_data` json DEFAULT NULL,
-  `estado` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `estado` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `version` int DEFAULT '1',
   `fecha_actualizacion` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -201,10 +202,10 @@ CREATE TABLE IF NOT EXISTS `informerevision` (
   `empleador_id` int DEFAULT NULL,
   `contrato_id` int DEFAULT NULL,
   `caso_id` int DEFAULT NULL,
-  `resumen_hallazgos` text COLLATE utf8mb4_unicode_ci,
+  `resumen_hallazgos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `monto_reclamo` decimal(15,2) DEFAULT NULL,
   `fecha` datetime DEFAULT (now()),
-  `archivo_informe` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `archivo_informe` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_informerevision_trabajador` (`trabajador_id`),
   KEY `fk_informerevision_empleador` (`empleador_id`),
@@ -232,7 +233,7 @@ CREATE TABLE IF NOT EXISTS `liquidacion` (
   `descuentos` decimal(15,2) DEFAULT NULL,
   `semana_corrida` decimal(15,2) DEFAULT NULL,
   `total_pago` decimal(15,2) DEFAULT NULL,
-  `archivo_liquidacion` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `archivo_liquidacion` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_carga` datetime DEFAULT (now()),
   PRIMARY KEY (`id`),
   KEY `fk_liquidacion_trabajador` (`trabajador_id`),
@@ -250,8 +251,9 @@ CREATE TABLE IF NOT EXISTS `liquidacion` (
 DROP TABLE IF EXISTS `trabajador`;
 CREATE TABLE IF NOT EXISTS `trabajador` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `rut` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nombre` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rut_cuerpo` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rut_dv` char(1) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nombre` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
   `apellido_paterno` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `apellido_materno` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
@@ -260,9 +262,18 @@ CREATE TABLE IF NOT EXISTS `trabajador` (
   `direccion` varchar(180) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_creacion` datetime DEFAULT (now()),
   `fecha_actualizacion` datetime DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
+  `tipo_contribuyente` enum('persona','empresa') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'persona',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `rut` (`rut`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `rut_unico` (`rut_cuerpo`,`rut_dv`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `trabajador`
+--
+
+INSERT INTO `trabajador` (`id`, `rut_cuerpo`, `rut_dv`, `nombre`, `apellido_paterno`, `apellido_materno`, `fecha_nacimiento`, `email`, `telefono`, `direccion`, `fecha_creacion`, `fecha_actualizacion`, `activo`, `tipo_contribuyente`) VALUES
+(3, '14326078', 'K', 'Jean', 'Norambuena', 'Chávez', '1977-05-07', 'jeannorambuena@gmail.com', '997718963', 'Ruta J55 km 13', '2025-08-03 17:14:30', NULL, 0, 'persona');
 
 --
 -- Restricciones para tablas volcadas

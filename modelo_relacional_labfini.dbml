@@ -1,0 +1,75 @@
+Project labfiniquito {
+  database_type: "MySQL"
+}
+
+Table trabajador {
+  id int [pk]
+  rut varchar(12)
+  nombre varchar(80)
+  apellido_paterno varchar(60)
+  apellido_materno varchar(60)
+  fecha_nacimiento date
+  email varchar(120)
+  telefono varchar(20)
+  direccion varchar(180)
+}
+
+Table empleador {
+  id int [pk]
+  razon_social varchar(120)
+  rut varchar(12)
+  direccion varchar(180)
+  telefono varchar(20)
+  email varchar(120)
+}
+
+Table contrato {
+  id int [pk]
+  trabajador_id int
+  empleador_id int
+  fecha_inicio date
+  fecha_termino date
+  tipo_contrato varchar(60)
+  cargo varchar(80)
+  jornada varchar(60)
+  sueldo_base decimal(15,2)
+}
+
+Table caso {
+  id int [pk]
+  trabajador_id int
+  empleador_id int
+  fecha_inicio date
+  estado varchar(30)
+  tipo varchar(60)
+}
+
+Table finiquito {
+  id int [pk]
+  documento_generado_id int
+  trabajador_id int
+  empleador_id int
+  caso_id int
+  monto_total decimal(15,2)
+}
+
+Table documentogenerado {
+  id int [pk]
+  trabajador_id int
+  empleador_id int
+  caso_id int
+  tipo_documento varchar(60)
+  archivo varchar(180)
+}
+
+Ref: contrato.trabajador_id > trabajador.id
+Ref: contrato.empleador_id > empleador.id
+Ref: caso.trabajador_id > trabajador.id
+Ref: caso.empleador_id > empleador.id
+Ref: documentogenerado.trabajador_id > trabajador.id
+Ref: documentogenerado.empleador_id > empleador.id
+Ref: documentogenerado.caso_id > caso.id
+Ref: finiquito.trabajador_id > trabajador.id
+Ref: finiquito.empleador_id > empleador.id
+Ref: finiquito.caso_id > caso.id
+Ref: finiquito.documento_generado_id > documentogenerado.id

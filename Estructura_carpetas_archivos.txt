@@ -1,0 +1,116 @@
+labfiniquitos-main
+├── .gitattributes
+├── .gitignore
+├── README.md
+├── app
+│   ├── __init__.py
+│   ├── config.py
+│   ├── forms
+│   │   ├── __init__.py
+│   │   ├── cartolaafp_form.py
+│   │   ├── caso_form.py
+│   │   ├── contrato_form.py
+│   │   ├── documentogenerado_form.py
+│   │   ├── empleador_form.py
+│   │   ├── finiquito_form.py
+│   │   ├── informerevision_form.py
+│   │   ├── liquidacion_form.py
+│   │   └── trabajador_form.py
+│   ├── models
+│   │   ├── __init__.py
+│   │   ├── bitacora.py
+│   │   ├── cartolaafp.py
+│   │   ├── caso.py
+│   │   ├── contrato.py
+│   │   ├── documentogenerado.py
+│   │   ├── empleador.py
+│   │   ├── finiquito.py
+│   │   ├── informerevision.py
+│   │   ├── liquidacion.py
+│   │   └── trabajador.py
+│   ├── routes
+│   │   ├── __init__.py
+│   │   ├── cartolaafp.py
+│   │   ├── caso.py
+│   │   ├── contrato.py
+│   │   ├── documentogenerado.py
+│   │   ├── empleador.py
+│   │   ├── finiquito.py
+│   │   ├── home.py
+│   │   ├── informerevision.py
+│   │   ├── liquidacion.py
+│   │   └── trabajadores.py
+│   ├── static
+│   │   ├── bootstrap
+│   │   │   ├── css
+│   │   │   │   ├── bootstrap-grid.css
+│   │   │   │   ├── bootstrap-grid.css.map
+│   │   │   │   ├── bootstrap-grid.min.css
+│   │   │   │   ├── bootstrap-grid.min.css.map
+│   │   │   │   ├── bootstrap-grid.rtl.css
+│   │   │   │   ├── bootstrap-grid.rtl.css.map
+│   │   │   │   ├── bootstrap-grid.rtl.min.css
+│   │   │   │   ├── bootstrap-grid.rtl.min.css.map
+│   │   │   │   ├── bootstrap-reboot.css
+│   │   │   │   ├── bootstrap-reboot.css.map
+│   │   │   │   ├── bootstrap-reboot.min.css
+│   │   │   │   ├── bootstrap-reboot.min.css.map
+│   │   │   │   ├── bootstrap-reboot.rtl.css
+│   │   │   │   ├── bootstrap-reboot.rtl.css.map
+│   │   │   │   ├── bootstrap-reboot.rtl.min.css
+│   │   │   │   ├── bootstrap-reboot.rtl.min.css.map
+│   │   │   │   ├── bootstrap-utilities.css
+│   │   │   │   ├── bootstrap-utilities.css.map
+│   │   │   │   ├── bootstrap-utilities.min.css
+│   │   │   │   ├── bootstrap-utilities.min.css.map
+│   │   │   │   ├── bootstrap-utilities.rtl.css
+│   │   │   │   ├── bootstrap-utilities.rtl.css.map
+│   │   │   │   ├── bootstrap-utilities.rtl.min.css
+│   │   │   │   ├── bootstrap-utilities.rtl.min.css.map
+│   │   │   │   ├── bootstrap.css
+│   │   │   │   ├── bootstrap.css.map
+│   │   │   │   ├── bootstrap.min.css
+│   │   │   │   ├── bootstrap.min.css.map
+│   │   │   │   ├── bootstrap.rtl.css
+│   │   │   │   ├── bootstrap.rtl.css.map
+│   │   │   │   ├── bootstrap.rtl.min.css
+│   │   │   │   └── bootstrap.rtl.min.css.map
+│   │   │   └── js
+│   │   │       ├── bootstrap.bundle.js
+│   │   │       ├── bootstrap.bundle.js.map
+│   │   │       ├── bootstrap.bundle.min.js
+│   │   │       ├── bootstrap.bundle.min.js.map
+│   │   │       ├── bootstrap.esm.js
+│   │   │       ├── bootstrap.esm.js.map
+│   │   │       ├── bootstrap.esm.min.js
+│   │   │       ├── bootstrap.esm.min.js.map
+│   │   │       ├── bootstrap.js
+│   │   │       ├── bootstrap.js.map
+│   │   │       ├── bootstrap.min.js
+│   │   │       └── bootstrap.min.js.map
+│   │   └── css
+│   │       └── styles.css
+│   ├── templates
+│   │   ├── base.html
+│   │   ├── home_old.html
+│   │   ├── index.html
+│   │   ├── trabajador
+│   │   │   └── index.html
+│   │   └── trabajadores
+│   │       ├── index.html
+│   │       └── nuevo.html
+│   └── utils
+│       ├── ai_tools.py
+│       ├── calculos.py
+│       └── ocr.py
+├── app.zip
+├── docs
+│   ├── Handover_labfiniquito.docx
+│   ├── changelog.md
+│   ├── labfini-final.sql
+│   ├── modelo_erd.dbml
+│   ├── modelo_erd.png
+│   └── requisitos.md
+├── requirements.txt
+├── run.py
+└── wsgi.py

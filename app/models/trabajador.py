@@ -1,37 +1,45 @@
+"""
+Modelo de datos para trabajadores.
+
+Representa a un trabajador registrado en el sistema, incluyendo sus datos
+personales, de contacto y situación laboral.
+
+Autor: Jean Paul Norambuena
+Proyecto: labfiniquito
+"""
+
 from app import db
 
 
 class Trabajador(db.Model):
     """
-    Modelo de Trabajador para la base de datos.
-
-    Representa a un trabajador, con todos los datos personales y de contacto requeridos
-    para el proceso de cálculo y documentación laboral.
-
-    Atributos:
-        id (int): Clave primaria, autoincremental.
-        rut (str): RUT chileno único.
-        nombre (str): Nombres del trabajador.
-        apellido_paterno (str): Apellido paterno.
-        apellido_materno (str): Apellido materno.
-        fecha_nacimiento (date): Fecha de nacimiento.
-        email (str): Correo electrónico.
-        telefono (str): Teléfono de contacto.
-        direccion (str): Dirección particular.
-        fecha_creacion (datetime): Fecha de registro en el sistema.
-        fecha_actualizacion (datetime): Última actualización del registro.
+    Modelo ORM para la tabla 'trabajador'.
+    Estructura profesionalizada con separación de RUT (cuerpo y dígito verificador).
     """
-
-    __tablename__ = 'trabajador'
+    __tablename__ = 'trabajador'  # Usa singular, congruente con tu base
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    rut = db.Column(db.String(12), unique=True)
-    nombre = db.Column(db.String(80))
-    apellido_paterno = db.Column(db.String(60))
-    apellido_materno = db.Column(db.String(60))
-    fecha_nacimiento = db.Column(db.Date)
-    email = db.Column(db.String(120))
-    telefono = db.Column(db.String(20))
-    direccion = db.Column(db.String(180))
-    fecha_creacion = db.Column(db.DateTime)
-    fecha_actualizacion = db.Column(db.DateTime)
+    rut_cuerpo = db.Column(db.String(8), nullable=False)
+    rut_dv = db.Column(db.String(1), nullable=False)
+    nombre = db.Column(db.String(80), nullable=False)
+    apellido_paterno = db.Column(db.String(60), nullable=False)
+    apellido_materno = db.Column(db.String(60), nullable=True)
+    fecha_nacimiento = db.Column(db.Date, nullable=True)
+    direccion = db.Column(db.String(180), nullable=True)
+    telefono = db.Column(db.String(20), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    activo = db.Column(db.Boolean, default=True, nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint('rut_cuerpo', 'rut_dv', name='rut_unico'),
+    )
+
+    @property
+    def rut(self):
+        """
+        Retorna el RUT completo en formato estándar (cuerpo-dv), útil para mostrar en plantillas.
+        """
+        return f"{self.rut_cuerpo}-{self.rut_dv}"
+
+    def __repr__(self):
+        return f"<Trabajador {self.rut} - {self.nombre} {self.apellido_paterno} {self.apellido_materno}>"
