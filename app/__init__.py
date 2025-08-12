@@ -44,14 +44,14 @@ def create_app():
     # Importación y registro de Blueprints (rutas modulares)
     from app.routes.home import home_bp
     from app.routes.trabajadores import trabajadores_bp
+    from app.routes.empleador import empleador_bp
 
     app.register_blueprint(home_bp)
     app.register_blueprint(trabajadores_bp)
+    app.register_blueprint(empleador_bp)
 
     # Diagnóstico de rutas reales
     print("🧭 Flask root path:", app.root_path)
     print("📁 Carpeta de archivos estáticos:", app.static_folder)
-
-    return app
 
     return app
