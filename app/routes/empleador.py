@@ -3,7 +3,7 @@ from app.models.empleador import Empleador
 from app.forms.empleador_form import EmpleadorForm
 from app.extensions.extensions import db
 
-empleador_bp = Blueprint('empleador', __name__, url_prefix='/empleador')
+empleador_bp = Blueprint('empleadores', __name__, url_prefix='/empleadores')
 
 
 @empleador_bp.route('/')

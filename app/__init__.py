@@ -8,11 +8,10 @@ Módulo principal de inicialización de la aplicación Flask.
 
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
-# Base de datos SQLAlchemy (se inicializa más abajo con app context)
-db = SQLAlchemy()
+# Importa la instancia global de db centralizada
+from app.extensions.extensions import db
 
 
 def create_app():
@@ -39,7 +38,13 @@ def create_app():
     db.init_app(app)
 
     # Importación de modelos (obligatorio para inicializar relaciones y migraciones)
-    from app.models import Trabajador
+    # Ajusta estos imports según tu estructura real de modelos
+    try:
+        # si tu package models exporta Trabajador en __init__.py
+        from app.models import Trabajador
+    except Exception:
+        # fallback común si cada modelo está en su propio archivo
+        from app.models.trabajador import Trabajador  # noqa: F401
 
     # Importación y registro de Blueprints (rutas modulares)
     from app.routes.home import home_bp
