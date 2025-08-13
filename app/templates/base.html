@@ -110,11 +110,17 @@
   {% block head %}{% endblock %}
 </head>
 
-<!-- ✅ Cambio aquí: estructura flex vertical con min-vh-100 -->
 <body class="d-flex flex-column min-vh-100 bg-light text-dark">
 
   <!-- Botón hamburguesa -->
   <button id="menuToggle" class="hamburger-button">☰</button>
+
+  <!-- Botón "Inicio" flotante en esquina superior derecha -->
+  <a href="{{ url_for('home.index') }}" 
+   class="btn btn-light btn-lg d-flex align-items-center justify-content-center shadow" 
+   style="width:60px; height:60px; border-radius:50%; position:fixed; top:15px; right:15px; z-index:1100; font-size:28px;">
+    🏠
+</a>
 
   <!-- Menú lateral WOW -->
   <nav id="sidebarMenu" class="sidebar">
@@ -157,12 +163,12 @@
     </div>
   </div>
 
-  <!-- Contenido principal con flex-fill -->
+  <!-- Contenido principal -->
   <main class="flex-fill">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Footer fijo al final -->
+  <!-- Footer -->
   <footer class="text-center text-muted small">
     <hr>
     <p class="mb-0">&copy; {{ current_year | default("2025") }} Ágora Creativa | Proyecto Apoyo Laboral</p>

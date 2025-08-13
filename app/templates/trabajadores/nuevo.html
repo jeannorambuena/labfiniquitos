@@ -24,13 +24,13 @@
           <label class="form-label">RUT</label>
           <div class="row g-1">
             <div class="col-8">
-              {{ form.rut_cuerpo(class="form-control form-control-lg", maxlength="8", placeholder="Ej: 12345678") }}
+              {{ form.rut_cuerpo(id="rut_cuerpo", class="form-control form-control-lg", maxlength="8", placeholder="Ej: 12345678") }}
             </div>
             <div class="col-1 d-flex align-items-center justify-content-center px-0">
               <span class="fw-bold">-</span>
             </div>
             <div class="col-3">
-              {{ form.rut_dv(class="form-control form-control-lg", maxlength="1", placeholder="K") }}
+              {{ form.rut_dv(id="rut_dv", class="form-control form-control-lg", maxlength="1", placeholder="K") }}
             </div>
           </div>
           {% for error in form.rut_cuerpo.errors %}
@@ -65,7 +65,7 @@
           {{ form.email(class="form-control form-control-lg", placeholder="Ej: juan@correo.cl") }}
         </div>
 
-        <!-- Teléfono con prefijo +56 y campo de 9 dígitos -->
+        <!-- Teléfono -->
         <div class="mb-3">
           <label class="form-label">Teléfono</label>
           <div class="input-group input-group-lg">
@@ -90,7 +90,7 @@
           {{ form.direccion(class="form-control form-control-lg", placeholder="Ej: Calle 123, Ciudad") }}
         </div>
 
-        <!-- Botones de acción -->
+        <!-- Botones -->
         <div class="d-flex justify-content-center gap-3">
           <button type="submit" class="btn btn-success btn-lg">
             <i class="fas fa-check me-1"></i> Guardar
@@ -104,13 +104,13 @@
   </div>
 </div>
 
-<!-- Modales de validación de RUT -->
+<!-- Modales -->
 <div class="modal fade" id="modalRutInvalido" tabindex="-1" aria-labelledby="modalRutInvalidoLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title" id="modalRutInvalidoLabel">RUT inválido</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         El RUT ingresado no es válido. Por favor, revise el número y el dígito verificador.
@@ -122,19 +122,17 @@
   </div>
 </div>
 
-<!-- Modal: RUT ya existe en la base de datos (mensaje actualizado) -->
 <div class="modal fade" id="modalRutExiste" tabindex="-1" aria-labelledby="modalRutExisteLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-warning text-dark">
         <h5 class="modal-title" id="modalRutExisteLabel">RUT ya registrado</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body fs-5">
         <i class="fas fa-exclamation-circle text-warning me-2"></i>
         El RUT ingresado ya está registrado en el sistema.<br>
-        <strong>Si desea editar los datos de este trabajador, vaya a la lista de trabajadores y utilice la opción <span class="text-primary">Editar</span>.</strong><br>
-        No puede registrar nuevamente un trabajador con el mismo RUT.
+        <strong>Si desea editar los datos de este trabajador, vaya a la lista de trabajadores y utilice la opción <span class="text-primary">Editar</span>.</strong>
       </div>
       <div class="modal-footer">
         <button type="button" id="modalRutExisteBtn" class="btn btn-warning" data-bs-dismiss="modal">Aceptar</button>
@@ -143,13 +141,12 @@
   </div>
 </div>
 
-<!-- Modal: RUT válido y NO existe en la base de datos -->
 <div class="modal fade" id="modalRutNuevo" tabindex="-1" aria-labelledby="modalRutNuevoLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-success text-white">
         <h5 class="modal-title" id="modalRutNuevoLabel">RUT válido</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         El RUT es válido y no existe en la base de datos.<br>
@@ -164,7 +161,26 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('static', filename='js/trabajador.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/rut_utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/rut_utils.js') }}"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.initRutValidation) {
+    initRutValidation({
+      formId: 'trabajador-form',
+      rutCuerpoId: 'rut_cuerpo',
+      rutDvId: 'rut_dv',
+      nextFocusId: 'nombre',  
+      modals: {
+        invalidId: 'modalRutInvalido',
+        existsId: 'modalRutExiste',
+        existsBtnId: 'modalRutExisteBtn',
+        okId: 'modalRutNuevo',
+        okBtnId: 'modalRutNuevoBtn'
+      },
+      endpoint: '/trabajadores/api/trabajador/existe'
+    });
+  }
+});
+</script>
 {% endblock %}

@@ -39,7 +39,7 @@
             <tr>
               <td class="fw-semibold">
                 {% if e.razon_social %}
-                  <a href="{{ url_for('empleadores.ver', id=e.id) }}" class="text-decoration-none">
+                  <a href="{{ url_for('empleadores.editar', id=e.id) }}" class="text-decoration-none">
                     {{ e.razon_social }}
                   </a>
                 {% else %}

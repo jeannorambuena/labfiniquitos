@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app.models.empleador import Empleador
 from app.forms.empleador_form import EmpleadorForm
 from app.extensions.extensions import db
@@ -34,7 +34,7 @@ def nuevo():
         db.session.add(nuevo_empleador)
         db.session.commit()
         flash('Empleador creado correctamente.', 'success')
-        return redirect(url_for('empleador.index'))
+        return redirect(url_for('empleadores.index'))
     return render_template('empleador/nuevo.html', form=form)
 
 
@@ -55,7 +55,7 @@ def editar(id):
         empleador.rut_dv = empleador.rut_dv.upper()
         db.session.commit()
         flash('Empleador actualizado correctamente.', 'success')
-        return redirect(url_for('empleador.index'))
+        return redirect(url_for('empleadores.index'))
     return render_template('empleador/editar.html', form=form, empleador=empleador)
 
 
@@ -65,4 +65,27 @@ def eliminar(id):
     db.session.delete(empleador)
     db.session.commit()
     flash('Empleador eliminado correctamente.', 'success')
-    return redirect(url_for('empleador.index'))
+    return redirect(url_for('empleadores.index'))
+
+
+# ---------------------------
+# API: Verificar existencia de RUT de empleador
+# ---------------------------
+@empleador_bp.route('/api/empleador/existe', methods=['GET'])
+def api_empleador_existe():
+    """
+    Verifica si un RUT de empleador ya existe en la base de datos.
+    Devuelve JSON: { "existe": true } o { "existe": false }
+    """
+    rut_cuerpo = request.args.get('rut_cuerpo', '').strip()
+    rut_dv = request.args.get('rut_dv', '').strip().upper()
+
+    if not rut_cuerpo or not rut_dv:
+        return jsonify({"error": "Faltan parámetros"}), 400
+
+    existe = Empleador.query.filter_by(
+        rut_cuerpo=rut_cuerpo,
+        rut_dv=rut_dv
+    ).first() is not None
+
+    return jsonify({"existe": existe})
