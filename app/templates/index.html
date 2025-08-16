@@ -24,10 +24,10 @@
 <section class="container-fluid py-5">
   <div class="row g-4 justify-content-center">
     {% set modulos = [
-      {'color': 'bg-primary', 'titulo': 'Trabajador', 'desc': 'Gestión de personal y RRHH', 'svg': 'user', 'url': '/trabajadores'},
-      {'color': 'bg-success', 'titulo': 'Empresa', 'desc': 'Datos y responsables del empleador', 'svg': 'building', 'url': '/empleadores'},
-      {'color': 'bg-warning', 'titulo': 'Documentos', 'desc': 'Contratos, cartas y anexos legales', 'svg': 'document', 'url': '/documentos'},
-      {'color': 'bg-danger', 'titulo': 'Finiquitos', 'desc': 'Procesos automáticos de desvinculación', 'svg': 'scissors', 'url': '/finiquitos'}
+      {'color': 'bg-primary',  'titulo': 'Trabajador', 'desc': 'Gestión y ficha',            'svg': 'user',     'url': '/trabajadores'},
+      {'color': 'bg-success',  'titulo': 'Empleador',  'desc': 'Datos y representante',      'svg': 'building', 'url': '/empleadores'},
+      {'color': 'bg-warning',  'titulo': 'Casos',      'desc': 'Historial y nuevo',          'svg': 'document', 'url': '/casos'},
+      {'color': 'bg-danger',   'titulo': 'Informes',   'desc': 'Reportes y descargas',       'svg': 'scissors', 'url': '/informes'}
     ] %}
 
     {% for m in modulos %}
@@ -38,19 +38,23 @@
           <div class="icon-container d-flex align-items-center justify-content-center mx-auto mb-3 rounded-circle shadow"
                style="width: 90px; height: 90px; background-color: rgba(255,255,255,0.1);">
             {% if m.svg == 'user' %}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+            <!-- Ícono Trabajador -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42" aria-hidden="true" focusable="false">
               <path fill-rule="evenodd" d="M18 8a6 6 0 11-12 0 6 6 0 0112 0zm-1.5 9.75a4.5 4.5 0 00-9 0 .75.75 0 11-1.5 0a6 6 0 1112 0 .75.75 0 11-1.5 0z" clip-rule="evenodd" />
             </svg>
             {% elif m.svg == 'building' %}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+            <!-- Ícono Empleador -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42" aria-hidden="true" focusable="false">
               <path d="M4 21V3.75A.75.75 0 014.75 3h6.5a.75.75 0 01.75.75V7h7.25a.75.75 0 01.75.75V21H4z"/>
             </svg>
             {% elif m.svg == 'document' %}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+            <!-- Ícono Casos -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42" aria-hidden="true" focusable="false">
               <path d="M4.5 3.75A.75.75 0 015.25 3h8.19a.75.75 0 01.53.22l4.81 4.81a.75.75 0 01.22.53v11.69a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V3.75zM13.5 3.75V8a.75.75 0 00.75.75h4.25"/>
             </svg>
             {% elif m.svg == 'scissors' %}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42">
+            <!-- Ícono Informes -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="42" height="42" aria-hidden="true" focusable="false">
               <path d="M9 5.25a2.25 2.25 0 11-2.25-2.25A2.25 2.25 0 019 5.25zM9 18.75a2.25 2.25 0 11-2.25-2.25A2.25 2.25 0 019 18.75zM14.25 4.5L5.25 14.25M14.25 19.5L5.25 9.75"/>
             </svg>
             {% endif %}
@@ -63,13 +67,11 @@
     {% endfor %}
   </div>
 </section>
-
-<!-- Ícono flotante Home -->
-<a href="/" id="homeIcon" title="Volver al inicio">🏠</a>
 {% endblock %}
 
 {% block scripts %}
 <script>
+  // Mantengo tu efecto hover; en desktop hace escala vertical suave
   document.addEventListener('DOMContentLoaded', () => {
     if (window.innerWidth > 768) {
       document.querySelectorAll('.modulo-card').forEach((card) => {

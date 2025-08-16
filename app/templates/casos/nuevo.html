@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Título + acciones -->
+  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Nuevo Caso</h1>
+      <p class="text-muted mb-0">Registra los datos base del caso. Luego podrás adjuntar documentos y generar cálculos.</p>
+    </div>
+    <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">← Volver</a>
+  </div>
+
+  <!-- Mensajes flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'warning' if category=='error' else category }} mb-2" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Formulario -->
+  <form method="POST" action="{{ url_for('casos.nuevo') }}" novalidate>
+    {{ form.hidden_tag() }}
+
+    <!-- Datos del Caso -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-header">Datos del Caso</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="{{ form.tipo_caso.id }}" class="form-label">Tipo de Caso</label>
+            {{ form.tipo_caso(class="form-select", id=form.tipo_caso.id) }}
+            {% if form.tipo_caso.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.tipo_caso.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-8">
+            <label for="{{ form.causal.id }}" class="form-label">Causal Legal</label>
+            {{ form.causal(class="form-control", id=form.causal.id, placeholder="Ej: Art. 160 Nº7 Código del Trabajo") }}
+            {% if form.causal.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.causal.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-6">
+            <label for="{{ form.fecha_inicio.id }}" class="form-label">Fecha Inicio</label>
+            {{ form.fecha_inicio(class="form-control", id=form.fecha_inicio.id) }}
+            {% if form.fecha_inicio.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.fecha_inicio.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-6">
+            <label for="{{ form.fecha_termino.id }}" class="form-label">Fecha Término</label>
+            {{ form.fecha_termino(class="form-control", id=form.fecha_termino.id) }}
+            {% if form.fecha_termino.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.fecha_termino.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-6">
+            <label for="{{ form.base_calculo.id }}" class="form-label">Base de Cálculo (CLP)</label>
+            {{ form.base_calculo(class="form-control", id=form.base_calculo.id, placeholder="Monto base") }}
+            {% if form.base_calculo.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.base_calculo.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Identificación (luego se reemplaza por tus modales de búsqueda) -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-header">Identificación</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="{{ form.rut_trabajador.id }}" class="form-label">RUT Trabajador</label>
+            {{ form.rut_trabajador(class="form-control", id=form.rut_trabajador.id, placeholder="Ej: 12.345.678-9") }}
+            {% if form.rut_trabajador.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.rut_trabajador.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-6">
+            <label for="{{ form.rut_empleador.id }}" class="form-label">RUT Empleador</label>
+            {{ form.rut_empleador(class="form-control", id=form.rut_empleador.id, placeholder="Ej: 76.123.456-7") }}
+            {% if form.rut_empleador.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.rut_empleador.errors[0] }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex justify-content-end gap-2">
+      <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
+  </form>
+</div>
+{% endblock %}

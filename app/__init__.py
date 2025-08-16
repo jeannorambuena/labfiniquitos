@@ -50,7 +50,9 @@ def create_app():
     from app.routes.home import home_bp
     from app.routes.trabajadores import trabajadores_bp
     from app.routes.empleador import empleador_bp
+    from app.routes import casos
 
+    app.register_blueprint(casos.casos_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(trabajadores_bp)
     app.register_blueprint(empleador_bp)

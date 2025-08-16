@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 13-08-2025 a las 16:02:11
+-- Tiempo de generación: 13-08-2025 a las 20:50:02
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -83,7 +83,14 @@ CREATE TABLE IF NOT EXISTS `caso` (
   KEY `idx_caso_fecha_inicio` (`fecha_inicio`),
   KEY `idx_caso_codigo` (`codigo`),
   KEY `idx_caso_estado` (`estado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `caso`
+--
+
+INSERT INTO `caso` (`id`, `codigo`, `trabajador_id`, `empleador_id`, `fecha_inicio`, `estado`, `resumen`, `tipo`, `nombre_caso`, `fecha_creacion`, `fecha_cierre`) VALUES
+(2, '2982081e-786b-11f0-8903-005056c00001', 3, 1, '2025-08-13', 'abierto', NULL, 'autodespido', 'Norambuena/Mariela Farias Leyton - 2982081e-786b-11f0-8903-005056c00001', '2025-08-13 13:30:10', NULL);
 
 --
 -- Disparadores `caso`
@@ -189,7 +196,18 @@ CREATE TABLE IF NOT EXISTS `documento_fuente` (
   KEY `fk_doc_trabajador` (`trabajador_id`),
   KEY `fk_doc_empleador` (`empleador_id`),
   KEY `fk_doc_contrato` (`contrato_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `documento_fuente`
+--
+
+INSERT INTO `documento_fuente` (`id`, `trabajador_id`, `empleador_id`, `contrato_id`, `caso_id`, `tipo_documento`, `emisor`, `periodo_inicio`, `periodo_fin`, `nombre_archivo`, `ruta_storage`, `hash_archivo`, `estado_carga`, `fecha_carga`) VALUES
+(1, 3, 1, NULL, 2, 'autodespido_comunicacion', 'Trabajador', NULL, NULL, 'COMUNICA AUTODESPIDO.docx', 'app/uploads/autodespidos/COMUNICA AUTODESPIDO.docx', NULL, 'cargado', '2025-08-13 14:01:43'),
+(2, 3, 1, NULL, 2, 'autodespido_protocolo', 'Trabajador', NULL, NULL, 'PROTOCOLO AUTODESPIDO - CARTA.docx', 'app/uploads/autodespidos/PROTOCOLO AUTODESPIDO - CARTA.docx', NULL, 'cargado', '2025-08-13 14:01:43'),
+(3, 3, 1, NULL, 2, 'proyecto_finiquito_borrador', 'Estudio Jurídico', NULL, NULL, 'PROYECTO DE FINIQUITO.docx', 'app/uploads/autodespidos/PROYECTO DE FINIQUITO.docx', NULL, 'cargado', '2025-08-13 14:01:43'),
+(4, 3, 1, NULL, 2, 'cartola_historica', 'Entidad Financiera/AFP', NULL, NULL, 'CARTOLA HISTORICA.pdf', 'app/uploads/autodespidos/CARTOLA HISTORICA.pdf', NULL, 'cargado', '2025-08-13 14:01:43'),
+(5, 3, 1, NULL, 2, 'resumen_semana_corrida', 'Empleador/Área RRHH', '2023-06-01', '2025-04-30', 'JUAN LUIS VALENZUELA ORELLANA - SEMANA CORRIDA.docx', 'app/uploads/autodespidos/JUAN LUIS VALENZUELA ORELLANA - SEMANA CORRIDA.docx', NULL, 'cargado', '2025-08-13 14:01:43');
 
 -- --------------------------------------------------------
 
@@ -372,7 +390,18 @@ CREATE TABLE IF NOT EXISTS `plantilla` (
   `fecha_creacion` datetime DEFAULT (now()),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_plantilla_tipo_version` (`tipo_documento`,`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `plantilla`
+--
+
+INSERT INTO `plantilla` (`id`, `nombre`, `tipo_documento`, `version`, `activo`, `fecha_creacion`) VALUES
+(1, 'Comunicación de Autodespido', 'autodespido_comunicacion', 1, 1, '2025-08-13 14:18:40'),
+(2, 'Protocolo Autodespido (Carta)', 'autodespido_protocolo', 1, 1, '2025-08-13 14:18:40'),
+(3, 'Proyecto de Finiquito (borrador)', 'proyecto_finiquito_borrador', 1, 1, '2025-08-13 14:18:40'),
+(4, 'Cartola Histórica', 'cartola_historica', 1, 1, '2025-08-13 14:18:40'),
+(5, 'Resumen Semana Corrida', 'resumen_semana_corrida', 1, 1, '2025-08-13 14:18:40');
 
 -- --------------------------------------------------------
 
@@ -433,17 +462,17 @@ INSERT INTO `trabajador` (`id`, `rut_cuerpo`, `rut_dv`, `nombre`, `apellido_pate
 --
 DROP VIEW IF EXISTS `vw_caso_header`;
 CREATE TABLE IF NOT EXISTS `vw_caso_header` (
-`id` int
-,`codigo` varchar(36)
-,`nombre_caso` varchar(200)
-,`tipo` varchar(60)
-,`estado` varchar(30)
-,`fecha_inicio` date
-,`trabajador_id` int
-,`trabajador_nombre` varchar(202)
-,`trabajador_apellido_paterno` varchar(60)
+`codigo` varchar(36)
 ,`empleador_id` int
 ,`empleador_razon_social` varchar(120)
+,`estado` varchar(30)
+,`fecha_inicio` date
+,`id` int
+,`nombre_caso` varchar(200)
+,`tipo` varchar(60)
+,`trabajador_apellido_paterno` varchar(60)
+,`trabajador_id` int
+,`trabajador_nombre` varchar(202)
 );
 
 -- --------------------------------------------------------
@@ -454,22 +483,22 @@ CREATE TABLE IF NOT EXISTS `vw_caso_header` (
 --
 DROP VIEW IF EXISTS `vw_insumos_finiquito`;
 CREATE TABLE IF NOT EXISTS `vw_insumos_finiquito` (
-`finiquito_id` int
-,`caso_id` int
-,`trabajador_id` int
+`caso_id` int
 ,`empleador_id` int
 ,`fecha_inicio_contrato` date
 ,`fecha_termino_contrato` date
-,`monto_indemnizacion` decimal(15,2)
-,`monto_vacaciones` decimal(15,2)
-,`monto_semanacorrida` decimal(15,2)
-,`monto_multas` decimal(15,2)
+,`finiquito_id` int
 ,`moneda` varchar(10)
+,`monto_indemnizacion` decimal(15,2)
+,`monto_multas` decimal(15,2)
+,`monto_semanacorrida` decimal(15,2)
+,`monto_vacaciones` decimal(15,2)
+,`semana_corrida_hist` decimal(37,2)
+,`sueldo_base_ultimo` decimal(15,2)
+,`sueldo_promedio` decimal(19,6)
+,`trabajador_id` int
 ,`valor_uf` decimal(15,4)
 ,`valor_utm` decimal(15,2)
-,`semana_corrida_hist` decimal(37,2)
-,`sueldo_promedio` decimal(19,6)
-,`sueldo_base_ultimo` decimal(15,2)
 );
 
 -- --------------------------------------------------------
