@@ -3,16 +3,16 @@
 {% block content %}
 <div class="container py-4">
 
-  <!-- Título + acciones -->
+  <!-- Encabezado -->
   <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
     <div>
-      <h1 class="h3 mb-1">Nuevo Caso</h1>
-      <p class="text-muted mb-0">Registra los datos base del caso. Luego podrás adjuntar documentos y generar cálculos.</p>
+      <h1 class="h3 mb-1">Nuevo caso</h1>
+      <p class="text-muted mb-0">Completa los pasos en orden (vertical). Campos con <span class="badge bg-danger">Obligatorio</span> deben completarse.</p>
     </div>
     <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">← Volver</a>
   </div>
 
-  <!-- Mensajes flash -->
+  <!-- Flash -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="mb-3">
@@ -25,101 +25,792 @@
     {% endif %}
   {% endwith %}
 
-  <!-- Formulario -->
-  <form method="POST" action="{{ url_for('casos.nuevo') }}" novalidate>
+  <!-- Estilos locales -->
+  <style>
+    .timeline-vert .step-pane { position: relative; padding-left: 2.5rem; border-left: 3px solid var(--bs-border-color); }
+    .timeline-vert .step-pane::before {
+      content: attr(data-step);
+      position: absolute; left: -0.95rem; top: 1rem; width: 2rem; height: 2rem;
+      display: grid; place-items: center; border-radius: 50%;
+      background: #0d6efd; color: #fff; font-weight: 700; box-shadow: 0 0 0 3px #fff;
+    }
+    .step-title { background:#0d6efd; color:#fff; padding:.65rem .9rem; border-radius:.5rem; display:flex; align-items:center; justify-content:space-between; }
+    .step-title .req { margin-left:.5rem; }
+    .step-body { background:#fff; border:1px solid var(--bs-border-color); border-top:0; border-radius:0 0 .5rem .5rem; padding:1rem; }
+    .step-wrap { margin-bottom:1rem; }
+    .badge-status { font-size:.75rem; }
+    .small-muted { font-size:.875rem; color:#6c757d; }
+
+    .lock-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: rgba(248,249,250,.9);
+      border-radius: 0 0 .5rem .5rem; display:none;
+      align-items: center; justify-content: center; text-align: center; padding: 1.5rem;
+    }
+    .lock-overlay .lock { font-size: 2rem; line-height: 1; display: block; margin-bottom: .5rem; }
+    .doc-card { border:1px solid var(--bs-border-color); border-radius:.5rem; padding: .75rem; }
+    .doc-card + .doc-card { margin-top:.5rem; }
+    .doc-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .doc-meta { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+    .char-counter { font-size:.75rem; color:#6c757d; }
+    .sticky-summary { position: sticky; top: 1rem; }
+  </style>
+
+  <!-- FORM master -->
+  <form method="POST" action="{{ url_for('casos.nuevo') }}" id="form-nuevo-caso" novalidate enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
-    <!-- Datos del Caso -->
-    <div class="card shadow-sm mb-3">
-      <div class="card-header">Datos del Caso</div>
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label for="{{ form.tipo_caso.id }}" class="form-label">Tipo de Caso</label>
-            {{ form.tipo_caso(class="form-select", id=form.tipo_caso.id) }}
-            {% if form.tipo_caso.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.tipo_caso.errors[0] }}
+    <!-- Hidden para IDs seleccionados y acción -->
+    <input type="hidden" name="trabajador_id" id="trabajador_id" value="{{ (caso.trabajador_id if caso else '') }}">
+    <input type="hidden" name="empleador_id"  id="empleador_id"  value="{{ (caso.empleador_id if caso else '') }}">
+    <input type="hidden" name="accion" id="accion" value="">
+    {% if caso %}
+      <input type="hidden" id="caso_id" value="{{ caso.id }}">
+    {% else %}
+      <input type="hidden" id="caso_id" value="">
+    {% endif %}
+
+    <div class="row">
+      <!-- Columna principal -->
+      <div class="col-lg-8 timeline-vert">
+
+        <!-- Paso 1: Trabajador -->
+        <section class="step-wrap step-pane" data-step="1">
+          <div class="step-title">
+            <span>1. Trabajador</span>
+            <span>
+              <span class="badge bg-danger req">Obligatorio</span>
+              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-1">Pendiente</span>
+            </span>
+          </div>
+          <div class="step-body position-relative">
+            <div id="err-step-1" class="alert alert-danger d-none mb-3">Debes seleccionar o crear un trabajador.</div>
+
+            <div class="d-flex gap-2 align-items-end">
+              <div class="flex-grow-1">
+                <label class="form-label">Buscar trabajador (RUT, nombre o apellido)</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="buscar-trabajador" placeholder="Ej: Jean, 12345678" autocomplete="off">
+                  <!-- Añadimos id para abrir modal por JS explícito -->
+                  <button type="button" class="btn btn-outline-primary" id="btn-open-trabajador" data-bs-toggle="modal" data-bs-target="#modalTrabajador">Abrir modal</button>
+                </div>
+                <div class="small-muted mt-1">Se buscan coincidencias por RUT y nombre/apellido.</div>
+                <div id="trabajador-resultados" class="py-2 text-muted">Escribe al menos 2 caracteres…</div>
+              </div>
+              <div>
+                <a href="{{ url_for('trabajadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo</a>
+              </div>
+            </div>
+
+            <hr class="my-3">
+            <div class="text-muted small">Trabajador seleccionado</div>
+            <div id="resumen-trabajador" class="fw-semibold">—</div>
+          </div>
+        </section>
+
+        <!-- Paso 2: Empleador -->
+        <section class="step-wrap step-pane" data-step="2">
+          <div class="step-title">
+            <span>2. Empleador</span>
+            <span>
+              <span class="badge bg-danger req">Obligatorio</span>
+              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-2">Pendiente</span>
+            </span>
+          </div>
+          <div class="step-body position-relative">
+            <div id="err-step-2" class="alert alert-danger d-none mb-3">Debes seleccionar o crear un empleador.</div>
+
+            <div class="d-flex gap-2 align-items-end">
+              <div class="flex-grow-1">
+                <label class="form-label">Buscar empleador (Razón social o RUT)</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="buscar-empleador" placeholder="Ej: Mariela, 76123456" autocomplete="off">
+                  <!-- Añadimos id para abrir modal por JS explícito -->
+                  <button type="button" class="btn btn-outline-primary" id="btn-open-empleador" data-bs-toggle="modal" data-bs-target="#modalEmpleador">Abrir modal</button>
+                </div>
+                <div class="small-muted mt-1">Se buscan coincidencias por razón social y RUT.</div>
+                <div id="empleador-resultados" class="py-2 text-muted">Escribe al menos 2 caracteres…</div>
+              </div>
+              <div>
+                <a href="{{ url_for('empleadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo</a>
+              </div>
+            </div>
+
+            <hr class="my-3">
+            <div class="text-muted small">Empleador seleccionado</div>
+            <div id="resumen-empleador" class="fw-semibold">—</div>
+          </div>
+        </section>
+
+        <!-- Paso 3: Historia -->
+        <section class="step-wrap step-pane" data-step="3">
+          <div class="step-title">
+            <span>3. Historia (relato de la reunión)</span>
+            <span>
+              <span class="badge bg-danger req">Obligatorio</span>
+              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-3">Pendiente</span>
+            </span>
+          </div>
+          <div class="step-body position-relative">
+            <div id="err-step-3" class="alert alert-danger d-none mb-3">La historia es obligatoria.</div>
+
+            <label for="historia" class="form-label">Cuéntame lo esencial (hechos, acuerdos, fechas relevantes)</label>
+            <textarea id="historia" name="historia" class="form-control" rows="6" maxlength="1500" placeholder="Ej.: Trabajé desde..., me informaron..., acordamos..." required>{{ (caso.historia if caso and caso.historia else '') }}</textarea>
+            <div class="d-flex justify-content-between mt-1">
+              <span class="small-muted">Máx. 1500 caracteres</span>
+              <span class="char-counter" id="historia-counter">0/1500</span>
+            </div>
+
+            <!-- CTA: Crear caso preliminar -->
+            <div class="alert alert-info mt-3 {% if caso %}d-none{% endif %}" id="precrear-hint">
+              Cuando completes <strong>Trabajador</strong>, <strong>Empleador</strong> e <strong>Historia</strong> podrás crear el <strong>caso preliminar</strong>. Eso generará el <em>ID del caso</em> y las carpetas de documentos.
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-primary {% if caso %}d-none{% endif %}" id="btn-precrear" disabled>Crear caso preliminar</button>
+            </div>
+
+            {% if caso %}
+              <div class="alert alert-success mt-3">
+                Caso <strong>#{{ caso.id }}</strong> creado. Estado: <span class="badge bg-primary">Recolección documental</span>
               </div>
             {% endif %}
           </div>
+        </section>
 
-          <div class="col-md-8">
-            <label for="{{ form.causal.id }}" class="form-label">Causal Legal</label>
-            {{ form.causal(class="form-control", id=form.causal.id, placeholder="Ej: Art. 160 Nº7 Código del Trabajo") }}
-            {% if form.causal.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.causal.errors[0] }}
-              </div>
-            {% endif %}
+        <!-- Paso 4: Documentos -->
+        <section class="step-wrap step-pane position-relative" data-step="4">
+          <div class="step-title">
+            <span>4. Documentos (obligatorios)</span>
+            <span>
+              <span class="badge bg-danger req">Obligatorio</span>
+              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-4">0/3</span>
+            </span>
           </div>
-
-          <div class="col-md-6">
-            <label for="{{ form.fecha_inicio.id }}" class="form-label">Fecha Inicio</label>
-            {{ form.fecha_inicio(class="form-control", id=form.fecha_inicio.id) }}
-            {% if form.fecha_inicio.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.fecha_inicio.errors[0] }}
+          <div class="step-body position-relative">
+            <div class="lock-overlay {% if not caso %}d-flex{% endif %}" id="lock-docs">
+              <div>
+                <span class="lock">🔒</span>
+                <div class="fw-semibold mb-1">Crea el caso preliminar para habilitar esta sección</div>
+                <div class="text-muted">Completa 1–3 y presiona “Crear caso preliminar”.</div>
               </div>
-            {% endif %}
+            </div>
+
+            <div id="err-step-4" class="alert alert-danger d-none mb-3">Faltan documentos obligatorios. Marca “Recibido” y el medio de entrega o sube archivo.</div>
+
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="small-muted">Progreso documentos: <span id="doc-progress-text">0/3</span></div>
+              <div class="progress flex-grow-1 ms-3" style="height: 8px;">
+                <div class="progress-bar" id="doc-progress-bar" role="progressbar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Contrato -->
+            <div class="doc-card" data-doc="contrato" data-obligatorio="1">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-semibold">Contrato de trabajo</div>
+                <span class="badge bg-secondary" id="badge-contrato">pendiente</span>
+              </div>
+              <div class="doc-meta mt-2">
+                <div class="form-check me-2">
+                  <input class="form-check-input doc-recibido" type="checkbox" id="recibido-contrato" {% if not caso %}disabled{% endif %}>
+                  <label class="form-check-label" for="recibido-contrato">Recibido</label>
+                </div>
+                <select class="form-select form-select-sm w-auto doc-medio" id="medio-contrato" disabled>
+                  <option value="" selected>Medio de entrega…</option>
+                  <option value="fisico">Físico</option>
+                  <option value="email">Email</option>
+                  <option value="pendrive">Pendrive</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="otro">Otro</option>
+                </select>
+                <input type="text" class="form-control form-control-sm w-auto d-none doc-medio-detalle" id="medio-contrato-detalle" placeholder="Detalle…">
+                <div class="doc-actions">
+                  <label class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}">
+                    Subir archivo
+                    <input type="file" class="d-none doc-file" id="file-contrato" accept=".pdf,.jpg,.jpeg,.png" {% if not caso %}disabled{% endif %}>
+                  </label>
+                  <button type="button" class="btn btn-sm btn-outline-secondary d-none" id="ver-contrato">Ver</button>
+                </div>
+              </div>
+              <input type="hidden" name="doc_contrato_estado" id="hid-contrato-estado" value="pendiente">
+              <input type="hidden" name="doc_contrato_medio" id="hid-contrato-medio" value="">
+              <input type="hidden" name="doc_contrato_medio_detalle" id="hid-contrato-medio-detalle" value="">
+            </div>
+
+            <!-- Liquidaciones -->
+            <div class="doc-card" data-doc="liquidaciones" data-obligatorio="1">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-semibold">Liquidaciones de sueldo (últimos 6–12 meses)</div>
+                <span class="badge bg-secondary" id="badge-liquidaciones">pendiente</span>
+              </div>
+              <div class="doc-meta mt-2">
+                <div class="form-check me-2">
+                  <input class="form-check-input doc-recibido" type="checkbox" id="recibido-liquidaciones" {% if not caso %}disabled{% endif %}>
+                  <label class="form-check-label" for="recibido-liquidaciones">Recibido</label>
+                </div>
+                <select class="form-select form-select-sm w-auto doc-medio" id="medio-liquidaciones" disabled>
+                  <option value="" selected>Medio de entrega…</option>
+                  <option value="fisico">Físico</option>
+                  <option value="email">Email</option>
+                  <option value="pendrive">Pendrive</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="otro">Otro</option>
+                </select>
+                <input type="text" class="form-control form-control-sm w-auto d-none doc-medio-detalle" id="medio-liquidaciones-detalle" placeholder="Detalle…">
+                <div class="doc-actions">
+                  <label class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}">
+                    Subir archivo(s)
+                    <input type="file" class="d-none doc-file" id="file-liquidaciones" accept=".pdf,.jpg,.jpeg,.png" multiple {% if not caso %}disabled{% endif %}>
+                  </label>
+                  <button type="button" class="btn btn-sm btn-outline-secondary d-none" id="ver-liquidaciones">Ver</button>
+                </div>
+              </div>
+              <input type="hidden" name="doc_liquidaciones_estado" id="hid-liquidaciones-estado" value="pendiente">
+              <input type="hidden" name="doc_liquidaciones_medio" id="hid-liquidaciones-medio" value="">
+              <input type="hidden" name="doc_liquidaciones_medio_detalle" id="hid-liquidaciones-medio-detalle" value="">
+            </div>
+
+            <!-- Cartola AFP -->
+            <div class="doc-card" data-doc="afp" data-obligatorio="1">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-semibold">Cartola previsional (AFP)</div>
+                <span class="badge bg-secondary" id="badge-afp">pendiente</span>
+              </div>
+              <div class="doc-meta mt-2">
+                <div class="form-check me-2">
+                  <input class="form-check-input doc-recibido" type="checkbox" id="recibido-afp" {% if not caso %}disabled{% endif %}>
+                  <label class="form-check-label" for="recibido-afp">Recibido</label>
+                </div>
+                <select class="form-select form-select-sm w-auto doc-medio" id="medio-afp" disabled>
+                  <option value="" selected>Medio de entrega…</option>
+                  <option value="fisico">Físico</option>
+                  <option value="email">Email</option>
+                  <option value="pendrive">Pendrive</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="otro">Otro</option>
+                </select>
+                <input type="text" class="form-control form-control-sm w-auto d-none doc-medio-detalle" id="medio-afp-detalle" placeholder="Detalle…">
+                <div class="doc-actions">
+                  <label class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}">
+                    Subir archivo
+                    <input type="file" class="d-none doc-file" id="file-afp" accept=".pdf,.jpg,.jpeg,.png" {% if not caso %}disabled{% endif %}>
+                  </label>
+                  <button type="button" class="btn btn-sm btn-outline-secondary d-none" id="ver-afp">Ver</button>
+                </div>
+              </div>
+              <input type="hidden" name="doc_afp_estado" id="hid-afp-estado" value="pendiente">
+              <input type="hidden" name="doc_afp_medio" id="hid-afp-medio" value="">
+              <input type="hidden" name="doc_afp_medio_detalle" id="hid-afp-medio-detalle" value="">
+            </div>
+
           </div>
+        </section>
 
-          <div class="col-md-6">
-            <label for="{{ form.fecha_termino.id }}" class="form-label">Fecha Término</label>
-            {{ form.fecha_termino(class="form-control", id=form.fecha_termino.id) }}
-            {% if form.fecha_termino.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.fecha_termino.errors[0] }}
-              </div>
-            {% endif %}
+        <!-- Paso 5: Ficha de Remuneraciones y Parámetros -->
+        <section class="step-wrap step-pane position-relative" data-step="5">
+          <div class="step-title">
+            <span>5. Ficha de Remuneraciones y Parámetros</span>
+            <span><span class="badge bg-secondary">Completar después de Documentos</span></span>
           </div>
-
-          <div class="col-md-6">
-            <label for="{{ form.base_calculo.id }}" class="form-label">Base de Cálculo (CLP)</label>
-            {{ form.base_calculo(class="form-control", id=form.base_calculo.id, placeholder="Monto base") }}
-            {% if form.base_calculo.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.base_calculo.errors[0] }}
+          <div class="step-body position-relative">
+            <div class="lock-overlay d-flex" id="lock-ficha">
+              <div>
+                <span class="lock">🔒</span>
+                <div class="fw-semibold mb-1">Completa los 3 documentos obligatorios para habilitar esta sección</div>
+                <div class="text-muted">Contrato, Liquidaciones y Cartola AFP.</div>
               </div>
-            {% endif %}
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="{{ form.tipo_caso.id }}" class="form-label">Tipo de caso</label>
+                {{ form.tipo_caso(class="form-select", id=form.tipo_caso.id) }}
+                {% if form.tipo_caso.errors %}
+                  <div class="invalid-feedback d-block">{{ form.tipo_caso.errors[0] }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-8">
+                <label for="{{ form.causal.id }}" class="form-label">Causal legal / descripción breve</label>
+                {{ form.causal(class="form-control", id=form.causal.id, placeholder="Ej: Despido, renuncia, no pago de cotizaciones…", autocomplete="off") }}
+                {% if form.causal.errors %}
+                  <div class="invalid-feedback d-block">{{ form.causal.errors[0] }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.fecha_inicio.id }}" class="form-label">Fecha inicio</label>
+                {{ form.fecha_inicio(class="form-control", id=form.fecha_inicio.id) }}
+                {% if form.fecha_inicio.errors %}
+                  <div class="invalid-feedback d-block">{{ form.fecha_inicio.errors[0] }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.fecha_termino.id }}" class="form-label">Fecha término</label>
+                {{ form.fecha_termino(class="form-control", id=form.fecha_termino.id) }}
+                <div class="invalid-feedback" id="fecha_termino_error"></div>
+                {% if form.fecha_termino.errors %}
+                  <div class="invalid-feedback d-block">{{ form.fecha_termino.errors[0] }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.base_calculo.id }}" class="form-label">Base de cálculo (CLP)</label>
+                {{ form.base_calculo(class="form-control", id=form.base_calculo.id, placeholder="Monto base", inputmode="numeric", autocomplete="off") }}
+                <div class="form-text">Se formatea automáticamente como CLP. Se enviará sin puntos al servidor.</div>
+                <div class="invalid-feedback" id="base_calculo_error"></div>
+                {% if form.base_calculo.errors %}
+                  <div class="invalid-feedback d-block">{{ form.base_calculo.errors[0] }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-3">
+              <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary" id="btn-submit-caso">Guardar</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Columna lateral: Resumen -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm mb-3 sticky-summary">
+          <div class="card-header">Resumen</div>
+          <div class="card-body small">
+            <div class="mb-3">
+              <div class="text-muted">Caso</div>
+              <div id="sum-caso" class="fw-semibold">{% if caso %}#{{ caso.id }}{% else %}—{% endif %}</div>
+              <div class="text-muted">{% if caso %}<span class="badge bg-primary">Recolección documental</span>{% else %}—{% endif %}</div>
+            </div>
+            <div class="mb-3">
+              <div class="text-muted">Trabajador</div>
+              <div id="sum-trabajador" class="fw-semibold">—</div>
+              <div id="sum-trabajador-rut" class="text-muted">—</div>
+            </div>
+            <div class="mb-3">
+              <div class="text-muted">Empleador</div>
+              <div id="sum-empleador" class="fw-semibold">—</div>
+              <div id="sum-empleador-rut" class="text-muted">—</div>
+            </div>
+            <div class="mb-3">
+              <div class="text-muted">Historia</div>
+              <div id="sum-historia" class="text-truncate">—</div>
+            </div>
+            <div class="mb-3">
+              <div class="text-muted">Documentos</div>
+              <div>Completos: <span id="sum-docs">0/3</span></div>
+            </div>
+            <div class="mb-3">
+              <div class="text-muted">Motivo</div>
+              <div id="sum-tipo" class="fw-semibold">—</div>
+              <div id="sum-causal" class="text-muted">—</div>
+            </div>
+            <div class="mb-3">
+              <div class="text-muted">Fechas</div>
+              <div>Inicio: <span id="sum-inicio">—</span></div>
+              <div>Término: <span id="sum-termino">—</span></div>
+            </div>
+            <div>
+              <div class="text-muted">Base de cálculo</div>
+              <div id="sum-base">—</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Identificación (luego se reemplaza por tus modales de búsqueda) -->
-    <div class="card shadow-sm mb-3">
-      <div class="card-header">Identificación</div>
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label for="{{ form.rut_trabajador.id }}" class="form-label">RUT Trabajador</label>
-            {{ form.rut_trabajador(class="form-control", id=form.rut_trabajador.id, placeholder="Ej: 12.345.678-9") }}
-            {% if form.rut_trabajador.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.rut_trabajador.errors[0] }}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="col-md-6">
-            <label for="{{ form.rut_empleador.id }}" class="form-label">RUT Empleador</label>
-            {{ form.rut_empleador(class="form-control", id=form.rut_empleador.id, placeholder="Ej: 76.123.456-7") }}
-            {% if form.rut_empleador.errors %}
-              <div class="invalid-feedback d-block">
-                {{ form.rut_empleador.errors[0] }}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Acciones -->
-    <div class="d-flex justify-content-end gap-2">
-      <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
-      {{ form.submit(class="btn btn-primary") }}
-    </div>
   </form>
 </div>
+
+<!-- MODAL: Trabajador -->
+<div class="modal fade" id="modalTrabajador" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Trabajador</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Buscar (RUT, nombre o apellido)</label>
+        <input type="text" class="form-control" id="buscar-trabajador-modal" placeholder="Ej: Jean, 12345678">
+        <div class="form-text">Se buscan coincidencias por RUT y nombre/apellido.</div>
+        <div id="trabajador-resultados-modal" class="py-3 text-center text-muted">Escribe al menos 2 caracteres…</div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <a href="{{ url_for('trabajadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo trabajador</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Empleador -->
+<div class="modal fade" id="modalEmpleador" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Empleador</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">Buscar (RUT o razón social)</label>
+        <input type="text" class="form-control" id="buscar-empleador-modal" placeholder="Ej: Mariela, 76123456">
+        <div class="form-text">Se buscan coincidencias por razón social y RUT.</div>
+        <div id="empleador-resultados-modal" class="py-3 text-center text-muted">Escribe al menos 2 caracteres…</div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <a href="{{ url_for('empleadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo empleador</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS (integrado) -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.__casosPageWired) return;
+  window.__casosPageWired = true;
+
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const clean = s => (s || '').toString().trim();
+  const onlyDigits = s => clean(s).replace(/\D+/g, '');
+  const formatCLP = s => { const d = onlyDigits(s); if (!d) return ''; return d.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
+  const deformatCLP = s => onlyDigits(s);
+  async function fetchJSON(url){ try{ const r=await fetch(url,{headers:{'Accept':'application/json'}}); return r.ok? r.json():[]; }catch{ return []; } }
+
+  // Abrir modales de forma explícita además del data-bs-*
+  function showModal(id){
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (window.bootstrap && window.bootstrap.Modal) {
+      window.bootstrap.Modal.getOrCreateInstance(el).show();
+    }
+  }
+  $('#btn-open-trabajador')?.addEventListener('click', (e)=>{ e.preventDefault(); showModal('modalTrabajador'); });
+  $('#btn-open-empleador')?.addEventListener('click', (e)=>{ e.preventDefault(); showModal('modalEmpleador'); });
+
+  // ---- Base elementos y resumen
+  const form = $('#form-nuevo-caso');
+  const inpTrabID = $('#trabajador_id');
+  const inpEmplID = $('#empleador_id');
+  const accionEl = $('#accion');
+  const casoIdEl = $('#caso_id');
+
+  const historiaEl = $('#historia');
+  const historiaCounter = $('#historia-counter');
+  const sumHistoria = $('#sum-historia');
+
+  const sumTrab = $('#sum-trabajador');
+  const sumTrabRut = $('#sum-trabajador-rut');
+  const sumEmpl = $('#sum-empleador');
+  const sumEmplRut = $('#sum-empleador-rut');
+
+  const elBase = $('#{{ form.base_calculo.id }}');
+  const elBaseErr = $('#base_calculo_error');
+  const elInicio = $('#{{ form.fecha_inicio.id }}');
+  const elTermino = $('#{{ form.fecha_termino.id }}');
+  const elTerminoErr = $('#fecha_termino_error');
+  const elTipo = $('#{{ form.tipo_caso.id }}');
+  const elCausal = $('#{{ form.causal.id }}');
+
+  function updateStepStatus(step, ok){
+    const badge = document.getElementById(`status-step-${step}`);
+    if (!badge) return;
+    if (ok){ badge.textContent='Listo'; badge.classList.remove('bg-light','text-dark'); badge.classList.add('bg-success','text-white'); }
+    else   { badge.textContent='Pendiente'; badge.classList.remove('bg-success','text-white'); badge.classList.add('bg-light','text-dark'); }
+  }
+
+  // Historia
+  function refreshHistoria(){
+    const v = (historiaEl?.value || '').trim();
+    if (historiaCounter) historiaCounter.textContent = `${v.length}/1500`;
+    if (sumHistoria) sumHistoria.textContent = v ? (v.length > 100 ? v.slice(0,100)+'…' : v) : '—';
+    return v.length > 0;
+  }
+  historiaEl?.addEventListener('input', ()=>{ $('#err-step-3')?.classList.add('d-none'); refreshHistoria(); validatePrecrearEnabled(); });
+  refreshHistoria();
+
+  // --- Trabajador (sección + modal)
+  (function wireTrabajador(){
+    const inp = $('#buscar-trabajador');
+    const box = $('#trabajador-resultados');
+    const resumen = $('#resumen-trabajador');
+
+    if (!inp || !box) return;
+
+    function paint(list, container){
+      if (!list || !list.length){ container.innerHTML = '<div class="py-2 text-muted">Sin resultados.</div>'; return; }
+      container.innerHTML = list.map(d => `
+        <button type="button" class="list-group-item list-group-item-action pick-t"
+                data-id="${d.id}" data-n="${d.nombre}" data-r="${d.rut||''}">
+          <div class="fw-semibold">${d.nombre}</div>
+          <div class="text-muted small">${d.rut||''}</div>
+        </button>`).join('');
+      container.querySelectorAll('.pick-t').forEach(b => b.onclick = () => {
+        inpTrabID.value = b.dataset.id;
+        const label = `${b.dataset.n}${b.dataset.r ? ' ('+b.dataset.r+')' : ''}`;
+        if (resumen) resumen.textContent = label;
+        if (sumTrab) sumTrab.textContent = b.dataset.n;
+        if (sumTrabRut) sumTrabRut.textContent = b.dataset.r || '—';
+        $('#err-step-1')?.classList.add('d-none');
+        updateStepStatus(1,true);
+        validatePrecrearEnabled();
+      });
+    }
+    async function doSearch(q, container){
+      container.textContent = q.length < 2 ? 'Escribe al menos 2 caracteres…' : 'Buscando…';
+      if (q.length < 2) return;
+      const data = await fetchJSON('/api/trabajadores?q='+encodeURIComponent(q));
+      container.innerHTML = `<div class="list-group"></div>`;
+      paint(data, container.firstElementChild);
+    }
+    inp.addEventListener('input', e => doSearch(e.target.value.trim(), box));
+
+    // Modal trabajador
+    const modalEl = $('#modalTrabajador');
+    if (modalEl){
+      modalEl.addEventListener('shown.bs.modal', () => {
+        const inpM = $('#buscar-trabajador-modal');
+        const boxM = $('#trabajador-resultados-modal');
+        if (!inpM || !boxM) return;
+        inpM.value=''; boxM.textContent='Escribe al menos 2 caracteres…'; inpM.focus();
+        inpM.oninput = async (ev) => {
+          const q = ev.target.value.trim();
+          boxM.textContent = q.length < 2 ? 'Escribe al menos 2 caracteres…' : 'Buscando…';
+          if (q.length < 2) return;
+          const data = await fetchJSON('/api/trabajadores?q='+encodeURIComponent(q));
+          boxM.innerHTML = `<div class="list-group"></div>`;
+          const listEl = boxM.firstElementChild;
+          if (!data || !data.length){ listEl.innerHTML = '<div class="py-2 text-muted">Sin resultados.</div>'; return; }
+          listEl.innerHTML = data.map(d => `
+            <button type="button" class="list-group-item list-group-item-action pick-tm"
+                    data-id="${d.id}" data-n="${d.nombre}" data-r="${d.rut||''}">
+              <div class="fw-semibold">${d.nombre}</div>
+              <div class="text-muted small">${d.rut||''}</div>
+            </button>`).join('');
+          listEl.querySelectorAll('.pick-tm').forEach(btn => btn.addEventListener('click', () => {
+            inpTrabID.value = btn.dataset.id;
+            const label = `${btn.dataset.n}${btn.dataset.r ? ' ('+btn.dataset.r+')' : ''}`;
+            if (resumen) resumen.textContent = label;
+            if (sumTrab) sumTrab.textContent = btn.dataset.n;
+            if (sumTrabRut) sumTrabRut.textContent = btn.dataset.r || '—';
+            $('#err-step-1')?.classList.add('d-none');
+            updateStepStatus(1,true);
+            validatePrecrearEnabled();
+            if (window.bootstrap) window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+          }, {once:true}));
+        };
+      });
+    }
+  })();
+
+  // --- Empleador (sección + modal)
+  (function wireEmpleador(){
+    const inp = $('#buscar-empleador');
+    const box = $('#empleador-resultados');
+    const resumen = $('#resumen-empleador');
+
+    if (!inp || !box) return;
+
+    function paint(list, container){
+      if (!list || !list.length){ container.innerHTML = '<div class="py-2 text-muted">Sin resultados.</div>'; return; }
+      container.innerHTML = list.map(d => `
+        <button type="button" class="list-group-item list-group-item-action pick-e"
+                data-id="${d.id}" data-n="${d.nombre}" data-r="${d.rut||''}">
+          <div class="fw-semibold">${d.nombre}</div>
+          <div class="text-muted small">${d.rut||''}</div>
+        </button>`).join('');
+      container.querySelectorAll('.pick-e').forEach(b => b.onclick = () => {
+        inpEmplID.value = b.dataset.id;
+        const label = `${b.dataset.n}${b.dataset.r ? ' ('+b.dataset.r+')' : ''}`;
+        if (resumen) resumen.textContent = label;
+        if (sumEmpl) sumEmpl.textContent = b.dataset.n;
+        if (sumEmplRut) sumEmplRut.textContent = b.dataset.r || '—';
+        $('#err-step-2')?.classList.add('d-none');
+        updateStepStatus(2,true);
+        validatePrecrearEnabled();
+      });
+    }
+    async function doSearch(q, container){
+      container.textContent = q.length < 2 ? 'Escribe al menos 2 caracteres…' : 'Buscando…';
+      if (q.length < 2) return;
+      const data = await fetchJSON('/api/empleadores?q='+encodeURIComponent(q));
+      container.innerHTML = `<div class="list-group"></div>`;
+      paint(data, container.firstElementChild);
+    }
+    inp.addEventListener('input', e => doSearch(e.target.value.trim(), box));
+
+    // Modal empleador
+    const modalEl = $('#modalEmpleador');
+    if (modalEl){
+      modalEl.addEventListener('shown.bs.modal', () => {
+        const inpM = $('#buscar-empleador-modal');
+        const boxM = $('#empleador-resultados-modal');
+        if (!inpM || !boxM) return;
+        inpM.value=''; boxM.textContent='Escribe al menos 2 caracteres…'; inpM.focus();
+        inpM.oninput = async (ev) => {
+          const q = ev.target.value.trim();
+          boxM.textContent = q.length < 2 ? 'Escribe al menos 2 caracteres…' : 'Buscando…';
+          if (q.length < 2) return;
+          const data = await fetchJSON('/api/empleadores?q='+encodeURIComponent(q));
+          boxM.innerHTML = `<div class="list-group"></div>`;
+          const listEl = boxM.firstElementChild;
+          if (!data || !data.length){ listEl.innerHTML = '<div class="py-2 text-muted">Sin resultados.</div>'; return; }
+          listEl.innerHTML = data.map(d => `
+            <button type="button" class="list-group-item list-group-item-action pick-em"
+                    data-id="${d.id}" data-n="${d.nombre}" data-r="${d.rut||''}">
+              <div class="fw-semibold">${d.nombre}</div>
+              <div class="text-muted small">${d.rut||''}</div>
+            </button>`).join('');
+          listEl.querySelectorAll('.pick-em').forEach(btn => btn.addEventListener('click', () => {
+            inpEmplID.value = btn.dataset.id;
+            const label = `${btn.dataset.n}${btn.dataset.r ? ' ('+btn.dataset.r+')' : ''}`;
+            if (resumen) resumen.textContent = label;
+            if (sumEmpl) sumEmpl.textContent = btn.dataset.n;
+            if (sumEmplRut) sumEmplRut.textContent = btn.dataset.r || '—';
+            $('#err-step-2')?.classList.add('d-none');
+            updateStepStatus(2,true);
+            validatePrecrearEnabled();
+            if (window.bootstrap) window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+          }, {once:true}));
+        };
+      });
+    }
+  })();
+
+  // ---- Habilitar “Crear caso preliminar”
+  const btnPrecrear = $('#btn-precrear');
+  function validatePrecrearEnabled(){
+    const hOk = refreshHistoria();
+    const tOk = !!inpTrabID.value;
+    const eOk = !!inpEmplID.value;
+    updateStepStatus(1,tOk); updateStepStatus(2,eOk); updateStepStatus(3,hOk);
+    if (btnPrecrear) btnPrecrear.disabled = !(tOk && eOk && hOk);
+  }
+  validatePrecrearEnabled();
+  btnPrecrear?.addEventListener('click', () => {
+    if (!inpTrabID.value){ $('#err-step-1')?.classList.remove('d-none'); return; }
+    if (!inpEmplID.value){ $('#err-step-2')?.classList.remove('d-none'); return; }
+    const h = (historiaEl?.value || '').trim();
+    if (!h){ $('#err-step-3')?.classList.remove('d-none'); return; }
+    accionEl.value = 'precrear';
+    form.submit();
+  });
+
+  // ---- Documentos obligatorios / progreso
+  const DOCS_OBLIGATORIOS = ['contrato','liquidaciones','afp'];
+  function updateDocBadge(key, state){
+    const badge = document.getElementById(`badge-${key}`);
+    badge.className = 'badge';
+    if (state === 'validado' || state === 'recibido' || state === 'subido'){
+      badge.classList.add('bg-success'); badge.textContent = state;
+    } else if (state === 'pendiente'){
+      badge.classList.add('bg-secondary'); badge.textContent = 'pendiente';
+    } else {
+      badge.classList.add('bg-warning'); badge.textContent = state;
+    }
+    document.getElementById(`hid-${key}-estado`).value = state;
+    updateDocsProgress();
+  }
+  function updateDocsProgress(){
+    let done = 0;
+    DOCS_OBLIGATORIOS.forEach(k => {
+      const st = document.getElementById(`hid-${k}-estado`).value || 'pendiente';
+      if (st !== 'pendiente') done += 1;
+    });
+    const total = DOCS_OBLIGATORIOS.length;
+    const pct = Math.round(done * 100 / total);
+    document.getElementById('doc-progress-text').textContent = `${done}/${total}`;
+    document.getElementById('sum-docs').textContent = `${done}/${total}`;
+    const bar = document.getElementById('doc-progress-bar');
+    bar.style.width = `${pct}%`;
+    bar.classList.toggle('bg-success', pct===100);
+    bar.classList.toggle('bg-warning', pct>0 && pct<100);
+    bar.classList.toggle('bg-secondary', pct===0);
+
+    const lockFicha = document.getElementById('lock-ficha');
+    if (lockFicha) lockFicha.style.display = (pct===100 ? 'none' : 'flex');
+
+    document.getElementById('status-step-4').textContent = `${done}/${total}`;
+  }
+  function bindDocRow(key){
+    const rec = document.getElementById(`recibido-${key}`);
+    const medio = document.getElementById(`medio-${key}`);
+    const detalle = document.getElementById(`medio-${key}-detalle`);
+    const file = document.getElementById(`file-${key}`);
+    if (!rec) return;
+
+    rec.addEventListener('change', () => {
+      if (rec.checked){
+        medio.disabled = false;
+        updateDocBadge(key,'recibido');
+      } else {
+        medio.disabled = true; medio.value='';
+        detalle.classList.add('d-none'); detalle.value='';
+        if (file) file.value='';
+        updateDocBadge(key,'pendiente');
+      }
+    });
+    medio?.addEventListener('change', () => {
+      const v = medio.value;
+      document.getElementById(`hid-${key}-medio`).value = v;
+      if (v==='otro'){ detalle.classList.remove('d-none'); }
+      else { detalle.classList.add('d-none'); const hid = document.getElementById(`hid-${key}-medio-detalle`); if (hid) hid.value=''; }
+      if ((document.getElementById(`hid-${key}-estado`).value || 'pendiente') === 'recibido'){
+        updateDocBadge(key,'recibido');
+      }
+    });
+    detalle?.addEventListener('input', () => {
+      const hid = document.getElementById(`hid-${key}-medio-detalle`); if (hid) hid.value = detalle.value.trim();
+    });
+    file?.addEventListener('change', () => {
+      if (file.files && file.files.length>0){
+        updateDocBadge(key,'subido');
+        const verBtn = document.getElementById(`ver-${key}`); verBtn?.classList.remove('d-none');
+      } else {
+        const recOn = rec.checked;
+        updateDocBadge(key, recOn ? 'recibido' : 'pendiente');
+        document.getElementById(`ver-${key}`)?.classList.add('d-none');
+      }
+    });
+  }
+  ['contrato','liquidaciones','afp'].forEach(bindDocRow);
+  updateDocsProgress();
+  const lockDocs = document.getElementById('lock-docs');
+  if (lockDocs) lockDocs.style.display = (casoIdEl?.value ? 'none' : 'flex');
+
+  // ---- Ficha (validaciones + sumario)
+  function validateFechas(){
+    const inicio = clean(elInicio?.value);
+    const termino = clean(elTermino?.value);
+    elTermino?.classList.remove('is-invalid');
+    elTerminoErr.textContent = '';
+    if (inicio && termino){
+      const d1 = new Date(inicio), d2 = new Date(termino);
+      if (d2 < d1){ elTermino?.classList.add('is-invalid'); elTerminoErr.textContent = 'La fecha de término no puede ser anterior a la de inicio.'; return false; }
+    }
+    return true;
+  }
+  elBase?.addEventListener('blur', ()=>{ elBase.value = formatCLP(elBase.value); elBase.classList.remove('is-invalid'); elBaseErr.textContent=''; });
+  elBase?.addEventListener('focus', ()=>{ elBase.value = deformatCLP(elBase.value); });
+  elBase?.addEventListener('input', ()=>{ elBase.classList.remove('is-invalid'); elBaseErr.textContent=''; document.getElementById('sum-base').textContent = formatCLP(elBase.value) ? '$ '+formatCLP(elBase.value) : '—'; });
+  [elInicio, elTermino].forEach(el => el?.addEventListener('change', ()=>{ validateFechas(); document.getElementById('sum-inicio').textContent = clean(elInicio.value) || '—'; document.getElementById('sum-termino').textContent = clean(elTermino.value) || '—'; }));
+  elTipo?.addEventListener('change', ()=>{ document.getElementById('sum-tipo').textContent = elTipo.options[elTipo.selectedIndex]?.text || '—'; });
+  elCausal?.addEventListener('input', ()=>{ document.getElementById('sum-causal').textContent = clean(elCausal.value) || '—'; });
+
+  // Inicial sumario
+  document.getElementById('sum-tipo').textContent   = elTipo?.options[elTipo.selectedIndex]?.text || '—';
+  document.getElementById('sum-causal').textContent = clean(elCausal?.value) || '—';
+  document.getElementById('sum-inicio').textContent = clean(elInicio?.value) || '—';
+  document.getElementById('sum-termino').textContent= clean(elTermino?.value) || '—';
+  document.getElementById('sum-base').textContent   = elBase?.value ? ('$ ' + formatCLP(elBase.value)) : '—';
+
+  // Submit final
+  form.addEventListener('submit', (e)=>{ if (!validateFechas()){ e.preventDefault(); e.stopPropagation(); window.scrollTo({top:0, behavior:'smooth'}); } if (elBase) elBase.value = deformatCLP(elBase.value); });
+});
+</script>
 {% endblock %}

@@ -4,63 +4,77 @@
 {% block content %}
 <div class="container py-4">
 
-  <!-- Encabezado de módulo -->
-  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
-    <div>
-      <h1 class="h3 mb-1">Casos</h1>
-      <p class="text-muted mb-0">Gestión de despidos, autodespidos y renuncias.</p>
-    </div>
-    <div class="d-flex gap-2">
-      <a href="{{ url_for('casos.nuevo') }}" class="btn btn-primary">
-        <span aria-hidden="true">➕</span> Nuevo caso
-      </a>
+  <!-- Encabezado de módulo con breadcrumb -->
+  <div class="mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small mb-2">
+        <li class="breadcrumb-item"><a href="{{ url_for('home.index') }}">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Casos</li>
+      </ol>
+    </nav>
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div>
+        <h1 class="h3 mb-1">Casos</h1>
+        <p class="text-muted mb-0">Gestión de despidos, autodespidos y renuncias.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{{ url_for('casos.nuevo') }}" class="btn btn-primary">
+          <span aria-hidden="true">➕</span> Nuevo caso
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- Filtros / Búsqueda -->
+  <!-- Filtros / Búsqueda (compactos) -->
   <div class="card shadow-sm mb-3">
     <div class="card-body">
-      <form method="GET" action="{{ url_for('casos.index') }}" class="row g-3" role="search" aria-label="Filtrar casos">
-        <div class="col-12 col-md-4">
-          <label for="q" class="form-label">Búsqueda</label>
-          <input id="q" name="q" type="search" class="form-control" placeholder="RUT, nombre trabajador, empleador, ID de caso..." value="{{ request.args.get('q','') }}">
-        </div>
+      <form method="GET" action="{{ url_for('casos.index') }}" role="search" aria-label="Filtrar casos">
+        <div class="row row-cols-1 row-cols-md-auto g-2 align-items-end">
+          <div class="col">
+            <label for="q" class="form-label small mb-1">Búsqueda</label>
+            <input id="q" name="q" type="search" class="form-control form-control-sm"
+                   placeholder="RUT, trabajador, empleador, ID…"
+                   value="{{ request.args.get('q','') }}">
+          </div>
 
-        <div class="col-6 col-md-3">
-          <label for="tipo" class="form-label">Tipo</label>
-          <select id="tipo" name="tipo" class="form-select">
-            <option value="">Todos</option>
-            <option value="despido"      {{ 'selected' if request.args.get('tipo')=='despido' }}>Despido</option>
-            <option value="autodespido"  {{ 'selected' if request.args.get('tipo')=='autodespido' }}>Autodespido</option>
-            <option value="renuncia"     {{ 'selected' if request.args.get('tipo')=='renuncia' }}>Renuncia</option>
-          </select>
-        </div>
+          <div class="col">
+            <label for="tipo" class="form-label small mb-1">Tipo</label>
+            <select id="tipo" name="tipo" class="form-select form-select-sm">
+              <option value="">Todos</option>
+              <option value="despido"      {{ 'selected' if request.args.get('tipo')=='despido' }}>Despido</option>
+              <option value="autodespido"  {{ 'selected' if request.args.get('tipo')=='autodespido' }}>Autodespido</option>
+              <option value="renuncia"     {{ 'selected' if request.args.get('tipo')=='renuncia' }}>Renuncia</option>
+            </select>
+          </div>
 
-        <div class="col-6 col-md-3">
-          <label for="estado" class="form-label">Estado</label>
-          <select id="estado" name="estado" class="form-select">
-            <option value="">Todos</option>
-            <option value="borrador"     {{ 'selected' if request.args.get('estado')=='borrador' }}>Borrador</option>
-            <option value="en_revision"  {{ 'selected' if request.args.get('estado')=='en_revision' }}>En revisión</option>
-            <option value="completo"     {{ 'selected' if request.args.get('estado')=='completo' }}>Completo</option>
-          </select>
-        </div>
+          <div class="col">
+            <label for="estado" class="form-label small mb-1">Estado</label>
+            <select id="estado" name="estado" class="form-select form-select-sm">
+              <option value="">Todos</option>
+              <option value="borrador"     {{ 'selected' if request.args.get('estado')=='borrador' }}>Borrador</option>
+              <option value="en_revision"  {{ 'selected' if request.args.get('estado')=='en_revision' }}>En revisión</option>
+              <option value="completo"     {{ 'selected' if request.args.get('estado')=='completo' }}>Completo</option>
+            </select>
+          </div>
 
-        <div class="col-6 col-md-2">
-          <label for="desde" class="form-label">Desde</label>
-          <input id="desde" name="desde" type="date" class="form-control" value="{{ request.args.get('desde','') }}">
-        </div>
+          <div class="col">
+            <label for="desde" class="form-label small mb-1">Desde</label>
+            <input id="desde" name="desde" type="date" class="form-control form-control-sm"
+                   value="{{ request.args.get('desde','') }}">
+          </div>
 
-        <div class="col-6 col-md-2">
-          <label for="hasta" class="form-label">Hasta</label>
-          <input id="hasta" name="hasta" type="date" class="form-control" value="{{ request.args.get('hasta','') }}">
-        </div>
+          <div class="col">
+            <label for="hasta" class="form-label small mb-1">Hasta</label>
+            <input id="hasta" name="hasta" type="date" class="form-control form-control-sm"
+                   value="{{ request.args.get('hasta','') }}">
+          </div>
 
-        <div class="col-12 d-flex gap-2 justify-content-end">
-          <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">Limpiar</a>
-          <button type="submit" class="btn btn-primary">
-            <span aria-hidden="true">🔍</span> Buscar
-          </button>
+          <div class="col ms-md-auto d-grid d-md-flex gap-2">
+            <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <span aria-hidden="true">🔍</span> Buscar
+            </button>
+          </div>
         </div>
       </form>
     </div>

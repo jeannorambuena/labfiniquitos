@@ -38,27 +38,22 @@ def create_app():
     db.init_app(app)
 
     # Importación de modelos (obligatorio para inicializar relaciones y migraciones)
-    # Ajusta estos imports según tu estructura real de modelos
     try:
-        # si tu package models exporta Trabajador en __init__.py
         from app.models import Trabajador
     except Exception:
-        # fallback común si cada modelo está en su propio archivo
         from app.models.trabajador import Trabajador  # noqa: F401
 
     # Importación y registro de Blueprints (rutas modulares)
     from app.routes.home import home_bp
     from app.routes.trabajadores import trabajadores_bp
     from app.routes.empleador import empleador_bp
-    from app.routes import casos
+    from app.routes.casos import casos_bp
+    from app.routes.api import api_bp
 
-    app.register_blueprint(casos.casos_bp)
+    app.register_blueprint(casos_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(trabajadores_bp)
     app.register_blueprint(empleador_bp)
-
-    # Diagnóstico de rutas reales
-    print("🧭 Flask root path:", app.root_path)
-    print("📁 Carpeta de archivos estáticos:", app.static_folder)
+    app.register_blueprint(api_bp)
 
     return app
