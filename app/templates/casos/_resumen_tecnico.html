@@ -1,0 +1,94 @@
+{% if caso %}
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+    <span class="fw-semibold">Resumen técnico del caso</span>
+    <span class="badge text-bg-primary">ID #{{ caso.id }}</span>
+  </div>
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="small text-muted">ID de caso</div>
+        <div class="fw-semibold">{{ caso.codigo_humano }}</div>
+      </div>
+      <div class="col-md-6">
+        <div class="small text-muted">Carátula</div>
+        <div class="fw-semibold">{{ caso.caratula_simple }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="small text-muted">Trabajador</div>
+        <div class="fw-semibold">
+          {{ caso.trabajador_nombre }} <span class="text-muted">({{ caso.trabajador_rut }})</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="small text-muted">Empleador</div>
+        <div class="fw-semibold">
+          {{ caso.empleador_razon_social }} <span class="text-muted">({{ caso.empleador_rut }})</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="small text-muted">Estado</div>
+        <div>
+          <span class="badge text-bg-info">{{ caso.estado or '—' }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="small text-muted">Fecha de creación</div>
+        <div class="fw-semibold">{{ caso.fecha_creacion_fmt }}</div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <div class="row g-3 align-items-center">
+      <div class="col-md-8">
+        <div class="small text-muted mb-1">Documentos obligatorios</div>
+        <ul class="list-inline mb-0 small">
+          <li class="list-inline-item me-3">
+            <span id="docchk-contrato" class="badge rounded-pill text-bg-secondary">Contrato</span>
+          </li>
+          <li class="list-inline-item me-3">
+            <span id="docchk-liquidaciones" class="badge rounded-pill text-bg-secondary">Liquidaciones</span>
+          </li>
+          <li class="list-inline-item">
+            <span id="docchk-afp" class="badge rounded-pill text-bg-secondary">AFP</span>
+          </li>
+        </ul>
+        <div class="mt-1">
+          <span class="small text-muted">Progreso:</span>
+          <span class="fw-semibold" id="sum-docs-mini">0/3</span>
+        </div>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a href="#docs" class="btn btn-sm btn-primary">Ir a Documentos</a>
+        <a href="{{ url_for('casos.index') }}" class="btn btn-sm btn-outline-secondary">Volver a Casos</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hook mínimo para sincronizar los badges del resumen con el estado actual del paso 4 -->
+<script>
+(function(){
+  const s = (id) => document.getElementById(id);
+  function applyBadge(el, ok){
+    if(!el) return;
+    el.classList.remove('text-bg-secondary','text-bg-warning','text-bg-success');
+    el.classList.add(ok ? 'text-bg-success' : 'text-bg-secondary');
+  }
+  try {
+    const estadoK = (k) => (document.getElementById('hid-'+k+'-estado')?.value || 'pendiente');
+    const done = ['contrato','liquidaciones','afp'].reduce((acc,k) => {
+      const ok = ['recibido','subido','validado'].includes(estadoK(k));
+      applyBadge(s('docchk-'+k), ok);
+      return acc + (ok ? 1 : 0);
+    }, 0);
+    const total = 3;
+    const mini = s('sum-docs-mini');
+    if (mini) mini.textContent = done + '/' + total;
+  } catch(e){}
+})();
+</script>
+{% endif %}

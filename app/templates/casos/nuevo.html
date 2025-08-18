@@ -151,15 +151,23 @@
               <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-3">Pendiente</span>
             </span>
           </div>
+
           <div class="step-body position-relative">
             <div id="err-step-3" class="alert alert-danger d-none mb-3">La historia es obligatoria.</div>
 
             <label for="historia" class="form-label">Cuéntame lo esencial (hechos, acuerdos, fechas relevantes)</label>
-            <textarea id="historia" name="historia" class="form-control" rows="6" maxlength="1500" placeholder="Ej.: Trabajé desde..., me informaron..., acordamos..." required>{{ (caso.historia if caso and caso.historia else '') }}</textarea>
+            <textarea id="historia" name="historia" class="form-control" rows="6" maxlength="1500"
+                      placeholder="Ej.: Trabajé desde..., me informaron..., acordamos..." required>
+        {{ (caso.resumen if caso and caso.resumen else '') }}</textarea>
+
             <div class="d-flex justify-content-between mt-1">
               <span class="small-muted">Máx. 1500 caracteres</span>
               <span class="char-counter" id="historia-counter">0/1500</span>
             </div>
+          </div>
+        </section>
+
+{% include 'casos/_resumen_tecnico.html' %}
 
             <!-- CTA: Crear caso preliminar -->
             <div class="alert alert-info mt-3 {% if caso %}d-none{% endif %}" id="precrear-hint">
@@ -524,15 +532,30 @@ document.addEventListener('DOMContentLoaded', () => {
     else   { badge.textContent='Pendiente'; badge.classList.remove('bg-success','text-white'); badge.classList.add('bg-light','text-dark'); }
   }
 
-  // Historia
+  // === Historia (incluye contador de caracteres y preview) ===
   function refreshHistoria(){
     const v = (historiaEl?.value || '').trim();
-    if (historiaCounter) historiaCounter.textContent = `${v.length}/1500`;
+
+    // Contador con umbrales
+    if (historiaCounter){
+      const MAX = 1500, WARN1 = 1275, WARN2 = 1425;
+      const len = v.length;
+      historiaCounter.textContent = `${len}/${MAX}`;
+      historiaCounter.classList.remove('text-warning','text-danger','fw-semibold');
+      if (len >= WARN2 && len <= MAX){
+        historiaCounter.classList.add('text-danger','fw-semibold');
+      } else if (len >= WARN1){
+        historiaCounter.classList.add('text-warning','fw-semibold');
+      }
+    }
+
+    // Resumen lateral truncado
     if (sumHistoria) sumHistoria.textContent = v ? (v.length > 100 ? v.slice(0,100)+'…' : v) : '—';
     return v.length > 0;
   }
   historiaEl?.addEventListener('input', ()=>{ $('#err-step-3')?.classList.add('d-none'); refreshHistoria(); validatePrecrearEnabled(); });
-  refreshHistoria();
+  historiaEl?.addEventListener('change', ()=>{ refreshHistoria(); });
+  refreshHistoria(); // inicial (por si hay texto precargado)
 
   // --- Trabajador (sección + modal)
   (function wireTrabajador(){
@@ -691,7 +714,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateStepStatus(1,tOk); updateStepStatus(2,eOk); updateStepStatus(3,hOk);
     if (btnPrecrear) btnPrecrear.disabled = !(tOk && eOk && hOk);
   }
+  window.validatePrecrearEnabled = validatePrecrearEnabled; // expone por si otros scripts lo necesitan
   validatePrecrearEnabled();
+
   btnPrecrear?.addEventListener('click', () => {
     if (!inpTrabID.value){ $('#err-step-1')?.classList.remove('d-none'); return; }
     if (!inpEmplID.value){ $('#err-step-2')?.classList.remove('d-none'); return; }
