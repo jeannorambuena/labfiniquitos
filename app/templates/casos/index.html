@@ -4,7 +4,6 @@
 {% block content %}
 <div class="container py-4">
 
-  <!-- Encabezado de módulo con breadcrumb -->
   <div class="mb-3">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb small mb-2">
@@ -29,7 +28,6 @@
     </div>
   </div>
 
-  <!-- Filtros / Búsqueda (compactos) -->
   <div class="card shadow-sm mb-3">
     <div class="card-body">
       <form method="GET" action="{{ url_for('casos.index') }}" role="search" aria-label="Filtrar casos">
@@ -84,12 +82,11 @@
     </div>
   </div>
 
-  {# === VISTA TARJETAS (resumen técnico reutilizado) === #}
+  <!-- Vista TARJETAS -->
   <div id="vistaTarjetas" class="d-none">
     {% if casos and casos|length %}
       <div class="d-grid gap-3">
         {% for c in casos %}
-          {# Reutiliza la tarjeta de resumen técnico por caso #}
           {% set caso = c %}
           {% include 'casos/_resumen_tecnico.html' %}
         {% endfor %}
@@ -104,7 +101,7 @@
     {% endif %}
   </div>
 
-  {# === VISTA TABLA (tu vista original, intacta) === #}
+  <!-- Vista TABLA -->
   <div id="vistaTabla">
     <div class="card shadow-sm">
       <div class="table-responsive">
@@ -116,7 +113,8 @@
               <th scope="col">Empleador</th>
               <th scope="col">Tipo</th>
               <th scope="col">Estado</th>
-              <th scope="col">Actualizado</th>
+              <th scope="col">Inicio</th>
+              <th scope="col">Últ. actualización</th>
               <th scope="col" class="text-end">Acciones</th>
             </tr>
           </thead>
@@ -125,8 +123,8 @@
               {% for c in casos %}
               <tr>
                 <td>
-                  <a href="{{ url_for('casos.detalle', id=c.id) }}" class="text-decoration-none fw-semibold">#{{ c.id }}</a>
-                  <div class="text-muted small">{{ c.codigo_humano if c.codigo_humano else '' }}</div>
+                  <a href="{{ url_for('casos.editar', id=c.id) }}" class="text-decoration-none fw-semibold">#{{ c.id }}</a>
+                  <div class="text-muted small">{{ c.codigo_humano }}</div>
                 </td>
                 <td>
                   <div class="fw-semibold">{{ c.trabajador_nombre }}</div>
@@ -136,7 +134,7 @@
                   <div class="fw-semibold">{{ c.empleador_razon_social }}</div>
                   <div class="text-muted small">{{ c.empleador_rut }}</div>
                 </td>
-                <td class="text-capitalize">{{ c.tipo or c.tipo_caso or '—' }}</td>
+                <td class="text-capitalize">{{ c.tipo or '—' }}</td>
                 <td>
                   {% set estado = (c.estado or 'borrador') %}
                   {% if estado == 'completo' %}
@@ -150,13 +148,18 @@
                   {% endif %}
                 </td>
                 <td>
-                  <time datetime="{{ (c.fecha_creacion_fmt or c.actualizado_en)|default('', true) }}">
-                    {{ c.fecha_creacion_fmt or c.actualizado_en or '—' }}
+                  <time datetime="{{ c.fecha_inicio|default('', true) }}">
+                    {{ c.fecha_inicio or '—' }}
+                  </time>
+                </td>
+                <td>
+                  <time datetime="{{ (c.fecha_creacion_fmt)|default('', true) }}">
+                    {{ c.fecha_creacion_fmt or '—' }}
                   </time>
                 </td>
                 <td class="text-end">
                   <div class="btn-group" role="group" aria-label="Acciones del caso {{ c.id }}">
-                    <a href="{{ url_for('casos.detalle', id=c.id) }}" class="btn btn-sm btn-outline-primary">Abrir</a>
+                    <a href="{{ url_for('casos.editar', id=c.id) }}" class="btn btn-sm btn-outline-primary">Abrir</a>
                     <a href="{{ url_for('casos.editar', id=c.id) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
                     <a href="{{ url_for('casos.generar', id=c.id) }}" class="btn btn-sm btn-outline-success">Generar</a>
                   </div>
@@ -165,7 +168,7 @@
               {% endfor %}
             {% else %}
               <tr>
-                <td colspan="7" class="text-center py-5">
+                <td colspan="8" class="text-center py-5">
                   <div class="text-muted">No hay casos para los filtros aplicados.</div>
                   <div class="mt-3">
                     <a href="{{ url_for('casos.nuevo') }}" class="btn btn-primary">
@@ -178,28 +181,11 @@
           </tbody>
         </table>
       </div>
-
-      {% if pagination %}
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <div class="text-muted small">
-          Mostrando {{ pagination.start_index }}–{{ pagination.end_index }} de {{ pagination.total }} resultados
-        </div>
-        <nav aria-label="Paginación de casos">
-          <ul class="pagination mb-0">
-            <li class="page-item {{ 'disabled' if not pagination.prev }}"><a class="page-link" href="{{ pagination.prev or '#' }}">Anterior</a></li>
-            {% for p in pagination.pages %}
-              <li class="page-item {{ 'active' if p.active }}"><a class="page-link" href="{{ p.url }}">{{ p.label }}</a></li>
-            {% endfor %}
-            <li class="page-item {{ 'disabled' if not pagination.next }}"><a class="page-link" href="{{ pagination.next or '#' }}">Siguiente</a></li>
-          </ul>
-        </nav>
-      </div>
-      {% endif %}
     </div>
   </div>
+
 </div>
 
-<!-- Toggle de vista persistente -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const k = 'casos.view';
