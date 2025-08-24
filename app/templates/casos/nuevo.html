@@ -1,144 +1,301 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container py-4">
-
   <!-- Encabezado -->
-  <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+  <div
+    class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3"
+  >
     <div>
       <h1 class="h3 mb-1">Nuevo caso</h1>
-      <p class="text-muted mb-0">Completa los pasos en orden (vertical). Campos con <span class="badge bg-danger">Obligatorio</span> deben completarse.</p>
+      <p class="text-muted mb-0">
+        Completa los pasos en orden (vertical). Campos con
+        <span class="badge bg-danger">Obligatorio</span> deben completarse.
+      </p>
     </div>
-    <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">← Volver</a>
+    <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary"
+      >← Volver</a
+    >
   </div>
 
   <!-- Flash -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="mb-3">
-        {% for category, message in messages %}
-          <div class="alert alert-{{ 'warning' if category=='error' else category }} mb-2" role="alert">
-            {{ message }}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="mb-3">
+    {% for category, message in messages %}
+    <div
+      class="alert alert-{{ 'warning' if category=='error' else category }} mb-2"
+      role="alert"
+    >
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
 
   <!-- Estilos locales -->
   <style>
-    .timeline-vert .step-pane { position: relative; padding-left: 2.5rem; border-left: 3px solid var(--bs-border-color); }
+    .timeline-vert .step-pane {
+      position: relative;
+      padding-left: 2.5rem;
+      border-left: 3px solid var(--bs-border-color);
+    }
     .timeline-vert .step-pane::before {
       content: attr(data-step);
-      position: absolute; left: -0.95rem; top: 1rem; width: 2rem; height: 2rem;
-      display: grid; place-items: center; border-radius: 50%;
-      background: #0d6efd; color: #fff; font-weight: 700; box-shadow: 0 0 0 3px #fff;
+      position: absolute;
+      left: -0.95rem;
+      top: 1rem;
+      width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #0d6efd;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 0 3px #fff;
     }
-    .step-title { background:#0d6efd; color:#fff; padding:.65rem .9rem; border-radius:.5rem; display:flex; align-items:center; justify-content:space-between; }
-    .step-title .req { margin-left:.5rem; }
-    .step-body { background:#fff; border:1px solid var(--bs-border-color); border-top:0; border-radius:0 0 .5rem .5rem; padding:1rem; }
-    .step-wrap { margin-bottom:1rem; }
-    .badge-status { font-size:.75rem; }
-    .small-muted { font-size:.875rem; color:#6c757d; }
+    .step-title {
+      background: #0d6efd;
+      color: #fff;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .step-title .req {
+      margin-left: 0.5rem;
+    }
+    .step-body {
+      background: #fff;
+      border: 1px solid var(--bs-border-color);
+      border-top: 0;
+      border-radius: 0 0 0.5rem 0.5rem;
+      padding: 1rem;
+    }
+    .step-wrap {
+      margin-bottom: 1rem;
+    }
+    .badge-status {
+      font-size: 0.75rem;
+    }
+    .small-muted {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
 
-    .lock-overlay { position: absolute; inset: 0; z-index: 2; background: rgba(248,249,250,.9); border-radius: 0 0 .5rem .5rem; display:none; align-items: center; justify-content: center; text-align: center; padding: 1.5rem; }
-    .lock-overlay .lock { font-size: 2rem; line-height: 1; display: block; margin-bottom: .5rem; }
-    .doc-card { border:1px solid var(--bs-border-color); border-radius:.5rem; padding: .75rem; }
-    .doc-card + .doc-card { margin-top:.5rem; }
-    .doc-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
-    .doc-meta { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
-    .char-counter { font-size:.75rem; color:#6c757d; }
-    .sticky-summary { position: sticky; top: 1rem; }
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: rgba(248, 249, 250, 0.9);
+      border-radius: 0 0 0.5rem 0.5rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .lock-overlay .lock {
+      font-size: 2rem;
+      line-height: 1;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .doc-card {
+      border: 1px solid var(--bs-border-color);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+    }
+    .doc-card + .doc-card {
+      margin-top: 0.5rem;
+    }
+    .doc-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .doc-meta {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .char-counter {
+      font-size: 0.75rem;
+      color: #6c757d;
+    }
+    .sticky-summary {
+      position: sticky;
+      top: 1rem;
+    }
 
     .box-selected {
       border-color: #198754 !important;
       background: #f6fff9;
-      box-shadow: 0 0 0 .2rem rgba(25,135,84,.15);
+      box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.15);
     }
 
-    .files-list { margin: .5rem 0 0; padding: 0; list-style: none; }
-    .files-list li { display:flex; align-items:center; gap:.5rem; padding:.35rem .5rem; border:1px solid var(--bs-border-color); border-radius:.375rem; margin-bottom:.35rem; }
-    .files-list .name { flex:1; min-width: 0; }
-    .files-list .name .truncate { display:block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .files-list .btn-sm { padding: .125rem .375rem; }
+    .files-list {
+      margin: 0.5rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .files-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid var(--bs-border-color);
+      border-radius: 0.375rem;
+      margin-bottom: 0.35rem;
+    }
+    .files-list .name {
+      flex: 1;
+      min-width: 0;
+    }
+    .files-list .name .truncate {
+      display: block;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .files-list .btn-sm {
+      padding: 0.125rem 0.375rem;
+    }
+	/* resalta archivos recién agregados */
+    .files-list li.new-file{border:2px solid #0d6efd;background:#eef6ff;}
   </style>
 
   <!-- FORM master -->
-  <form method="POST" action="{{ url_for('casos.nuevo') }}" id="form-nuevo-caso" novalidate enctype="multipart/form-data">
+  <form
+    method="POST"
+    action="{{ url_for('casos.nuevo') }}"
+    id="form-nuevo-caso"
+    novalidate
+    enctype="multipart/form-data"
+  >
     {{ form.hidden_tag() }}
 
     <!-- Hidden para IDs seleccionados y acción -->
-    <input type="hidden" name="trabajador_id" id="trabajador_id" value="{{ (caso.trabajador_id if caso else '') }}">
-    <input type="hidden" name="empleador_id"  id="empleador_id"  value="{{ (caso.empleador_id  if caso else '') }}">
-    <input type="hidden" name="accion" id="accion" value="">
+    <input
+      type="hidden"
+      name="trabajador_id"
+      id="trabajador_id"
+      value="{{ (caso.trabajador_id if caso else '') }}"
+    />
+    <input
+      type="hidden"
+      name="empleador_id"
+      id="empleador_id"
+      value="{{ (caso.empleador_id  if caso else '') }}"
+    />
+    <input type="hidden" name="accion" id="accion" value="" />
     {% if caso %}
-      <input type="hidden" name="caso_id" id="caso_id" value="{{ caso.id }}">
+    <input type="hidden" name="caso_id" id="caso_id" value="{{ caso.id }}" />
     {% else %}
-      <input type="hidden" name="caso_id" id="caso_id" value="">
+    <input type="hidden" name="caso_id" id="caso_id" value="" />
     {% endif %}
-
 
     <div class="row">
       <!-- Columna principal -->
-      <div class="{{ 'col-12' if not show_resumen else 'col-lg-8' }} timeline-vert">
-
+      <div
+        class="{{ 'col-12' if not show_resumen else 'col-lg-8' }} timeline-vert"
+      >
         <!-- Paso 1: Trabajador -->
         <section class="step-wrap step-pane" data-step="1">
           <div class="step-title">
             <span>1. Trabajador</span>
             <span>
               <span class="badge bg-danger req">Obligatorio</span>
-              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-1">Pendiente</span>
+              <span
+                class="badge rounded-pill bg-light text-dark badge-status"
+                id="status-step-1"
+                >Pendiente</span
+              >
             </span>
           </div>
           <div class="step-body position-relative">
-            <div id="err-step-1" class="alert alert-danger d-none mb-3">Debes seleccionar o crear un trabajador.</div>
+            <div id="err-step-1" class="alert alert-danger d-none mb-3">
+              Debes seleccionar o crear un trabajador.
+            </div>
 
             <div class="d-flex gap-2 align-items-end">
               <div class="flex-grow-1">
-                <label class="form-label">Buscar trabajador (RUT, nombre o apellido)</label>
+                <label class="form-label"
+                  >Buscar trabajador (RUT, nombre o apellido)</label
+                >
                 <div class="input-group">
-                  <input type="text" class="form-control" id="buscar-trabajador" placeholder="Ej: Jean, 12345678" autocomplete="off">
-                  <button type="button" class="btn btn-outline-primary" id="btn-open-trabajador" data-bs-toggle="modal" data-bs-target="#modalTrabajador">Buscar Trabajador</button>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="buscar-trabajador"
+                    placeholder="Ej: Jean, 12345678"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    id="btn-open-trabajador"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalTrabajador"
+                  >
+                    Buscar Trabajador
+                  </button>
+                  <a
+                    href="{{ url_for('trabajadores.nuevo') }}"
+                    class="btn btn-outline-success ms-2"
+                  >
+                    Crear nuevo
+                  </a>
                 </div>
-                <div class="small-muted mt-1">Se buscan coincidencias por RUT y nombre/apellido.</div>
+                <div class="small-muted mt-1">
+                  Se buscan coincidencias por RUT y nombre/apellido.
+                </div>
                 <div id="trabajador-resultados" class="py-2 text-muted"></div>
-              </div>
-              <div>
-                <a href="{{ url_for('trabajadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo</a>
               </div>
             </div>
 
-            <hr class="my-3">
+            <hr class="my-3" />
             <div class="text-muted small mb-2">Trabajador seleccionado</div>
-            <div id="box-trabajador" class="border rounded p-2 d-flex justify-content-between align-items-center">
+            <div
+              id="box-trabajador"
+              class="border rounded p-2 d-flex justify-content-between align-items-center"
+            >
               <div>
                 <div class="d-flex align-items-center gap-2">
                   <div id="resumen-trabajador" class="fw-semibold mb-0">
-                    {% if caso and caso.trabajador %}
-                      {{  caso.trabajador.nombre_completo
-                          or (
-                              (caso.trabajador.nombres or caso.trabajador.nombre)|default('') ~ ' ' ~
-                              (caso.trabajador.apellido_paterno or caso.trabajador.apellido or '') ~ ' ' ~
-                              (caso.trabajador.apellido_materno or caso.trabajador.segundo_apellido or '')
-                            )|trim
-                          or (
-                              (caso.trabajador.nombres or '') ~ ' ' ~ (caso.trabajador.apellidos or '')
-                            )|trim
-                          or (
-                              (caso.trabajador.nombre or '') ~ ' ' ~ (caso.trabajador.apellido or '')
-                            )|trim
-                          or caso.trabajador.nombre
-                      }}
-                    {% else %}—{% endif %}
+                    {% if caso and caso.trabajador %} {{
+                    caso.trabajador.nombre_completo or (
+                    (caso.trabajador.nombres or
+                    caso.trabajador.nombre)|default('') ~ ' ' ~
+                    (caso.trabajador.apellido_paterno or
+                    caso.trabajador.apellido or '') ~ ' ' ~
+                    (caso.trabajador.apellido_materno or
+                    caso.trabajador.segundo_apellido or '') )|trim or (
+                    (caso.trabajador.nombres or '') ~ ' ' ~
+                    (caso.trabajador.apellidos or '') )|trim or (
+                    (caso.trabajador.nombre or '') ~ ' ' ~
+                    (caso.trabajador.apellido or '') )|trim or
+                    caso.trabajador.nombre }} {% else %}—{% endif %}
                   </div>
-                  <span id="badge-trab" class="badge bg-success ms-2 d-none">✓ Seleccionado</span>
+                  <span id="badge-trab" class="badge bg-success ms-2 d-none"
+                    >✓ Seleccionado</span
+                  >
                 </div>
                 <div id="resumen-trabajador-rut" class="text-muted small">
-                  {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{% else %}—{% endif %}
+                  {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{%
+                  else %}—{% endif %}
                 </div>
               </div>
-              <button type="button" id="btn-clear-trabajador" class="btn btn-sm btn-outline-danger" disabled>Quitar</button>
+              <button
+                type="button"
+                id="btn-clear-trabajador"
+                class="btn btn-sm btn-outline-danger"
+                disabled
+              >
+                Quitar
+              </button>
             </div>
           </div>
         </section>
@@ -149,59 +306,89 @@
             <span>2. Empleador</span>
             <span>
               <span class="badge bg-danger req">Obligatorio</span>
-              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-2">Pendiente</span>
+              <span
+                class="badge rounded-pill bg-light text-dark badge-status"
+                id="status-step-2"
+                >Pendiente</span
+              >
             </span>
           </div>
           <div class="step-body position-relative">
-            <div id="err-step-2" class="alert alert-danger d-none mb-3">Debes seleccionar o crear un empleador.</div>
+            <div id="err-step-2" class="alert alert-danger d-none mb-3">
+              Debes seleccionar o crear un empleador.
+            </div>
 
             <div class="d-flex gap-2 align-items-end">
               <div class="flex-grow-1">
-                <label class="form-label">Buscar empleador (Razón social o RUT)</label>
+                <label class="form-label"
+                  >Buscar empleador (RUT, razón social o nombre)</label
+                >
                 <div class="input-group">
-                  <input type="text" class="form-control" id="buscar-empleador" placeholder="Ej: Mariela, 76123456" autocomplete="off">
-                  <button type="button" class="btn btn-outline-primary" id="btn-open-empleador" data-bs-toggle="modal" data-bs-target="#modalEmpleador">Buscar Empleador</button>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="buscar-empleador"
+                    placeholder="Ej: Empresa Ltda, 12345678"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    id="btn-open-empleador"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEmpleador"
+                  >
+                    Buscar Empleador
+                  </button>
+                  <a
+                    href="{{ url_for('empleadores.nuevo') }}"
+                    class="btn btn-outline-success ms-2"
+                  >
+                    Crear nuevo
+                  </a>
                 </div>
-                <div class="small-muted mt-1">Se buscan coincidencias por razón social y RUT.</div>
+                <div class="small-muted mt-1">
+                  Se buscan coincidencias por RUT, razón social o nombre.
+                </div>
                 <div id="empleador-resultados" class="py-2 text-muted"></div>
-              </div>
-              <div>
-                <a href="{{ url_for('empleadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo</a>
               </div>
             </div>
 
-            <hr class="my-3">
+            <hr class="my-3" />
             <div class="text-muted small mb-2">Empleador seleccionado</div>
-            <div id="box-empleador" class="border rounded p-2 d-flex justify-content-between align-items-center">
+            <div
+              id="box-empleador"
+              class="border rounded p-2 d-flex justify-content-between align-items-center"
+            >
               <div>
                 <div class="d-flex align-items-center gap-2">
                   <div id="resumen-empleador" class="fw-semibold mb-0">
-                    {% if caso and caso.empleador %}
-                      {{  caso.empleador.razon_social
-                          or caso.empleador.nombre_completo
-                          or caso.empleador.nombre_fantasia
-                          or caso.empleador.nombre
-                          or '—'
-                      }}
-                    {% else %}—{% endif %}
+                    {% if caso and caso.empleador %} {{
+                    caso.empleador.razon_social or
+                    caso.empleador.nombre_completo or
+                    caso.empleador.nombre_fantasia or caso.empleador.nombre or
+                    '—' }} {% else %}—{% endif %}
                   </div>
-                  <span id="badge-empl" class="badge bg-success ms-2 d-none">✓ Seleccionado</span>
+                  <span id="badge-empl" class="badge bg-success ms-2 d-none"
+                    >✓ Seleccionado</span
+                  >
                 </div>
                 <div id="resumen-empleador-rut" class="text-muted small">
-                  {% if caso and caso.empleador %}
-                    {{  caso.empleador.rut
-                        or caso.empleador.rut_formateado
-                        or caso.empleador.rut_empresa
-                        or caso.empleador.rut_empleador
-                        or caso.empleador.run
-                        or '—'
-                    }}
+                  {% if caso and caso.empleador %} {{ caso.empleador.rut or
+                  caso.empleador.rut_formateado or caso.empleador.rut_empresa or
+                  caso.empleador.rut_empleador or caso.empleador.run or '—' }}
                   {% else %}—{% endif %}
                 </div>
               </div>
-              <button type="button" id="btn-clear-empleador" class="btn btn-sm btn-outline-danger" disabled>Quitar</button>
+              <button
+                type="button"
+                id="btn-clear-empleador"
+                class="btn btn-sm btn-outline-danger"
+                disabled
+              >
+                Quitar
+              </button>
             </div>
-
           </div>
         </section>
 
@@ -211,44 +398,166 @@
             <span>3. Historia (relato de la reunión)</span>
             <span>
               <span class="badge bg-danger req">Obligatorio</span>
-              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-3">Pendiente</span>
+              <span
+                class="badge rounded-pill bg-light text-dark badge-status"
+                id="status-step-3"
+                >Pendiente</span
+              >
             </span>
           </div>
 
           <div class="step-body position-relative">
-            <div id="err-step-3" class="alert alert-danger d-none mb-3">La historia es obligatoria.</div>
+            <div id="err-step-3" class="alert alert-danger d-none mb-3">
+              La historia es obligatoria.
+            </div>
 
-            <label for="historia" class="form-label">Cuéntame lo esencial (hechos, acuerdos, fechas relevantes)</label>
-            <textarea id="historia" name="historia" class="form-control" rows="6" maxlength="1500" placeholder="Ej.: Trabajé desde..., me informaron..., acordamos..." required>{{ (caso.resumen if caso and caso.resumen else '') | trim }}</textarea>
+            <label for="historia" class="form-label"
+              >Cuéntame lo esencial (hechos, acuerdos, fechas relevantes)</label
+            >
+            <textarea
+              id="historia"
+              name="historia"
+              class="form-control"
+              rows="6"
+              maxlength="1500"
+              placeholder="Ej.: Trabajé desde..., me informaron..., acordamos..."
+              required
+            >
+{{ (caso.resumen if caso and caso.resumen else '') | trim }}</textarea
+            >
 
             <div class="d-flex justify-content-between mt-1">
               <span class="small-muted">Máx. 1500 caracteres</span>
               <span class="char-counter" id="historia-counter">0/1500</span>
             </div>
           </div>
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button"
-                    class="btn btn-success"
-                    id="btn-guardar-caso"
-                    {% if not caso %}disabled{% endif %}>
-              Guardar cambios del caso
+
+          {# --- Acciones debajo de 1,2,3: Crear caso (si no existe) o Guardar
+          (si ya existe) --- #} {% set trabajador_ok = trabajador_ok if
+          trabajador_ok is defined else (caso and caso.trabajador_id) %} {% set
+          empleador_ok = empleador_ok if empleador_ok is defined else (caso and
+          caso.empleador_id) %} {% set historia_ok = historia_ok if historia_ok
+          is defined else ((caso and caso.resumen) or
+          (request.form.get('historia')|default('')|trim)) %} {% set faltantes =
+          [] %} {% if not trabajador_ok %}{% set _ =
+          faltantes.append('Trabajador') %}{% endif %} {% if not empleador_ok
+          %}{% set _ = faltantes.append('Empleador') %}{% endif %} {% if not
+          historia_ok %}{% set _ = faltantes.append('Historia') %}{% endif %} {%
+          set puede_crear = (faltantes|length == 0) %}
+
+          <div class="mt-3" id="acciones-caso">
+            {% if not caso %}
+            <div
+              id="crear-caso-hint"
+              class="alert alert-warning d-none"
+              role="alert"
+            >
+              Para crear el caso debes completar:
+              <strong id="crear-caso-faltantes"></strong>.
+              <div class="small text-muted mt-1">
+                Al crear el caso se generará el <em>ID</em> y las carpetas de
+                documentos.
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btn-crear-caso"
+              {%
+              if
+              not
+              puede_crear
+              %}disabled
+              aria-disabled="true"
+              {%
+              endif
+              %}
+            >
+              Crear caso
             </button>
+            {% else %}
+            <div class="d-flex justify-content-end">
+              <button
+                type="submit"
+                class="btn btn-success"
+                id="btn-guardar-caso"
+              >
+                Guardar cambios del caso
+              </button>
+            </div>
+
+            <div class="alert alert-success mt-3" id="resumen-caso-creado">
+              Caso <strong>#{{ caso.id }}</strong> creado. Estado:
+              <span class="badge bg-primary">Recolección documental</span>
+            </div>
+            {% endif %}
           </div>
         </section>
 
-        <!-- CTA: Crear caso preliminar -->
-        <div class="alert alert-info mt-3 {% if caso %}d-none{% endif %}" id="precrear-hint">
-          Cuando completes <strong>Trabajador</strong>, <strong>Empleador</strong> e <strong>Historia</strong> podrás crear el <strong>caso preliminar</strong>. Eso generará el <em>ID del caso</em> y las carpetas de documentos.
-        </div>
-        <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-primary {% if caso %}d-none{% endif %}" id="btn-precrear" disabled>Crear caso preliminar</button>
-        </div>
+        <!-- Script específico para habilitar/crear caso -->
+        <script>
+          (function () {
+            // 1) Limpia elementos antiguos (por si quedaron de versiones previas)
+            document.getElementById("precrear-hint")?.remove();
+            document.getElementById("btn-precrear")?.remove();
 
-        {% if caso %}
-          <div class="alert alert-success mt-3">
-            Caso <strong>#{{ caso.id }}</strong> creado. Estado: <span class="badge bg-primary">Recolección documental</span>
-          </div>
-        {% endif %}
+            // 2) Referencias correctas (IDs con underscore)
+            const btnCrear = document.getElementById("btn-crear-caso");
+            const hintBox = document.getElementById("crear-caso-hint");
+            const faltSpan = document.getElementById("crear-caso-faltantes");
+            const historiaEl = document.getElementById("historia");
+
+            const trabajadorIdEl = document.getElementById("trabajador_id");
+            const empleadorIdEl = document.getElementById("empleador_id");
+
+            function camposFaltantes() {
+              const falt = [];
+              if (!trabajadorIdEl?.value) falt.push("Trabajador");
+              if (!empleadorIdEl?.value) falt.push("Empleador");
+              if (!historiaEl?.value.trim()) falt.push("Historia");
+              return falt;
+            }
+
+            function refreshCrearEstado() {
+              if (!btnCrear) return; // Ya existe el caso (solo botón Guardar)
+              const falt = camposFaltantes();
+              const puede = falt.length === 0;
+
+              btnCrear.disabled = !puede;
+
+              if (puede) {
+                btnCrear.classList.remove("disabled");
+                btnCrear.removeAttribute("aria-disabled");
+                hintBox?.classList.add("d-none");
+              } else {
+                if (faltSpan) faltSpan.textContent = falt.join(", ");
+                hintBox?.classList.remove("d-none");
+              }
+            }
+
+            // Exponer para que otros scripts puedan refrescar (selección en modales)
+            window.refreshCrearEstado = refreshCrearEstado;
+
+            // 3) Eventos de cambio
+            trabajadorIdEl?.addEventListener("change", refreshCrearEstado);
+            empleadorIdEl?.addEventListener("change", refreshCrearEstado);
+            historiaEl?.addEventListener("input", refreshCrearEstado);
+
+            // 4) Click en "Crear caso" => submit con acción "precrear" (nueva UX, backend compatible)
+            btnCrear?.addEventListener("click", () => {
+              const falt = camposFaltantes();
+              if (falt.length) return; // seguridad
+              const form = document.getElementById("form-nuevo-caso");
+              const accionEl = document.getElementById("accion");
+              accionEl.value = "precrear";
+              form.submit();
+            });
+
+            // 5) Inicializa estado
+            refreshCrearEstado();
+          })();
+        </script>
 
         <!-- Paso 4: Documentos (obligatorios) -->
         <section class="step-wrap step-pane position-relative" data-step="4">
@@ -256,27 +565,46 @@
             <span>4. Documentos (obligatorios)</span>
             <span>
               <span class="badge bg-danger req">Obligatorio</span>
-              <span class="badge rounded-pill bg-light text-dark badge-status" id="status-step-4">0/3</span>
+              <span
+                class="badge rounded-pill bg-light text-dark badge-status"
+                id="status-step-4"
+                >0/3</span
+              >
             </span>
           </div>
 
           <div class="step-body position-relative">
-            <div class="lock-overlay {% if not caso %}d-flex{% endif %}" id="lock-docs">
+            <div
+              class="lock-overlay {% if not caso %}d-flex{% endif %}"
+              id="lock-docs"
+            >
               <div>
                 <span class="lock">🔒</span>
-                <div class="fw-semibold mb-1">Crea el caso preliminar para habilitar esta sección</div>
-                <div class="text-muted">Completa Trabajador, Empleador e Historia y presiona “Crear caso preliminar”.</div>
+                <div class="fw-semibold mb-1">
+                  Crea el caso para habilitar esta sección
+                </div>
+                <div class="text-muted">
+                  Completa Trabajador, Empleador e Historia y presiona “Crear
+                  caso”.
+                </div>
               </div>
             </div>
 
             <div id="err-step-4" class="alert alert-danger d-none mb-3">
-              Faltan documentos obligatorios. Marca “Recibido” y el medio de entrega o sube archivo.
+              Faltan documentos obligatorios. Sube archivo(s) para cada documento requerido.
             </div>
 
             <div class="d-flex align-items-center justify-content-between mb-3">
-              <div class="small-muted">Progreso documentos: <span id="doc-progress-text">0/3</span></div>
-              <div class="progress flex-grow-1 ms-3" style="height: 8px;">
-                <div class="progress-bar" id="doc-progress-bar" role="progressbar" style="width: 0%"></div>
+              <div class="small-muted">
+                Progreso documentos: <span id="doc-progress-text">0/3</span>
+              </div>
+              <div class="progress flex-grow-1 ms-3" style="height: 8px">
+                <div
+                  class="progress-bar"
+                  id="doc-progress-bar"
+                  role="progressbar"
+                  style="width: 0%"
+                ></div>
               </div>
             </div>
 
@@ -286,27 +614,18 @@
                 <div class="fw-semibold">Contrato de trabajo</div>
                 <span
                   class="badge {{ 'bg-success' if (docs_estados and docs_estados.get('contrato')=='subido') else 'bg-secondary' }}"
-                  id="badge-contrato">
-                  {{ 'subido' if (docs_estados and docs_estados.get('contrato')=='subido') else 'pendiente' }}
+                  id="badge-contrato"
+                >
+                	  {{ 'subido' if (docs_estados and
+                  docs_estados.get('contrato')=='subido') else 'pendiente' }}
                 </span>
               </div>
               <div class="doc-meta mt-2">
-                <div class="form-check me-2">
-                  <input class="form-check-input doc-recibido" type="checkbox" id="recibido-contrato" {% if not caso %}disabled{% endif %}>
-                  <label class="form-check-label" for="recibido-contrato">Recibido</label>
-                </div>
-                <select class="form-select form-select-sm w-auto doc-medio" id="medio-contrato" disabled>
-                  <option value="" selected>Medio de entrega…</option>
-                  <option value="fisico">Físico</option>
-                  <option value="email">Email</option>
-                  <option value="pendrive">Pendrive</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="otro">Otro</option>
-                </select>
-                <input type="text" class="form-control form-control-sm w-auto d-none doc-medio-detalle" id="medio-contrato-detalle" placeholder="Detalle…">
-
+                
                 <div class="doc-actions">
-                  <label class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}">
+                  <label
+                    class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}"
+                  >
                     Seleccionar archivo(s)
                     <input
                       type="file"
@@ -314,58 +633,74 @@
                       id="file-contrato"
                       name="file-contrato"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      multiple {% if not caso %}disabled{% endif %}>
+                      multiple
+                      {%
+                      if
+                      not
+                      caso
+                      %}disabled{%
+                      endif
+                      %}
+                    />
                   </label>
                 </div>
               </div>
               <ul id="files-contrato" class="files-list">
-                {% if caso and docs_files and docs_files.get('contrato') %}
-                  {% for fn in docs_files.get('contrato') %}
-                    <li data-fn="{{ fn }}">
-                      <span class="name"><span class="truncate">{{ fn }}</span></span>
-                      <a
-                        class="btn btn-sm btn-outline-secondary"
-                        href="{{ url_for('casos.descargar_archivo', id=caso.id, tipo='contratos', filename=fn) }}"
-                        target="_blank" rel="noopener"
-                      >ver</a>
-                    </li>
-                  {% endfor %}
-                {% endif %}
+                {% if caso and docs_files and docs_files.get('contrato') %} {%
+                for fn in docs_files.get('contrato') %}
+                <li data-fn="{{ fn }}">
+                  <span class="name"
+                    ><span class="truncate">{{ fn }}</span></span
+                  >
+                  <a
+                    class="btn btn-sm btn-outline-secondary"
+                    href="{{ url_for('casos.descargar_archivo', id=caso.id, tipo='contratos', filename=fn) }}"
+                    target="_blank"
+                    rel="noopener"
+                    >ver</a
+                  >
+                  <!-- Botón eliminar archivo guardado -->
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    data-action="remove-saved"
+                    data-key="contrato"
+                    data-fn="{{ fn }}"
+                  >×</button>
+                </li>
+                {% endfor %} {% endif %}
               </ul>
 
-              <input type="hidden" name="doc_contrato_estado" id="hid-contrato-estado"
-                value="{{ (docs_estados.get('contrato') if docs_estados else 'pendiente') or 'pendiente' }}">
-              <input type="hidden" name="doc_contrato_medio" id="hid-contrato-medio" value="">
-              <input type="hidden" name="doc_contrato_medio_detalle" id="hid-contrato-medio-detalle" value="">
+              <input
+                type="hidden"
+                name="doc_contrato_estado"
+                id="hid-contrato-estado"
+                value="{{ (docs_estados.get('contrato') if docs_estados else 'pendiente') or 'pendiente' }}"
+              />
+              
             </div>
 
             <!-- Liquidaciones -->
             <div class="doc-card" data-doc="liquidaciones" data-obligatorio="1">
               <div class="d-flex justify-content-between align-items-center">
-                <div class="fw-semibold">Liquidaciones de sueldo (últimos 6–12 meses)</div>
+                <div class="fw-semibold">
+                  Liquidaciones de sueldo (últimos 6–12 meses)
+                </div>
                 <span
                   class="badge {{ 'bg-success' if (docs_estados and docs_estados.get('liquidaciones')=='subido') else 'bg-secondary' }}"
-                  id="badge-liquidaciones">
-                  {{ 'subido' if (docs_estados and docs_estados.get('liquidaciones')=='subido') else 'pendiente' }}
+                  id="badge-liquidaciones"
+                >
+                  {{ 'subido' if (docs_estados and
+                  docs_estados.get('liquidaciones')=='subido') else 'pendiente'
+                  }}
                 </span>
               </div>
               <div class="doc-meta mt-2">
-                <div class="form-check me-2">
-                  <input class="form-check-input doc-recibido" type="checkbox" id="recibido-liquidaciones" {% if not caso %}disabled{% endif %}>
-                  <label class="form-check-label" for="recibido-liquidaciones">Recibido</label>
-                </div>
-                <select class="form-select form-select-sm w-auto doc-medio" id="medio-liquidaciones" disabled>
-                  <option value="" selected>Medio de entrega…</option>
-                  <option value="fisico">Físico</option>
-                  <option value="email">Email</option>
-                  <option value="pendrive">Pendrive</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="otro">Otro</option>
-                </select>
-                <input type="text" class="form-control form-control-sm w-auto d-none doc-medio-detalle" id="medio-liquidaciones-detalle" placeholder="Detalle…">
-
+                
                 <div class="doc-actions">
-                  <label class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}">
+                  <label
+                    class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}"
+                  >
                     Seleccionar archivo(s)
                     <input
                       type="file"
@@ -373,29 +708,51 @@
                       id="file-liquidaciones"
                       name="file-liquidaciones"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      multiple {% if not caso %}disabled{% endif %}>
+                      multiple
+                      {%
+                      if
+                      not
+                      caso
+                      %}disabled{%
+                      endif
+                      %}
+                    />
                   </label>
                 </div>
               </div>
               <ul id="files-liquidaciones" class="files-list">
                 {% if caso and docs_files and docs_files.get('liquidaciones') %}
-                  {% for fn in docs_files.get('liquidaciones') %}
-                    <li data-fn="{{ fn }}">
-                      <span class="name"><span class="truncate">{{ fn }}</span></span>
-                      <a
-                        class="btn btn-sm btn-outline-secondary"
-                        href="{{ url_for('casos.descargar_archivo', id=caso.id, tipo='liquidaciones', filename=fn) }}"
-                        target="_blank" rel="noopener"
-                      >ver</a>
-                    </li>
-                  {% endfor %}
-                {% endif %}
+                {% for fn in docs_files.get('liquidaciones') %}
+                <li data-fn="{{ fn }}">
+                  <span class="name"
+                    ><span class="truncate">{{ fn }}</span></span
+                  >
+                  <a
+                    class="btn btn-sm btn-outline-secondary"
+                    href="{{ url_for('casos.descargar_archivo', id=caso.id, tipo='liquidaciones', filename=fn) }}"
+                    target="_blank"
+                    rel="noopener"
+                    >ver</a
+                  >
+                  <!-- Botón eliminar archivo guardado -->
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    data-action="remove-saved"
+                    data-key="liquidaciones"
+                    data-fn="{{ fn }}"
+                  >×</button>
+                </li>
+                {% endfor %} {% endif %}
               </ul>
 
-              <input type="hidden" name="doc_liquidaciones_estado" id="hid-liquidaciones-estado"
-                value="{{ (docs_estados.get('liquidaciones') if docs_estados else 'pendiente') or 'pendiente' }}">
-              <input type="hidden" name="doc_liquidaciones_medio" id="hid-liquidaciones-medio" value="">
-              <input type="hidden" name="doc_liquidaciones_medio_detalle" id="hid-liquidaciones-medio-detalle" value="">
+              <input
+                type="hidden"
+                name="doc_liquidaciones_estado"
+                id="hid-liquidaciones-estado"
+                value="{{ (docs_estados.get('liquidaciones') if docs_estados else 'pendiente') or 'pendiente' }}"
+              />
+              
             </div>
             <!-- Cartola AFP -->
             <div class="doc-card" data-doc="afp" data-obligatorio="1">
@@ -403,31 +760,19 @@
                 <div class="fw-semibold">Cartola previsional (AFP)</div>
                 <span
                   class="badge {{ 'bg-success' if (docs_estados and docs_estados.get('afp')=='subido') else 'bg-secondary' }}"
-                  id="badge-afp">
-                  {{ 'subido' if (docs_estados and docs_estados.get('afp')=='subido') else 'pendiente' }}
+                  id="badge-afp"
+                >
+                  {{ 'subido' if (docs_estados and
+                  docs_estados.get('afp')=='subido') else 'pendiente' }}
                 </span>
               </div>
 
               <div class="doc-meta mt-2">
-                <div class="form-check me-2">
-                  <input class="form-check-input doc-recibido" type="checkbox" id="recibido-afp" {% if not caso %}disabled{% endif %}>
-                  <label class="form-check-label" for="recibido-afp">Recibido</label>
-                </div>
-
-                <select class="form-select form-select-sm w-auto doc-medio" id="medio-afp" disabled>
-                  <option value="" selected>Medio de entrega…</option>
-                  <option value="fisico">Físico</option>
-                  <option value="email">Email</option>
-                  <option value="pendrive">Pendrive</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="otro">Otro</option>
-                </select>
-
-                <input type="text" class="form-control form-control-sm w-auto d-none doc-medio-detalle"
-                      id="medio-afp-detalle" placeholder="Detalle…">
-
+                
                 <div class="doc-actions">
-                  <label class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}">
+                  <label
+                    class="btn btn-sm btn-outline-primary mb-0 {% if not caso %}disabled{% endif %}"
+                  >
                     Seleccionar archivo(s)
                     <input
                       type="file"
@@ -435,107 +780,187 @@
                       id="file-afp"
                       name="file-afp"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      multiple {% if not caso %}disabled{% endif %}>
+                      multiple
+                      {%
+                      if
+                      not
+                      caso
+                      %}disabled{%
+                      endif
+                      %}
+                    />
                   </label>
                 </div>
               </div>
 
               <ul id="files-afp" class="files-list">
-                {% if caso and docs_files and docs_files.get('afp') %}
-                  {% for fn in docs_files.get('afp') %}
-                    <li data-fn="{{ fn }}">
-                      <span class="name"><span class="truncate">{{ fn }}</span></span>
-                      <a
-                        class="btn btn-sm btn-outline-secondary"
-                        href="{{ url_for('casos.descargar_archivo', id=caso.id, tipo='cartolas', filename=fn) }}"
-                        target="_blank" rel="noopener"
-                      >ver</a>
-                    </li>
-                  {% endfor %}
-                {% endif %}
+                {% if caso and docs_files and docs_files.get('afp') %} {% for fn
+                in docs_files.get('afp') %}
+                <li data-fn="{{ fn }}">
+                  <span class="name"
+                    ><span class="truncate">{{ fn }}</span></span
+                  >
+                  <a
+                    class="btn btn-sm btn-outline-secondary"
+                    href="{{ url_for('casos.descargar_archivo', id=caso.id, tipo='cartolas', filename=fn) }}"
+                    target="_blank"
+                    rel="noopener"
+                    >ver</a
+                  >
+                  <!-- Botón eliminar archivo guardado -->
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    data-action="remove-saved"
+                    data-key="afp"
+                    data-fn="{{ fn }}"
+                  >×</button>
+                </li>
+                {% endfor %} {% endif %}
               </ul>
 
               <!-- Hidden SOLO una vez, y fuera del <ul> -->
-              <input type="hidden" name="doc_afp_estado" id="hid-afp-estado"
-                    value="{{ (docs_estados.get('afp') if docs_estados else 'pendiente') or 'pendiente' }}">
-              <input type="hidden" name="doc_afp_medio" id="hid-afp-medio" value="">
-              <input type="hidden" name="doc_afp_medio_detalle" id="hid-afp-medio-detalle" value="">
+              <input
+                type="hidden"
+                name="doc_afp_estado"
+                id="hid-afp-estado"
+                value="{{ (docs_estados.get('afp') if docs_estados else 'pendiente') or 'pendiente' }}"
+              />
+              
             </div>
 
             <!-- Botón Guardar Documentos -->
             <div class="d-flex justify-content-end gap-2 mt-3">
-              <button type="button"
-                      class="btn btn-primary"
-                      id="btn-guardar-docs"
-                      {% if not caso %}disabled{% endif %}>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="btn-guardar-docs"
+                {%
+                if
+                not
+                caso
+                %}disabled{%
+                endif
+                %}
+              >
                 Guardar documentos
               </button>
             </div>
           </div>
         </section>
+
         <!-- Paso 5: Ficha de Remuneraciones y Parámetros -->
         <section class="step-wrap step-pane position-relative" data-step="5">
           <div class="step-title">
             <span>5. Ficha de Remuneraciones y Parámetros</span>
-            <span><span class="badge bg-secondary">Completar después de Documentos</span></span>
+            <span
+              ><span class="badge bg-secondary"
+                >Completar después de Documentos</span
+              ></span
+            >
           </div>
           <div class="step-body position-relative">
-            <div class="lock-overlay {{ 'd-none' if (docs_done_total == 3) else 'd-flex' }}" id="lock-ficha">
+            <div
+              class="lock-overlay {{ 'd-none' if (docs_done_total == 3) else 'd-flex' }}"
+              id="lock-ficha"
+            >
               <div>
                 <span class="lock">🔒</span>
-                <div class="fw-semibold mb-1">Completa los 3 documentos obligatorios para habilitar esta sección</div>
-                <div class="text-muted">Contrato, Liquidaciones y Cartola AFP.</div>
+                <div class="fw-semibold mb-1">
+                  Completa los 3 documentos obligatorios para habilitar esta
+                  sección
+                </div>
+                <div class="text-muted">
+                  Contrato, Liquidaciones y Cartola AFP.
+                </div>
               </div>
             </div>
 
             <div class="row g-3">
               <div class="col-md-4">
-                <label for="{{ form.tipo_caso.id }}" class="form-label">Tipo de caso</label>
+                <label for="{{ form.tipo_caso.id }}" class="form-label"
+                  >Tipo de caso</label
+                >
                 {{ form.tipo_caso(class="form-select", id=form.tipo_caso.id) }}
                 {% if form.tipo_caso.errors %}
-                  <div class="invalid-feedback d-block">{{ form.tipo_caso.errors[0] }}</div>
+                <div class="invalid-feedback d-block">
+                  {{ form.tipo_caso.errors[0] }}
+                </div>
                 {% endif %}
               </div>
 
               <div class="col-md-8">
-                <label for="{{ form.causal.id }}" class="form-label">Causal legal / descripción breve</label>
-                {{ form.causal(class="form-control", id=form.causal.id, placeholder="Ej: Despido, renuncia, no pago de cotizaciones…", autocomplete="off") }}
-                {% if form.causal.errors %}
-                  <div class="invalid-feedback d-block">{{ form.causal.errors[0] }}</div>
+                <label for="{{ form.causal.id }}" class="form-label"
+                  >Causal legal / descripción breve</label
+                >
+                {{ form.causal(class="form-control", id=form.causal.id,
+                placeholder="Ej: Despido, renuncia, no pago de cotizaciones…",
+                autocomplete="off") }} {% if form.causal.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.causal.errors[0] }}
+                </div>
                 {% endif %}
               </div>
 
               <div class="col-md-6">
-                <label for="{{ form.fecha_inicio.id }}" class="form-label">Fecha inicio</label>
-                {{ form.fecha_inicio(class="form-control", id=form.fecha_inicio.id) }}
-                {% if form.fecha_inicio.errors %}
-                  <div class="invalid-feedback d-block">{{ form.fecha_inicio.errors[0] }}</div>
+                <label for="{{ form.fecha_inicio.id }}" class="form-label"
+                  >Fecha inicio</label
+                >
+                {{ form.fecha_inicio(class="form-control",
+                id=form.fecha_inicio.id) }} {% if form.fecha_inicio.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.fecha_inicio.errors[0] }}
+                </div>
                 {% endif %}
               </div>
 
               <div class="col-md-6">
-                <label for="{{ form.fecha_termino.id }}" class="form-label">Fecha término</label>
-                {{ form.fecha_termino(class="form-control", id=form.fecha_termino.id) }}
+                <label for="{{ form.fecha_termino.id }}" class="form-label"
+                  >Fecha término</label
+                >
+                {{ form.fecha_termino(class="form-control",
+                id=form.fecha_termino.id) }}
                 <div class="invalid-feedback" id="fecha_termino_error"></div>
                 {% if form.fecha_termino.errors %}
-                  <div class="invalid-feedback d-block">{{ form.fecha_termino.errors[0] }}</div>
+                <div class="invalid-feedback d-block">
+                  {{ form.fecha_termino.errors[0] }}
+                </div>
                 {% endif %}
               </div>
 
               <div class="col-md-6">
-                <label for="{{ form.base_calculo.id }}" class="form-label">Base de cálculo (CLP)</label>
-                {{ form.base_calculo(class="form-control", id=form.base_calculo.id, placeholder="Monto base", inputmode="numeric", autocomplete="off") }}
-                <div class="form-text">Se formatea automáticamente como CLP. Se enviará sin puntos al servidor.</div>
+                <label for="{{ form.base_calculo.id }}" class="form-label"
+                  >Base de cálculo (CLP)</label
+                >
+                {{ form.base_calculo(class="form-control",
+                id=form.base_calculo.id, placeholder="Monto base",
+                inputmode="numeric", autocomplete="off") }}
+                <div class="form-text">
+                  Se formatea automáticamente como CLP. Se enviará sin puntos al
+                  servidor.
+                </div>
                 <div class="invalid-feedback" id="base_calculo_error"></div>
                 {% if form.base_calculo.errors %}
-                  <div class="invalid-feedback d-block">{{ form.base_calculo.errors[0] }}</div>
+                <div class="invalid-feedback d-block">
+                  {{ form.base_calculo.errors[0] }}
+                </div>
                 {% endif %}
               </div>
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-3">
-              <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary">Cancelar</a>
-              <button type="submit" class="btn btn-primary" id="btn-submit-caso">Guardar</button>
+              <a
+                href="{{ url_for('casos.index') }}"
+                class="btn btn-outline-secondary"
+                >Cancelar</a
+              >
+              <button
+                type="submit"
+                class="btn btn-primary"
+                id="btn-submit-caso"
+              >
+                Guardar
+              </button>
             </div>
           </div>
         </section>
@@ -550,7 +975,9 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <div class="text-muted">Caso</div>
-                <div class="fw-semibold" id="sum2-caso">{% if caso %}#{{ caso.id }}{% else %}—{% endif %}</div>
+                <div class="fw-semibold" id="sum2-caso">
+                  {% if caso %}#{{ caso.id }}{% else %}—{% endif %}
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="text-muted">Progreso documentos</div>
@@ -559,55 +986,46 @@
               <div class="col-md-6">
                 <div class="text-muted">Trabajador</div>
                 <div class="fw-semibold" id="sum2-trabajador">
-                  {% if caso and caso.trabajador %}
-                    {{  caso.trabajador.nombre_completo
-                        or (
-                            (caso.trabajador.nombres or caso.trabajador.nombre)|default('') ~ ' ' ~
-                            (caso.trabajador.apellido_paterno or caso.trabajador.apellido or '') ~ ' ' ~
-                            (caso.trabajador.apellido_materno or caso.trabajador.segundo_apellido or '')
-                          )|trim
-                        or (
-                            (caso.trabajador.nombres or '') ~ ' ' ~ (caso.trabajador.apellidos or '')
-                          )|trim
-                        or (
-                            (caso.trabajador.nombre or '') ~ ' ' ~ (caso.trabajador.apellido or '')
-                          )|trim
-                        or caso.trabajador.nombre
-                    }}
-                  {% else %}—{% endif %}
+                  {% if caso and caso.trabajador %} {{
+                  caso.trabajador.nombre_completo or ( (caso.trabajador.nombres
+                  or caso.trabajador.nombre)|default('') ~ ' ' ~
+                  (caso.trabajador.apellido_paterno or caso.trabajador.apellido
+                  or '') ~ ' ' ~ (caso.trabajador.apellido_materno or
+                  caso.trabajador.segundo_apellido or '') )|trim or (
+                  (caso.trabajador.nombres or '') ~ ' ' ~
+                  (caso.trabajador.apellidos or '') )|trim or (
+                  (caso.trabajador.nombre or '') ~ ' ' ~
+                  (caso.trabajador.apellido or '') )|trim or
+                  caso.trabajador.nombre }} {% else %}—{% endif %}
                 </div>
-                <div class="text-muted" id="sum2-trabajador-rut">{% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{% else %}—{% endif %}</div>
+                <div class="text-muted" id="sum2-trabajador-rut">
+                  {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{%
+                  else %}—{% endif %}
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="text-muted">Empleador</div>
                 <div class="fw-semibold" id="sum2-empleador">
-                  {% if caso and caso.empleador %}
-                    {{  caso.empleador.razon_social
-                        or caso.empleador.nombre_completo
-                        or caso.empleador.nombre_fantasia
-                        or caso.empleador.nombre
-                        or '—'
-                    }}
-                  {% else %}—{% endif %}
+                  {% if caso and caso.empleador %} {{
+                  caso.empleador.razon_social or caso.empleador.nombre_completo
+                  or caso.empleador.nombre_fantasia or caso.empleador.nombre or
+                  '—' }} {% else %}—{% endif %}
                 </div>
                 <div class="text-muted" id="sum2-empleador-rut">
-                  {% if caso and caso.empleador %}
-                    {{  caso.empleador.rut
-                        or caso.empleador.rut_formateado
-                        or caso.empleador.rut_empresa
-                        or caso.empleador.rut_empleador
-                        or caso.empleador.run
-                        or '—'
-                    }}
+                  {% if caso and caso.empleador %} {{ caso.empleador.rut or
+                  caso.empleador.rut_formateado or caso.empleador.rut_empresa or
+                  caso.empleador.rut_empleador or caso.empleador.run or '—' }}
                   {% else %}—{% endif %}
                 </div>
               </div>
 
-
               <!-- NUEVOS CAMPOS -->
               <div class="col-md-6">
                 <div class="text-muted">Fecha de creación</div>
-                <div class="fw-semibold" id="sum2-creado">{% if caso and caso.fecha_creacion %}{{ caso.fecha_creacion }}{% else %}—{% endif %}</div>
+                <div class="fw-semibold" id="sum2-creado">
+                  {% if caso and caso.fecha_creacion %}{{ caso.fecha_creacion
+                  }}{% else %}—{% endif %}
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="text-muted">Estado del caso</div>
@@ -623,7 +1041,6 @@
             </div>
           </div>
         </section>
-
       </div>
 
       {% if show_resumen %}
@@ -634,54 +1051,52 @@
           <div class="card-body small">
             <div class="mb-3">
               <div class="text-muted">Caso</div>
-              <div id="sum-caso" class="fw-semibold">{% if caso %}#{{ caso.id }}{% else %}—{% endif %}</div>
-              <div class="text-muted">{% if caso %}<span class="badge bg-primary">Recolección documental</span>{% else %}—{% endif %}</div>
+              <div id="sum-caso" class="fw-semibold">
+                {% if caso %}#{{ caso.id }}{% else %}—{% endif %}
+              </div>
+              <div class="text-muted">
+                {% if caso %}<span class="badge bg-primary"
+                  >Recolección documental</span
+                >{% else %}—{% endif %}
+              </div>
             </div>
 
             <div class="mb-3">
               <div class="text-muted">Trabajador</div>
               <div id="sum-trabajador" class="fw-semibold">
-                {% if caso and caso.trabajador %}
-                  {{  caso.trabajador.nombre_completo
-                      or ((caso.trabajador.nombres or caso.trabajador.nombre)|default('') ~ ' ' ~
-                          (caso.trabajador.apellido_paterno or caso.trabajador.apellido or '') ~ ' ' ~
-                          (caso.trabajador.apellido_materno or caso.trabajador.segundo_apellido or ''))|trim
-                      or ((caso.trabajador.nombres or '') ~ ' ' ~ (caso.trabajador.apellidos or ''))|trim
-                      or ((caso.trabajador.nombre or '') ~ ' ' ~ (caso.trabajador.apellido or ''))|trim
-                      or caso.trabajador.nombre
-                  }}
-                {% else %}—{% endif %}
+                {% if caso and caso.trabajador %} {{
+                caso.trabajador.nombre_completo or ((caso.trabajador.nombres or
+                caso.trabajador.nombre)|default('') ~ ' ' ~
+                (caso.trabajador.apellido_paterno or caso.trabajador.apellido or
+                '') ~ ' ' ~ (caso.trabajador.apellido_materno or
+                caso.trabajador.segundo_apellido or ''))|trim or
+                ((caso.trabajador.nombres or '') ~ ' ' ~
+                (caso.trabajador.apellidos or ''))|trim or
+                ((caso.trabajador.nombre or '') ~ ' ' ~
+                (caso.trabajador.apellido or ''))|trim or caso.trabajador.nombre
+                }} {% else %}—{% endif %}
               </div>
               <div id="sum-trabajador-rut" class="text-muted">
-                {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{% else %}—{% endif %}
+                {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{%
+                else %}—{% endif %}
               </div>
             </div>
 
             <div class="mb-3">
               <div class="text-muted">Empleador</div>
               <div id="sum-empleador" class="fw-semibold">
-                {% if caso and caso.empleador %}
-                  {{  caso.empleador.razon_social
-                      or caso.empleador.nombre_completo
-                      or caso.empleador.nombre_fantasia
-                      or caso.empleador.nombre
-                      or '—'
-                  }}
-                {% else %}—{% endif %}
+                {% if caso and caso.empleador %} {{ caso.empleador.razon_social
+                or caso.empleador.nombre_completo or
+                caso.empleador.nombre_fantasia or caso.empleador.nombre or '—'
+                }} {% else %}—{% endif %}
               </div>
               <div id="sum-empleador-rut" class="text-muted">
-                {% if caso and caso.empleador %}
-                  {{  caso.empleador.rut
-                      or caso.empleador.rut_formateado
-                      or caso.empleador.rut_empresa
-                      or caso.empleador.rut_empleador
-                      or caso.empleador.run
-                      or '—'
-                  }}
-                {% else %}—{% endif %}
+                {% if caso and caso.empleador %} {{ caso.empleador.rut or
+                caso.empleador.rut_formateado or caso.empleador.rut_empresa or
+                caso.empleador.rut_empleador or caso.empleador.run or '—' }} {%
+                else %}—{% endif %}
               </div>
             </div>
-
 
             <div class="mb-3">
               <div class="text-muted">Historia</div>
@@ -714,7 +1129,6 @@
       </div>
       {% endif %}
     </div>
-
   </form>
 </div>
 
@@ -724,17 +1138,40 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Seleccionar Trabajador</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
       <div class="modal-body">
         <label class="form-label">Buscar (RUT, nombre o apellido)</label>
-        <input type="text" class="form-control" id="buscar-trabajador-modal" placeholder="Ej: Jean, 12345678">
-        <div class="form-text">Se buscan coincidencias por RUT y nombre/apellido.</div>
-        <div id="trabajador-resultados-modal" class="py-3 text-center text-muted">Escribe al menos 2 caracteres…</div>
+        <input
+          type="text"
+          class="form-control"
+          id="buscar-trabajador-modal"
+          placeholder="Ej: Jean, 12345678"
+        />
+        <div class="form-text">
+          Se buscan coincidencias por RUT y nombre/apellido.
+        </div>
+        <div
+          id="trabajador-resultados-modal"
+          class="py-3 text-center text-muted"
+        >
+          Escribe al menos 2 caracteres…
+        </div>
       </div>
       <div class="modal-footer d-flex justify-content-between">
-        <a href="{{ url_for('trabajadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo trabajador</a>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <a
+          href="{{ url_for('trabajadores.nuevo') }}"
+          class="btn btn-outline-secondary"
+          >Crear nuevo trabajador</a
+        >
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cerrar
+        </button>
       </div>
     </div>
   </div>
@@ -746,17 +1183,40 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Seleccionar Empleador</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
       <div class="modal-body">
         <label class="form-label">Buscar (RUT o razón social)</label>
-        <input type="text" class="form-control" id="buscar-empleador-modal" placeholder="Ej: Mariela, 76123456">
-        <div class="form-text">Se buscan coincidencias por razón social y RUT.</div>
-        <div id="empleador-resultados-modal" class="py-3 text-center text-muted">Escribe al menos 2 caracteres…</div>
+        <input
+          type="text"
+          class="form-control"
+          id="buscar-empleador-modal"
+          placeholder="Ej: Mariela, 76123456"
+        />
+        <div class="form-text">
+          Se buscan coincidencias por razón social y RUT.
+        </div>
+        <div
+          id="empleador-resultados-modal"
+          class="py-3 text-center text-muted"
+        >
+          Escribe al menos 2 caracteres…
+        </div>
       </div>
       <div class="modal-footer d-flex justify-content-between">
-        <a href="{{ url_for('empleadores.nuevo') }}" class="btn btn-outline-secondary">Crear nuevo empleador</a>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <a
+          href="{{ url_for('empleadores.nuevo') }}"
+          class="btn btn-outline-secondary"
+          >Crear nuevo empleador</a
+        >
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cerrar
+        </button>
       </div>
     </div>
   </div>
@@ -764,816 +1224,1032 @@
 
 <!-- JS (integrado) -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.__casosPageWired) return;
-  window.__casosPageWired = true;
-
-  const $ = (sel, ctx=document) => ctx.querySelector(sel);
-  const clean = s => (s || '').toString().trim();
-  const onlyDigits = s => clean(s).replace(/\D+/g, '');
-  const formatCLP = s => { const d = onlyDigits(s); if (!d) return ''; return d.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
-  const deformatCLP = s => onlyDigits(s);
-  const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-  async function fetchJSON(url){ try{ const r=await fetch(url,{headers:{'Accept':'application/json'}}); return r.ok? r.json():[]; }catch{ return []; } }
-
-  /* Helpers para construir nombres (robustos a snake_case) */
-  function buildFullNameFromDataset(ds){
-    const full = ds.nombreCompleto
-      || ds.nombre_completo
-      || [ds.nombres || ds.nombre, ds.apellido || ds.apellidos].filter(Boolean).join(' ').trim();
-    return full || ds.n || '';
-  }
-  function buildEmployerNameFromDataset(ds){
-    return ds.razonSocial
-        || ds.razon_social
-        || ds.nombreCompleto
-        || ds.nombre_completo
-        || ds.nombreFantasia
-        || ds.nombre_fantasia
-        || ds.nombre
-        || ds.n
-        || '';
-  }
-
-  // Resaltado visual al seleccionar/quitar
-  function setSelectedState(boxId, badgeId, on){
-    const box = document.getElementById(boxId);
-    const badge = document.getElementById(badgeId);
-    if (box) box.classList.toggle('box-selected', !!on);
-    if (badge) badge.classList.toggle('d-none', !on);
-  }
-
-  function showModal(id){
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (window.bootstrap && window.bootstrap.Modal) {
-      window.bootstrap.Modal.getOrCreateInstance(el).show();
-    }
-  }
-  $('#btn-open-trabajador')?.addEventListener('click', (e)=>{ e.preventDefault(); showModal('modalTrabajador'); });
-  $('#btn-open-empleador')?.addEventListener('click', (e)=>{ e.preventDefault(); showModal('modalEmpleador'); });
-
-  // ---- Base elementos y resumen
-  const form = $('#form-nuevo-caso');
-  const inpTrabID = $('#trabajador_id');
-  const inpEmplID = $('#empleador_id');
-  const accionEl = $('#accion');
-  const casoIdEl = $('#caso_id');
-
-  const historiaEl = $('#historia');
-  const historiaCounter = $('#historia-counter');
-
-  const sumHistoria = $('#sum-historia');
-  const sumTrab = $('#sum-trabajador');
-  const sumTrabRut = $('#sum-trabajador-rut');
-  const sumEmpl = $('#sum-empleador');
-  const sumEmplRut = $('#sum-empleador-rut');
-
-  const elBase = $('#{{ form.base_calculo.id }}');
-  const elBaseErr = $('#base_calculo_error');
-  const elInicio = $('#{{ form.fecha_inicio.id }}');
-  const elTermino = $('#{{ form.fecha_termino.id }}');
-  const elTerminoErr = $('#fecha_termino_error');
-  const elTipo = $('#{{ form.tipo_caso.id }}');
-  const elCausal = $('#{{ form.causal.id }}');
-
-  function updateStepStatus(step, ok){
-    const badge = document.getElementById(`status-step-${step}`);
-    if (!badge) return;
-    if (ok){ badge.textContent='Listo'; badge.classList.remove('bg-light','text-dark'); badge.classList.add('bg-success','text-white'); }
-    else   { badge.textContent='Pendiente'; badge.classList.remove('bg-success','text-white'); badge.classList.add('bg-light','text-dark'); }
-  }
-
-  // === Historia (contador + previews) ===
-  function refreshHistoria(){
-    const v = (historiaEl?.value || '').trim();
-    if (historiaCounter){
-      const MAX = 1500, WARN1 = 1275, WARN2 = 1425;
-      const len = v.length;
-      historiaCounter.textContent = `${len}/${MAX}`;
-      historiaCounter.classList.remove('text-warning','text-danger','fw-semibold');
-      if (len >= WARN2 && len <= MAX){ historiaCounter.classList.add('text-danger','fw-semibold'); }
-      else if (len >= WARN1){ historiaCounter.classList.add('text-warning','fw-semibold'); }
-    }
-    if (sumHistoria) setText('sum-historia', v ? (v.length > 100 ? v.slice(0,100)+'…' : v) : '—');
-    return v.length > 0;
-  }
-  historiaEl?.addEventListener('input', ()=>{ $('#err-step-3')?.classList.add('d-none'); refreshHistoria(); validatePrecrearEnabled(); });
-  historiaEl?.addEventListener('change', ()=>{ refreshHistoria(); });
-  refreshHistoria();
-
-  // === Trabajador (sección + modal) ===
-  (function wireTrabajador(){
-    const inp = $('#buscar-trabajador');
-    const box = $('#trabajador-resultados');
-    const resumen = $('#resumen-trabajador');
-    const resumenRut = $('#resumen-trabajador-rut');
-    const btnClearTrab = $('#btn-clear-trabajador');
-    if (!inp || !box) return;
-
-    async function doSearch(q, container){
-      container.innerHTML = q.length < 2 ? '' : '<div class="text-muted small">Buscando…</div>';
-      if (q.length < 2) return;
-
-      const data = await fetchJSON('/api/trabajadores?q=' + encodeURIComponent(q));
-
-      container.innerHTML = '<div class="list-group"></div>';
-      const listEl = container.firstElementChild;
-
-      if (!data || !data.length){
-        listEl.innerHTML = '<div class="list-group-item text-muted">Sin resultados.</div>';
-        return;
-      }
-
-      listEl.innerHTML = data.map(d => `
-        <button type="button" class="list-group-item list-group-item-action pick-t"
-                title="Seleccionar"
-                data-id="${d.id}"
-                data-r="${(d.rut||d.rut_formateado||d.run||'')}"
-                data-n="${(d.nombre_completo || d.nombre || '').replace(/"/g,'&quot;')}"
-                data-nombre="${(d.nombre||'').replace(/"/g,'&quot;')}"
-                data-nombres="${(d.nombres||'').replace(/"/g,'&quot;')}"
-                data-apellido="${(d.apellido||d.apellidos||'').replace(/"/g,'&quot;')}"
-                data-nombre_completo="${(d.nombre_completo||'').replace(/"/g,'&quot;')}">
-          <div class="fw-semibold">${
-            (d.nombre_completo)
-            || [d.nombres||d.nombre, d.apellido||d.apellidos].filter(Boolean).join(' ')
-            || d.nombre || ''
-          }</div>
-          <div class="text-muted small">${(d.rut||d.rut_formateado||d.run||'')}</div>
-        </button>`).join('');
-
-      listEl.querySelectorAll('.pick-t').forEach(b => b.onclick = () => {
-        inpTrabID.value = b.dataset.id;
-
-        const fullName = buildFullNameFromDataset(b.dataset);
-        if (resumen)    resumen.textContent    = fullName || '—';
-        if (resumenRut) resumenRut.textContent = b.dataset.r || '—';
-        if (sumTrab)    sumTrab.textContent    = fullName || '—';
-        if (sumTrabRut) sumTrabRut.textContent = b.dataset.r || '—';
-        setText('sum2-trabajador', fullName || '—');
-        setText('sum2-trabajador-rut', b.dataset.r || '—');
-
-        btnClearTrab?.removeAttribute('disabled');
-        $('#err-step-1')?.classList.add('d-none');
-        updateStepStatus(1, true);
-        validatePrecrearEnabled();
-        setSelectedState('box-trabajador','badge-trab', true);
-        refreshEstadoGlobal();
-      });
-    }
-
-    inp.addEventListener('input', e => doSearch(e.target.value.trim(), box));
-
-    // Modal trabajador
-    const modalEl = $('#modalTrabajador');
-    if (modalEl){
-      modalEl.addEventListener('shown.bs.modal', () => {
-        const inpM = $('#buscar-trabajador-modal');
-        const boxM = $('#trabajador-resultados-modal');
-        if (!inpM || !boxM) return;
-        inpM.value=''; boxM.textContent=''; inpM.focus();
-        inpM.oninput = async (ev) => {
-          const q = ev.target.value.trim();
-          boxM.innerHTML = q.length < 2 ? '' : '<div class="text-muted small">Buscando…</div>';
-          if (q.length < 2) return;
-
-          const data = await fetchJSON('/api/trabajadores?q='+encodeURIComponent(q));
-          boxM.innerHTML = '<div class="list-group"></div>';
-          const listEl = boxM.firstElementChild;
-
-          if (!data || !data.length){ listEl.innerHTML = '<div class="list-group-item text-muted">Sin resultados.</div>'; return; }
-
-          listEl.innerHTML = data.map(d => `
-            <button type="button" class="list-group-item list-group-item-action pick-tm"
-                    data-id="${d.id}"
-                    data-r="${(d.rut||d.rut_formateado||d.run||'')}"
-                    data-n="${(d.nombre_completo || d.nombre || '').replace(/"/g,'&quot;')}"
-                    data-nombre="${(d.nombre||'').replace(/"/g,'&quot;')}"
-                    data-nombres="${(d.nombres||'').replace(/"/g,'&quot;')}"
-                    data-apellido="${(d.apellido||d.apellidos||'').replace(/"/g,'&quot;')}"
-                    data-nombre_completo="${(d.nombre_completo||'').replace(/"/g,'&quot;')}">
-              <div class="fw-semibold">${
-                (d.nombre_completo)
-                || [d.nombres||d.nombre, d.apellido||d.apellidos].filter(Boolean).join(' ')
-                || d.nombre || ''
-              }</div>
-              <div class="text-muted small">${(d.rut||d.rut_formateado||d.run||'')}</div>
-            </button>`).join('');
-
-          listEl.querySelectorAll('.pick-tm').forEach(btn => btn.addEventListener('click', () => {
-            inpTrabID.value = btn.dataset.id;
-
-            const fullName = buildFullNameFromDataset(btn.dataset);
-            if (resumen)    resumen.textContent    = fullName || '—';
-            if (resumenRut) resumenRut.textContent = btn.dataset.r || '—';
-            if (sumTrab)    sumTrab.textContent    = fullName || '—';
-            if (sumTrabRut) sumTrabRut.textContent = btn.dataset.r || '—';
-
-            setText('sum2-trabajador', fullName || '—');
-            setText('sum2-trabajador-rut', btn.dataset.r || '—');
-
-            btnClearTrab?.removeAttribute('disabled');
-            $('#err-step-1')?.classList.add('d-none');
-            updateStepStatus(1,true);
-            validatePrecrearEnabled();
-            setSelectedState('box-trabajador','badge-trab', true);
-            refreshEstadoGlobal();
-
-            if (window.bootstrap) window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
-          }, {once:true}));
-        };
-      });
-    }
-
-    // Botón quitar trabajador
-    btnClearTrab?.addEventListener('click', () => {
-      inpTrabID.value = '';
-      if (resumen) resumen.textContent = '—';
-      if (resumenRut) resumenRut.textContent = '—';
-      if (sumTrab) sumTrab.textContent = '—';
-      if (sumTrabRut) sumTrabRut.textContent = '—';
-      setText('sum2-trabajador', '—'); setText('sum2-trabajador-rut', '—');
-      btnClearTrab.setAttribute('disabled', 'disabled');
-      updateStepStatus(1, false);
-      validatePrecrearEnabled();
-      setSelectedState('box-trabajador','badge-trab', false);
-      refreshEstadoGlobal();
-    });
-
-    // Inicial si viene servidor
-    (function initFromServer(){
-      const name = resumen?.textContent?.trim();
-      if (name && name !== '—'){
-        btnClearTrab?.removeAttribute('disabled');
-        updateStepStatus(1,true);
-        setSelectedState('box-trabajador','badge-trab', true);
-        setText('sum2-trabajador', name);
-        setText('sum2-trabajador-rut', (resumenRut?.textContent?.trim() || '—'));
-      }
-    })();
-  })();
-
-  // === Empleador (sección + modal) ===
-  (function wireEmpleador(){
-    const inp          = $('#buscar-empleador');
-    const box          = $('#empleador-resultados');
-    const resumen      = $('#resumen-empleador');
-    const resumenRutE  = $('#resumen-empleador-rut');
-    const btnClearEmpl = $('#btn-clear-empleador');
-    if (!inp || !box) return;
-
-    async function doSearch(q, container){
-      container.innerHTML = q.length < 2 ? '' : '<div class="text-muted small">Buscando…</div>';
-      if (q.length < 2) return;
-
-      const data = await fetchJSON('/api/empleadores?q=' + encodeURIComponent(q));
-
-      container.innerHTML = '<div class="list-group"></div>';
-      const listEl = container.firstElementChild;
-
-      if (!data || !data.length){
-        listEl.innerHTML = '<div class="list-group-item text-muted">Sin resultados.</div>';
-        return;
-      }
-
-      listEl.innerHTML = data.map(d => `
-        <button type="button" class="list-group-item list-group-item-action pick-e"
-                title="Seleccionar"
-                data-id="${d.id}"
-                data-r="${(d.rut||d.rut_formateado||d.rut_empresa||d.rut_empleador||'')}"
-                data-n="${(d.razon_social || d.nombre_completo || d.nombre_fantasia || d.nombre || '').replace(/"/g,'&quot;')}"
-                data-razon_social="${(d.razon_social||'').replace(/"/g,'&quot;')}"
-                data-nombre_completo="${(d.nombre_completo||'').replace(/"/g,'&quot;')}"
-                data-nombre_fantasia="${(d.nombre_fantasia||'').replace(/"/g,'&quot;')}"
-                data-nombre="${(d.nombre||'').replace(/"/g,'&quot;')}">
-          <div class="fw-semibold">${
-            d.razon_social || d.nombre_completo || d.nombre_fantasia || d.nombre || ''
-          }</div>
-          <div class="text-muted small">${(d.rut||d.rut_formateado||d.rut_empresa||d.rut_empleador||'')}</div>
-        </button>`).join('');
-
-      listEl.querySelectorAll('.pick-e').forEach(b => b.onclick = () => {
-        document.querySelector('#empleador_id').value = b.dataset.id;
-
-        const name = buildEmployerNameFromDataset(b.dataset);
-        if (resumen)     resumen.textContent     = name || '—';
-        if (resumenRutE) resumenRutE.textContent = b.dataset.r || '—';
-        if (sumEmpl)     sumEmpl.textContent     = name || '—';
-        if (sumEmplRut)  sumEmplRut.textContent  = b.dataset.r || '—';
-
-        setText('sum2-empleador', name || '—');
-        setText('sum2-empleador-rut', b.dataset.r || '—');
-
-        btnClearEmpl?.removeAttribute('disabled');
-        $('#err-step-2')?.classList.add('d-none');
-        updateStepStatus(2, true);
-        validatePrecrearEnabled();
-        setSelectedState('box-empleador','badge-empl', true);
-        refreshEstadoGlobal();
-      });
-    }
-
-    inp.addEventListener('input', e => doSearch(e.target.value.trim(), box));
-
-    // Modal empleador
-    const modalEl = $('#modalEmpleador');
-    if (modalEl){
-      modalEl.addEventListener('shown.bs.modal', () => {
-        const inpM = $('#buscar-empleador-modal');
-        const boxM = $('#empleador-resultados-modal');
-        if (!inpM || !boxM) return;
-        inpM.value = '';
-        boxM.textContent = '';
-        inpM.focus();
-        inpM.oninput = async (ev) => {
-          const q = ev.target.value.trim();
-          boxM.innerHTML = q.length < 2 ? '' : '<div class="text-muted small">Buscando…</div>';
-          if (q.length < 2) return;
-
-          const data = await fetchJSON('/api/empleadores?q='+encodeURIComponent(q));
-          boxM.innerHTML = '<div class="list-group"></div>';
-          const listEl = boxM.firstElementChild;
-
-          if (!data || !data.length){ listEl.innerHTML = '<div class="list-group-item text-muted">Sin resultados.</div>'; return; }
-
-          listEl.innerHTML = data.map(d => `
-            <button type="button" class="list-group-item list-group-item-action pick-em"
-                    data-id="${d.id}"
-                    data-r="${(d.rut||d.rut_formateado||d.rut_empresa||d.rut_empleador||'')}"
-                    data-n="${(d.razon_social || d.nombre_completo || d.nombre_fantasia || d.nombre || '').replace(/"/g,'&quot;')}"
-                    data-razon_social="${(d.razon_social||'').replace(/"/g,'&quot;')}"
-                    data-nombre_completo="${(d.nombre_completo||'').replace(/"/g,'&quot;')}"
-                    data-nombre_fantasia="${(d.nombre_fantasia||'').replace(/"/g,'&quot;')}"
-                    data-nombre="${(d.nombre||'').replace(/"/g,'&quot;')}">
-              <div class="fw-semibold">${
-                d.razon_social || d.nombre_completo || d.nombre_fantasia || d.nombre || ''
-              }</div>
-              <div class="text-muted small">${(d.rut||d.rut_formateado||d.rut_empresa||d.rut_empleador||'')}</div>
-            </button>`).join('');
-
-          listEl.querySelectorAll('.pick-em').forEach(btn => btn.addEventListener('click', () => {
-            document.querySelector('#empleador_id').value = btn.dataset.id;
-
-            const name = buildEmployerNameFromDataset(btn.dataset);
-            if (resumen)     resumen.textContent     = name || '—';
-            if (resumenRutE) resumenRutE.textContent = btn.dataset.r || '—';
-            if (sumEmpl)     sumEmpl.textContent     = name || '—';
-            if (sumEmplRut)  sumEmplRut.textContent  = btn.dataset.r || '—';
-
-            setText('sum2-empleador', name || '—');
-            setText('sum2-empleador-rut', btn.dataset.r || '—');
-
-            btnClearEmpl?.removeAttribute('disabled');
-            $('#err-step-2')?.classList.add('d-none');
-            updateStepStatus(2,true);
-            validatePrecrearEnabled();
-            setSelectedState('box-empleador','badge-empl', true);
-            refreshEstadoGlobal();
-
-            if (window.bootstrap) window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
-          }, {once:true}));
-        };
-      });
-    }
-
-    // Botón quitar empleador
-    btnClearEmpl?.addEventListener('click', () => {
-      document.querySelector('#empleador_id').value = '';
-      if (resumen)     resumen.textContent = '—';
-      if (resumenRutE) resumenRutE.textContent = '—';
-      if (sumEmpl)     sumEmpl.textContent = '—';
-      if (sumEmplRut)  sumEmplRut.textContent = '—';
-      setText('sum2-empleador', '—'); setText('sum2-empleador-rut','—');
-      btnClearEmpl.setAttribute('disabled', 'disabled');
-      updateStepStatus(2, false);
-      validatePrecrearEnabled();
-      setSelectedState('box-empleador','badge-empl', false);
-      refreshEstadoGlobal();
-    });
-
-    // Inicial si viene servidor
-    (function initFromServer(){
-      const name = resumen?.textContent?.trim();
-      if (name && name !== '—'){
-        btnClearEmpl?.removeAttribute('disabled');
-        updateStepStatus(2,true);
-        setSelectedState('box-empleador','badge-empl', true);
-        setText('sum2-empleador', name);
-        setText('sum2-empleador-rut', (resumenRutE?.textContent?.trim() || '—'));
-      }
-    })();
-  })();
-
-  // ---- Habilitar “Crear caso preliminar”
-  const btnPrecrear = $('#btn-precrear');
-  function validatePrecrearEnabled(){
-    const hOk = refreshHistoria();
-    const tOk = !!inpTrabID.value || ($('#resumen-trabajador')?.textContent.trim() !== '—');
-    const eOk = !!inpEmplID.value || ($('#resumen-empleador')?.textContent.trim() !== '—');
-    updateStepStatus(1,tOk); updateStepStatus(2,eOk); updateStepStatus(3,hOk);
-    if (btnPrecrear) btnPrecrear.disabled = !(tOk && eOk && hOk);
-  }
-  window.validatePrecrearEnabled = validatePrecrearEnabled;
-  validatePrecrearEnabled();
-
-  btnPrecrear?.addEventListener('click', () => {
-    if (!inpTrabID.value && $('#resumen-trabajador')?.textContent.trim() === '—'){ $('#err-step-1')?.classList.remove('d-none'); return; }
-    if (!inpEmplID.value && $('#resumen-empleador')?.textContent.trim() === '—'){ $('#err-step-2')?.classList.remove('d-none'); return; }
-    const h = (historiaEl?.value || '').trim();
-    if (!h){ $('#err-step-3')?.classList.remove('d-none'); return; }
-    accionEl.value = 'precrear';
-    form.submit();
-  });
-
-  // ---- Documentos obligatorios / progreso
-  const DOCS_OBLIGATORIOS = ['contrato','liquidaciones','afp'];
-  function updateDocBadge(key, state){
-    const badge = document.getElementById(`badge-${key}`);
-    if (badge){
-      badge.className = 'badge';
-      if (state === 'validado' || state === 'recibido' || state === 'subido'){
-        badge.classList.add('bg-success'); badge.textContent = state;
-      } else if (state === 'pendiente'){
-        badge.classList.add('bg-secondary'); badge.textContent = 'pendiente';
-      } else {
-        badge.classList.add('bg-warning'); badge.textContent = state;
-      }
-    }
-    const hidEstado = document.getElementById(`hid-${key}-estado`);
-    if (hidEstado) hidEstado.value = state;
-    updateDocsProgress();
-  }
-
-  function updateDocsProgress(){
-    let done = 0;
-    DOCS_OBLIGATORIOS.forEach(k => {
-      const st = document.getElementById(`hid-${k}-estado`).value || 'pendiente';
-      if (st !== 'pendiente') done += 1;
-    });
-    const total = DOCS_OBLIGATORIOS.length;
-    const pct = Math.round(done * 100 / total);
-    document.getElementById('doc-progress-text').textContent = `${done}/${total}`;
-    setText('sum-docs', `${done}/${total}`);
-    setText('sum2-docs', `${done}/${total}`);
-
-    const bar = document.getElementById('doc-progress-bar');
-    bar.style.width = `${pct}%`;
-    bar.classList.toggle('bg-success', pct===100);
-    bar.classList.toggle('bg-warning', pct>0 && pct<100);
-    bar.classList.toggle('bg-secondary', pct===0);
-
-    const lockFicha = document.getElementById('lock-ficha');
-    if (lockFicha) lockFicha.style.display = (pct===100 ? 'none' : 'flex');
-
-    document.getElementById('status-step-4').textContent = `${done}/${total}`;
-
-    // Actualizar estado global cada vez que cambia el progreso
-    refreshEstadoGlobal();
-  }
-
-  // Render y acciones por archivo
-  function renderSelectedFiles(key){
-    const input = document.getElementById(`file-${key}`);
-    const list  = document.getElementById(`files-${key}`);
-    if (!input || !list) return;
-
-    const files = Array.from(input.files || []);
-    if (files.length === 0){ list.innerHTML = ''; return; }
-
-    list.innerHTML = files.map((f, i) => `
-      <li>
-        <span class="name"><span class="truncate" title="${f.name}">${f.name}</span></span>
-        <a href="#" class="btn btn-link btn-sm" data-action="view" data-key="${key}" data-index="${i}">Ver</a>
-        <button type="button" class="btn btn-sm btn-outline-danger" data-action="remove" data-key="${key}" data-index="${i}">×</button>
-      </li>
-    `).join('');
-
-    list.onclick = (ev) => {
-      const btn = ev.target.closest('[data-action]');
-      if (!btn) return;
-      ev.preventDefault();
-      const action = btn.dataset.action;
-      const idx = parseInt(btn.dataset.index, 10);
-      if (Number.isNaN(idx)) return;
-
-      if (action === 'view'){
-        const f = input.files[idx];
-        if (!f) return;
-        const url = URL.createObjectURL(f);
-        window.open(url, '_blank');
-        setTimeout(()=>URL.revokeObjectURL(url), 15000);
-      } else if (action === 'remove'){
-        const dt = new DataTransfer();
-        Array.from(input.files).forEach((f, j) => { if (j !== idx) dt.items.add(f); });
-        input.files = dt.files;
-        if (input.files.length === 0){
-          const rec = document.getElementById(`recibido-${key}`);
-          updateDocBadge(key, rec?.checked ? 'recibido' : 'pendiente');
-        }
-        renderSelectedFiles(key);
-      }
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.__casosPageWired) return;
+    window.__casosPageWired = true;
+
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const clean = (s) => (s || "").toString().trim();
+    const onlyDigits = (s) => clean(s).replace(/\D+/g, "");
+    const formatCLP = (s) => {
+      const d = onlyDigits(s);
+      if (!d) return "";
+      return d.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
-  }
-
-  function bindDocRow(key){
-    const rec     = document.getElementById(`recibido-${key}`);
-    const medio   = document.getElementById(`medio-${key}`);
-    const detalle = document.getElementById(`medio-${key}-detalle`);
-    const file    = document.getElementById(`file-${key}`);
-    if (!rec) return;
-
-    rec.addEventListener('change', () => {
-      if (rec.checked){
-        medio.disabled = false;
-        updateDocBadge(key,'recibido');
-      } else {
-        medio.disabled = true; medio.value='';
-        detalle.classList.add('d-none'); detalle.value='';
-        if (file) file.value='';
-        renderSelectedFiles(key);
-        updateDocBadge(key,'pendiente');
+    const deformatCLP = (s) => onlyDigits(s);
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    async function fetchJSON(url) {
+      try {
+        const r = await fetch(url, { headers: { Accept: "application/json" } });
+        return r.ok ? r.json() : [];
+      } catch {
+        return [];
       }
-    });
-
-    medio?.addEventListener('change', () => {
-      const v = medio.value;
-      document.getElementById(`hid-${key}-medio`).value = v;
-      if (v==='otro'){ detalle.classList.remove('d-none'); }
-      else { detalle.classList.add('d-none'); const hid = document.getElementById(`hid-${key}-medio-detalle`); if (hid) hid.value=''; }
-      if ((document.getElementById(`hid-${key}-estado`).value || 'pendiente') === 'recibido'){
-        updateDocBadge(key,'recibido');
-      }
-    });
-
-    detalle?.addEventListener('input', () => {
-      const hid = document.getElementById(`hid-${key}-medio-detalle`); if (hid) hid.value = detalle.value.trim();
-    });
-
-    file?.addEventListener('change', () => {
-      renderSelectedFiles(key);
-      if (file.files && file.files.length > 0){
-        updateDocBadge(key,'subido');
-      } else {
-        const recOn = rec.checked;
-        updateDocBadge(key, recOn ? 'recibido' : 'pendiente');
-      }
-    });
-  }
-  ['contrato','liquidaciones','afp'].forEach(bindDocRow);
-  updateDocsProgress();
-  // === Guardar Documentos ===
-(function wireGuardarDocs(){
-  const btnGuardar = document.getElementById('btn-guardar-docs');
-  if (!btnGuardar) return;
-
-  const form       = document.getElementById('form-nuevo-caso');
-  const accionEl   = document.getElementById('accion');
-  const casoIdEl   = document.getElementById('caso_id');
-
-  // Habilitar el botón si hay caso creado y si hay algún cambio en documentos
-  function hayCambiosDocs(){
-    // Regla simple: si hay algún archivo seleccionado o algún estado != 'pendiente' o algún medio seteado
-    const keys = ['contrato','liquidaciones','afp'];
-    for (const k of keys){
-      const file   = document.getElementById(`file-${k}`);
-      const estado = (document.getElementById(`hid-${k}-estado`)?.value || 'pendiente').trim();
-      const medio  = (document.getElementById(`hid-${k}-medio`)?.value  || '').trim();
-
-      if (file?.files?.length) return true;
-      if (estado !== 'pendiente') return true;
-      if (medio) return true;
     }
-    return false;
-  }
 
-  function refreshGuardarEnabled(){
-    const tieneCaso = !!(casoIdEl?.value);
-    btnGuardar.disabled = !(tieneCaso && hayCambiosDocs());
-  }
+    /* Helpers para construir nombres (robustos a snake_case) */
+    function buildFullNameFromDataset(ds) {
+      const full =
+        ds.nombreCompleto ||
+        ds.nombre_completo ||
+        [ds.nombres || ds.nombre, ds.apellido || ds.apellidos]
+          .filter(Boolean)
+          .join(" ")
+          .trim();
+      return full || ds.n || "";
+    }
+    function buildEmployerNameFromDataset(ds) {
+      return (
+        ds.razonSocial ||
+        ds.razon_social ||
+        ds.nombreCompleto ||
+        ds.nombre_completo ||
+        ds.nombreFantasia ||
+        ds.nombre_fantasia ||
+        ds.nombre ||
+        ds.n ||
+        ""
+      );
+    }
 
-  // Recalcular cuando hay cambios en cualquier control de documentos
-  ['contrato','liquidaciones','afp'].forEach(k => {
-    document.getElementById(`file-${k}`)?.addEventListener('change', refreshGuardarEnabled);
-    document.getElementById(`recibido-${k}`)?.addEventListener('change', refreshGuardarEnabled);
-    document.getElementById(`medio-${k}`)?.addEventListener('change', refreshGuardarEnabled);
-    document.getElementById(`medio-${k}-detalle`)?.addEventListener('input', refreshGuardarEnabled);
+    // Resaltado visual al seleccionar/quitar
+    function setSelectedState(boxId, badgeId, on) {
+      const box = document.getElementById(boxId);
+      const badge = document.getElementById(badgeId);
+      if (box) box.classList.toggle("box-selected", !!on);
+      if (badge) badge.classList.toggle("d-none", !on);
+    }
+
+    function showModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (window.bootstrap && window.bootstrap.Modal) {
+        window.bootstrap.Modal.getOrCreateInstance(el).show();
+      }
+    }
+    $("#btn-open-trabajador")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      showModal("modalTrabajador");
+    });
+    $("#btn-open-empleador")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      showModal("modalEmpleador");
+    });
+
+    // ---- Base elementos y resumen
+    const form = $("#form-nuevo-caso");
+    const inpTrabID = $("#trabajador_id");
+    const inpEmplID = $("#empleador_id");
+    const accionEl = $("#accion");
+    const casoIdEl = $("#caso_id");
+
+    const historiaEl = $("#historia");
+    const historiaCounter = $("#historia-counter");
+
+    const sumHistoria = $("#sum-historia");
+    const sumTrab = $("#sum-trabajador");
+    const sumTrabRut = $("#sum-trabajador-rut");
+    const sumEmpl = $("#sum-empleador");
+    const sumEmplRut = $("#sum-empleador-rut");
+
+    const elBase = $("#{{ form.base_calculo.id }}");
+    const elBaseErr = $("#base_calculo_error");
+    const elInicio = $("#{{ form.fecha_inicio.id }}");
+    const elTermino = $("#{{ form.fecha_termino.id }}");
+    const elTerminoErr = $("#fecha_termino_error");
+    const elTipo = $("#{{ form.tipo_caso.id }}");
+    const elCausal = $("#{{ form.causal.id }}");
+
+    function updateStepStatus(step, ok) {
+      const badge = document.getElementById(`status-step-${step}`);
+      if (!badge) return;
+      if (ok) {
+        badge.textContent = "Listo";
+        badge.classList.remove("bg-light", "text-dark");
+        badge.classList.add("bg-success", "text-white");
+      } else {
+        badge.textContent = "Pendiente";
+        badge.classList.remove("bg-success", "text-white");
+        badge.classList.add("bg-light", "text-dark");
+      }
+    }
+
+    // === Historia (contador + previews) ===
+    function refreshHistoria() {
+      const v = (historiaEl?.value || "").trim();
+      if (historiaCounter) {
+        const MAX = 1500,
+          WARN1 = 1275,
+          WARN2 = 1425;
+        const len = v.length;
+        historiaCounter.textContent = `${len}/${MAX}`;
+        historiaCounter.classList.remove(
+          "text-warning",
+          "text-danger",
+          "fw-semibold"
+        );
+        if (len >= WARN2 && len <= MAX) {
+          historiaCounter.classList.add("text-danger", "fw-semibold");
+        } else if (len >= WARN1) {
+          historiaCounter.classList.add("text-warning", "fw-semibold");
+        }
+      }
+      if (sumHistoria)
+        setText(
+          "sum-historia",
+          v ? (v.length > 100 ? v.slice(0, 100) + "…" : v) : "—"
+        );
+      return v.length > 0;
+    }
+    historiaEl?.addEventListener("input", () => {
+      $("#err-step-3")?.classList.add("d-none");
+      refreshHistoria();
+      window.refreshCrearEstado?.();
+    });
+    historiaEl?.addEventListener("change", () => {
+      refreshHistoria();
+    });
+    refreshHistoria();
+
+    // === Trabajador (sección + modal) ===
+    (function wireTrabajador() {
+      const inp = $("#buscar-trabajador");
+      const box = $("#trabajador-resultados");
+      const resumen = $("#resumen-trabajador");
+      const resumenRut = $("#resumen-trabajador-rut");
+      const btnClearTrab = $("#btn-clear-trabajador");
+      if (!inp || !box) return;
+
+      async function doSearch(q, container) {
+        container.innerHTML =
+          q.length < 2 ? "" : '<div class="text-muted small">Buscando…</div>';
+        if (q.length < 2) return;
+
+        const data = await fetchJSON(
+          "/api/trabajadores?q=" + encodeURIComponent(q)
+        );
+
+        container.innerHTML = '<div class="list-group"></div>';
+        const listEl = container.firstElementChild;
+
+        if (!data || !data.length) {
+          listEl.innerHTML =
+            '<div class="list-group-item text-muted">Sin resultados.</div>';
+          return;
+        }
+
+        listEl.innerHTML = data
+          .map(
+            (d) => `
+				<button type="button" class="list-group-item list-group-item-action pick-t"
+								title="Seleccionar"
+								data-id="${d.id}"
+								data-r="${d.rut || d.rut_formateado || d.run || ""}"
+								data-n="${(d.nombre_completo || d.nombre || "").replace(/"/g, "&quot;")}"
+								data-nombre="${(d.nombre || "").replace(/"/g, "&quot;")}"
+								data-nombres="${(d.nombres || "").replace(/"/g, "&quot;")}"
+								data-apellido="${(d.apellido || d.apellidos || "").replace(/"/g, "&quot;")}"
+								data-nombre_completo="${(d.nombre_completo || "").replace(/"/g, "&quot;")}">
+					<div class="fw-semibold">${
+            d.nombre_completo ||
+            [d.nombres || d.nombre, d.apellido || d.apellidos]
+              .filter(Boolean)
+              .join(" ") ||
+            d.nombre ||
+            ""
+          }</div>
+					<div class="text-muted small">${d.rut || d.rut_formateado || d.run || ""}</div>
+				</button>`
+          )
+          .join("");
+
+        listEl.querySelectorAll(".pick-t").forEach(
+          (b) =>
+            (b.onclick = () => {
+              inpTrabID.value = b.dataset.id;
+
+              const fullName = buildFullNameFromDataset(b.dataset);
+              if (resumen) resumen.textContent = fullName || "—";
+              if (resumenRut) resumenRut.textContent = b.dataset.r || "—";
+              if (sumTrab) sumTrab.textContent = fullName || "—";
+              if (sumTrabRut) sumTrabRut.textContent = b.dataset.r || "—";
+              setText("sum2-trabajador", fullName || "—");
+              setText("sum2-trabajador-rut", b.dataset.r || "—");
+
+              btnClearTrab?.removeAttribute("disabled");
+              $("#err-step-1")?.classList.add("d-none");
+              updateStepStatus(1, true);
+              window.refreshCrearEstado?.();
+              setSelectedState("box-trabajador", "badge-trab", true);
+              refreshEstadoGlobal();
+            })
+        );
+      }
+
+      inp.addEventListener("input", (e) =>
+        doSearch(e.target.value.trim(), box)
+      );
+
+      // Modal trabajador
+      const modalEl = $("#modalTrabajador");
+      if (modalEl) {
+        modalEl.addEventListener("shown.bs.modal", () => {
+          const inpM = $("#buscar-trabajador-modal");
+          const boxM = $("#trabajador-resultados-modal");
+          if (!inpM || !boxM) return;
+          inpM.value = "";
+          boxM.textContent = "";
+          inpM.focus();
+          inpM.oninput = async (ev) => {
+            const q = ev.target.value.trim();
+            boxM.innerHTML =
+              q.length < 2
+                ? ""
+                : '<div class="text-muted small">Buscando…</div>';
+            if (q.length < 2) return;
+
+            const data = await fetchJSON(
+              "/api/trabajadores?q=" + encodeURIComponent(q)
+            );
+            boxM.innerHTML = '<div class="list-group"></div>';
+            const listEl = boxM.firstElementChild;
+
+            if (!data || !data.length) {
+              listEl.innerHTML =
+                '<div class="list-group-item text-muted">Sin resultados.</div>';
+              return;
+            }
+
+            listEl.innerHTML = data
+              .map(
+                (d) => `
+						<button type="button" class="list-group-item list-group-item-action pick-tm"
+										data-id="${d.id}"
+										data-r="${d.rut || d.rut_formateado || d.run || ""}"
+										data-n="${(d.nombre_completo || d.nombre || "").replace(/"/g, "&quot;")}"
+										data-nombre="${(d.nombre || "").replace(/"/g, "&quot;")}"
+										data-nombres="${(d.nombres || "").replace(/"/g, "&quot;")}"
+										data-apellido="${(d.apellido || d.apellidos || "").replace(/"/g, "&quot;")}"
+										data-nombre_completo="${(d.nombre_completo || "").replace(/"/g, "&quot;")}">
+							<div class="fw-semibold">${
+                d.nombre_completo ||
+                [d.nombres || d.nombre, d.apellido || d.apellidos]
+                  .filter(Boolean)
+                  .join(" ") ||
+                d.nombre ||
+                ""
+              }</div>
+							<div class="text-muted small">${d.rut || d.rut_formateado || d.run || ""}</div>
+						</button>`
+              )
+              .join("");
+
+            listEl.querySelectorAll(".pick-tm").forEach((btn) =>
+              btn.addEventListener(
+                "click",
+                () => {
+                  inpTrabID.value = btn.dataset.id;
+
+                  const fullName = buildFullNameFromDataset(btn.dataset);
+                  if (resumen) resumen.textContent = fullName || "—";
+                  if (resumenRut) resumenRut.textContent = btn.dataset.r || "—";
+                  if (sumTrab) sumTrab.textContent = fullName || "—";
+                  if (sumTrabRut) sumTrabRut.textContent = btn.dataset.r || "—";
+
+                  setText("sum2-trabajador", fullName || "—");
+                  setText("sum2-trabajador-rut", btn.dataset.r || "—");
+
+                  btnClearTrab?.removeAttribute("disabled");
+                  $("#err-step-1")?.classList.add("d-none");
+                  updateStepStatus(1, true);
+                  window.refreshCrearEstado?.();
+                  setSelectedState("box-trabajador", "badge-trab", true);
+                  refreshEstadoGlobal();
+
+                  if (window.bootstrap)
+                    window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+                },
+                { once: true }
+              )
+            );
+          };
+        });
+      }
+
+      // Botón quitar trabajador
+      btnClearTrab?.addEventListener("click", () => {
+        inpTrabID.value = "";
+        if (resumen) resumen.textContent = "—";
+        if (resumenRut) resumenRut.textContent = "—";
+        if (sumTrab) sumTrab.textContent = "—";
+        if (sumTrabRut) sumTrabRut.textContent = "—";
+        setText("sum2-trabajador", "—");
+        setText("sum2-trabajador-rut", "—");
+        btnClearTrab.setAttribute("disabled", "disabled");
+        updateStepStatus(1, false);
+        window.refreshCrearEstado?.();
+        setSelectedState("box-trabajador", "badge-trab", false);
+        refreshEstadoGlobal();
+      });
+
+      // Inicial si viene servidor
+      (function initFromServer() {
+        const name = resumen?.textContent?.trim();
+        if (name && name !== "—") {
+          btnClearTrab?.removeAttribute("disabled");
+          updateStepStatus(1, true);
+          setSelectedState("box-trabajador", "badge-trab", true);
+          setText("sum2-trabajador", name);
+          setText(
+            "sum2-trabajador-rut",
+            resumenRut?.textContent?.trim() || "—"
+          );
+        }
+      })();
+    })();
+
+    // === Empleador (sección + modal) ===
+    (function wireEmpleador() {
+      const inp = $("#buscar-empleador");
+      const box = $("#empleador-resultados");
+      const resumen = $("#resumen-empleador");
+      const resumenRutE = $("#resumen-empleador-rut");
+      const btnClearEmpl = $("#btn-clear-empleador");
+      if (!inp || !box) return;
+
+      async function doSearch(q, container) {
+        container.innerHTML =
+          q.length < 2 ? "" : '<div class="text-muted small">Buscando…</div>';
+        if (q.length < 2) return;
+
+        const data = await fetchJSON(
+          "/api/empleadores?q=" + encodeURIComponent(q)
+        );
+
+        container.innerHTML = '<div class="list-group"></div>';
+        const listEl = container.firstElementChild;
+
+        if (!data || !data.length) {
+          listEl.innerHTML =
+            '<div class="list-group-item text-muted">Sin resultados.</div>';
+          return;
+        }
+
+        listEl.innerHTML = data
+          .map(
+            (d) => `
+				<button type="button" class="list-group-item list-group-item-action pick-e"
+								title="Seleccionar"
+								data-id="${d.id}"
+								data-r="${
+                  d.rut ||
+                  d.rut_formateado ||
+                  d.rut_empresa ||
+                  d.rut_empleador ||
+                  d.run ||
+                  ""
+                }"
+
+								data-n="${(
+                  d.razon_social ||
+                  d.nombre_completo ||
+                  d.nombre_fantasia ||
+                  d.nombre ||
+                  ""
+                ).replace(/"/g, "&quot;")}"
+								data-razon_social="${(d.razon_social || "").replace(/"/g, "&quot;")}"
+								data-nombre_completo="${(d.nombre_completo || "").replace(/"/g, "&quot;")}"
+								data-nombre_fantasia="${(d.nombre_fantasia || "").replace(/"/g, "&quot;")}"
+								data-nombre="${(d.nombre || "").replace(/"/g, "&quot;")}">
+					<div class="fw-semibold">${
+            d.razon_social ||
+            d.nombre_completo ||
+            d.nombre_fantasia ||
+            d.nombre ||
+            ""
+          }</div>
+					<div class="text-muted small">${
+            d.rut ||
+            d.rut_formateado ||
+            d.rut_empresa ||
+            d.rut_empleador ||
+            d.run ||
+            ""
+          }</div>
+				</button>`
+          )
+          .join("");
+
+        listEl.querySelectorAll(".pick-e").forEach(
+          (b) =>
+            (b.onclick = () => {
+              document.querySelector("#empleador_id").value = b.dataset.id;
+
+              const name = buildEmployerNameFromDataset(b.dataset);
+              if (resumen) resumen.textContent = name || "—";
+              if (resumenRutE) resumenRutE.textContent = b.dataset.r || "—";
+              if (sumEmpl) sumEmpl.textContent = name || "—";
+              if (sumEmplRut) sumEmplRut.textContent = b.dataset.r || "—";
+
+              setText("sum2-empleador", name || "—");
+              setText("sum2-empleador-rut", b.dataset.r || "—");
+
+              try {
+                localStorage.setItem("empleadorID", b.dataset.id || "");
+                localStorage.setItem("empleadorRUT", b.dataset.r || "");
+              } catch {}
+
+              btnClearEmpl?.removeAttribute("disabled");
+              $("#err-step-2")?.classList.add("d-none");
+              updateStepStatus(2, true);
+              window.refreshCrearEstado?.();
+              setSelectedState("box-empleador", "badge-empl", true);
+              refreshEstadoGlobal();
+            })
+        );
+      }
+
+      inp.addEventListener("input", (e) =>
+        doSearch(e.target.value.trim(), box)
+      );
+
+      // Modal empleador
+      const modalEl = $("#modalEmpleador");
+      if (modalEl) {
+        modalEl.addEventListener("shown.bs.modal", () => {
+          const inpM = $("#buscar-empleador-modal");
+          const boxM = $("#empleador-resultados-modal");
+          if (!inpM || !boxM) return;
+          inpM.value = "";
+          boxM.textContent = "";
+          inpM.focus();
+          inpM.oninput = async (ev) => {
+            const q = ev.target.value.trim();
+            boxM.innerHTML =
+              q.length < 2
+                ? ""
+                : '<div class="text-muted small">Buscando…</div>';
+            if (q.length < 2) return;
+
+            const data = await fetchJSON(
+              "/api/empleadores?q=" + encodeURIComponent(q)
+            );
+            boxM.innerHTML = '<div class="list-group"></div>';
+            const listEl = boxM.firstElementChild;
+
+            if (!data || !data.length) {
+              listEl.innerHTML =
+                '<div class="list-group-item text-muted">Sin resultados.</div>';
+              return;
+            }
+
+            listEl.innerHTML = data
+              .map(
+                (d) => `
+						<button type="button" class="list-group-item list-group-item-action pick-em"
+										data-id="${d.id}"
+										data-r="${
+                      d.rut ||
+                      d.rut_formateado ||
+                      d.rut_empresa ||
+                      d.rut_empleador ||
+                      d.run ||
+                      ""
+                    }"
+										data-n="${(
+                      d.razon_social ||
+                      d.nombre_completo ||
+                      d.nombre_fantasia ||
+                      d.nombre ||
+                      ""
+                    ).replace(/"/g, "&quot;")}"
+										data-razon_social="${(d.razon_social || "").replace(/"/g, "&quot;")}"
+										data-nombre_completo="${(d.nombre_completo || "").replace(/"/g, "&quot;")}"
+										data-nombre_fantasia="${(d.nombre_fantasia || "").replace(/"/g, "&quot;")}"
+										data-nombre="${(d.nombre || "").replace(/"/g, "&quot;")}">
+							<div class="fw-semibold">${
+                d.razon_social ||
+                d.nombre_completo ||
+                d.nombre_fantasia ||
+                d.nombre ||
+                ""
+              }</div>
+							<div class="text-muted small">${
+                d.rut ||
+                d.rut_formateado ||
+                d.rut_empresa ||
+                d.rut_empleador ||
+                d.run ||
+                ""
+              }</div>
+						</button>`
+              )
+              .join("");
+
+            listEl.querySelectorAll(".pick-em").forEach((btn) =>
+              btn.addEventListener(
+                "click",
+                () => {
+                  document.querySelector("#empleador_id").value =
+                    btn.dataset.id;
+
+                  const name = buildEmployerNameFromDataset(btn.dataset);
+                  if (resumen) resumen.textContent = name || "—";
+                  if (resumenRutE)
+                    resumenRutE.textContent = btn.dataset.r || "—";
+                  if (sumEmpl) sumEmpl.textContent = name || "—";
+                  if (sumEmplRut) sumEmplRut.textContent = btn.dataset.r || "—";
+
+                  setText("sum2-empleador", name || "—");
+                  setText("sum2-empleador-rut", btn.dataset.r || "—");
+
+                  try {
+                    localStorage.setItem("empleadorID", btn.dataset.id || "");
+                    localStorage.setItem("empleadorRUT", btn.dataset.r || "");
+                  } catch {}
+
+                  btnClearEmpl?.removeAttribute("disabled");
+                  $("#err-step-2")?.classList.add("d-none");
+                  updateStepStatus(2, true);
+                  window.refreshCrearEstado?.();
+                  setSelectedState("box-empleador", "badge-empl", true);
+                  refreshEstadoGlobal();
+
+                  if (window.bootstrap)
+                    window.bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+                },
+                { once: true }
+              )
+            );
+          };
+        });
+      }
+
+      // Botón quitar empleador
+      btnClearEmpl?.addEventListener("click", () => {
+        document.querySelector("#empleador_id").value = "";
+        if (resumen) resumen.textContent = "—";
+        if (resumenRutE) resumenRutE.textContent = "—";
+        if (sumEmpl) sumEmpl.textContent = "—";
+        if (sumEmplRut) sumEmplRut.textContent = "—";
+        setText("sum2-empleador", "—");
+        setText("sum2-empleador-rut", "—");
+
+        // limpiar persistencia
+        localStorage.removeItem("empleadorID");
+        localStorage.removeItem("empleadorRUT");
+
+        btnClearEmpl.setAttribute("disabled", "disabled");
+        updateStepStatus(2, false);
+        window.refreshCrearEstado?.();
+        setSelectedState("box-empleador", "badge-empl", false);
+        refreshEstadoGlobal();
+      });
+      (function initFromServer() {
+        const name = resumen?.textContent?.trim();
+        if (name && name !== "—") {
+          btnClearEmpl?.removeAttribute("disabled");
+          updateStepStatus(2, true);
+          setSelectedState("box-empleador", "badge-empl", true);
+          setText("sum2-empleador", name);
+
+          let rut = resumenRutE?.textContent?.trim() || "";
+          if (!rut || rut === "—") {
+            const curId = document.querySelector("#empleador_id")?.value || "";
+            const sId = localStorage.getItem("empleadorID") || "";
+            const sRut = localStorage.getItem("empleadorRUT") || "";
+            if (sRut && (!curId || curId === sId)) {
+              rut = sRut;
+              if (resumenRutE) resumenRutE.textContent = rut;
+              setText("sum-empleador-rut", rut);
+            }
+          }
+          setText("sum2-empleador-rut", rut || "—");
+        }
+      })();
+
+      // Inicial si viene servidor
+      (function initFromServer() {
+        const name = resumen?.textContent?.trim();
+        if (name && name !== "—") {
+          btnClearEmpl?.removeAttribute("disabled");
+          updateStepStatus(2, true);
+          setSelectedState("box-empleador", "badge-empl", true);
+          setText("sum2-empleador", name);
+          setText(
+            "sum2-empleador-rut",
+            resumenRutE?.textContent?.trim() || "—"
+          );
+        }
+      })();
+    })();
+
+    // (Eliminado flujo antiguo de "precrear"; ahora se usa el botón #btn-crear-caso)
+    // ---- Documentos obligatorios / progreso
+    const DOCS_OBLIGATORIOS = ["contrato", "liquidaciones", "afp"];
+	const PENDING = { contrato: [], liquidaciones: [], afp: [] };
+    function updateDocBadge(key, state) {
+      const badge = document.getElementById(`badge-${key}`);
+      if (badge) {
+        badge.className = "badge";
+        if (
+          state === "validado" ||
+          state === "recibido" ||
+          state === "subido"
+        ) {
+          badge.classList.add("bg-success");
+          badge.textContent = state;
+        } else if (state === "pendiente") {
+          badge.classList.add("bg-secondary");
+          badge.textContent = "pendiente";
+        } else {
+          badge.classList.add("bg-warning");
+          badge.textContent = state;
+        }
+      }
+      const hidEstado = document.getElementById(`hid-${key}-estado`);
+      if (hidEstado) hidEstado.value = state;
+      updateDocsProgress();
+    }
+
+    function updateDocsProgress() {
+      let done = 0;
+      DOCS_OBLIGATORIOS.forEach((k) => {
+        const st =
+          document.getElementById(`hid-${k}-estado`).value || "pendiente";
+        if (st !== "pendiente") done += 1;
+      });
+      const total = DOCS_OBLIGATORIOS.length;
+      const pct = Math.round((done * 100) / total);
+      document.getElementById(
+        "doc-progress-text"
+      ).textContent = `${done}/${total}`;
+      setText("sum-docs", `${done}/${total}`);
+      setText("sum2-docs", `${done}/${total}`);
+
+      const bar = document.getElementById("doc-progress-bar");
+      bar.style.width = `${pct}%`;
+      bar.classList.toggle("bg-success", pct === 100);
+      bar.classList.toggle("bg-warning", pct > 0 && pct < 100);
+      bar.classList.toggle("bg-secondary", pct === 0);
+
+      const lockFicha = document.getElementById("lock-ficha");
+      if (lockFicha) lockFicha.style.display = pct === 100 ? "none" : "flex";
+
+      document.getElementById("status-step-4").textContent = `${done}/${total}`;
+
+      // Actualizar estado global cada vez que cambia el progreso
+      refreshEstadoGlobal();
+    }
+// === REEMPLAZO COMPLETO ===
+function renderSelectedFiles(key){
+  const input = document.getElementById(`file-${key}`);
+  const list  = document.getElementById(`files-${key}`) || input?.closest('.doc-card')?.querySelector('.files-list');
+  if (!input || !list) return;
+
+  // NO borrar documentos ya guardados: solo quita los nuevos previos
+  list.querySelectorAll('li[data-new="1"]').forEach(li => li.remove());
+
+  // Agrega los archivos NUEVOS al final y resaltados
+  Array.from(input.files || []).forEach((f, i) => {
+    const li = document.createElement('li');
+    li.setAttribute('data-new','1');
+    li.classList.add('new-file');
+    li.innerHTML = `
+      <span class="name"><span class="truncate" title="${f.name}">${f.name}</span></span>
+      <a href="#" class="btn btn-link btn-sm" data-action="view" data-key="${key}" data-index="${i}">Ver</a>
+      <button type="button" class="btn btn-sm btn-outline-danger" data-action="remove" data-key="${key}" data-index="${i}">×</button>
+    `;
+    list.appendChild(li);
   });
 
-  // Al cargar
-  refreshGuardarEnabled();
+  // Delegación de acciones
+  list.onclick = (ev) => {
+    const btn = ev.target.closest('[data-action]');
+    if (!btn) return;
+    ev.preventDefault();
+    const action = btn.dataset.action;
 
-  // Click => enviar formulario solo guardando docs
-  btnGuardar.addEventListener('click', () => {
-    if (!casoIdEl?.value){
-      alert('Debes crear el Caso preliminar antes de guardar documentos.');
+    // Eliminar archivo guardado (del servidor)
+    if (action === 'remove-saved') {
+      // Eliminar el elemento de la lista
+      const li = btn.closest('li');
+      if (li) li.remove();
+      // Si no quedan archivos (ni nuevos ni guardados), actualizar el estado a pendiente
+      if (!list.querySelector('li')) {
+        updateDocBadge(key, 'pendiente');
+      }
       return;
     }
-    // Opcional: validación mínima de que hayas marcado recibido o subido algo al menos
-    // if (!hayCambiosDocs()) { alert('No se detectan cambios en documentos.'); return; }
 
-    btnGuardar.disabled = true;
-    btnGuardar.textContent = 'Guardando…';
-    accionEl.value = 'guardar_docs';
-    form.submit();
-  });
-})();
+    // Para acciones que requieren índice (archivos recién seleccionados)
+    const idx = parseInt(btn.dataset.index, 10);
+    if (Number.isNaN(idx)) return;
 
+    if (action === 'view'){
+      const f = input.files[idx];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      window.open(url, '_blank');
+      setTimeout(()=>URL.revokeObjectURL(url), 15000);
+    } else if (action === 'remove'){
+      const dt = new DataTransfer();
+      Array.from(input.files).forEach((f, j) => { if (j !== idx) dt.items.add(f); });
+      input.files = dt.files;
+      PENDING[key] = Array.from(input.files || []); // mantener store
+      if (input.files.length === 0){
+        updateDocBadge(key, 'pendiente'); // ← ya no usamos 'recibido'
+      }
+      renderSelectedFiles(key);
+    }
+  };
+}
 
-  const lockDocs = document.getElementById('lock-docs');
-  if (lockDocs) lockDocs.style.display = (casoIdEl?.value ? 'none' : 'flex');
-  function ensureDocsEnabled() {
-  const hasCaso = !!casoIdEl?.value;
-  ['contrato','liquidaciones','afp'].forEach(k => {
-    const file = document.getElementById(`file-${k}`);
-    const rec  = document.getElementById(`recibido-${k}`);
-    const med  = document.getElementById(`medio-${k}`);
-    if (file) file.disabled = !hasCaso;
-    if (rec)  rec.disabled  = !hasCaso;
-    if (med)  med.disabled  = !hasCaso;
+function bindDocRow(key){
+  const file = document.getElementById(`file-${key}`);
+  if (!file) return;
+
+  // Utilizamos únicamente el evento 'change' para evitar procesar la misma selección dos veces.
+  file.addEventListener('change', (e) => {
+    const input = e.target;
+    const list  = document.getElementById(`files-${key}`) || input.closest('.doc-card')?.querySelector('.files-list');
+    if (!list) return;
+
+    // Construir conjunto de nombres existentes a partir de los archivos ya guardados (en el servidor) y los que el usuario ha seleccionado previamente.
+    const existingNames = new Set();
+    Array.from(list.querySelectorAll('li:not([data-new="1"]) .truncate')).forEach((el) => {
+      const txt = (el.textContent || '').trim().toLowerCase();
+      if (txt) existingNames.add(txt);
+    });
+    const store = PENDING[key] || [];
+    store.forEach((f) => {
+      if (f && f.name) existingNames.add(f.name.toLowerCase());
+    });
+
+    // Separar archivos nuevos válidos de los duplicados
+    const newFiles = Array.from(input.files || []);
+    const validFiles = [];
+    const duplicates = [];
+    newFiles.forEach((f) => {
+      const nm = f.name.toLowerCase();
+      if (existingNames.has(nm)) {
+        duplicates.push(f);
+      } else {
+        validFiles.push(f);
+        existingNames.add(nm);
+      }
+    });
+
+    // Crear DataTransfer con los archivos que ya estaban seleccionados (store) y los nuevos válidos
+    const dt = new DataTransfer();
+    store.forEach((f) => dt.items.add(f));
+    validFiles.forEach((f) => {
+      dt.items.add(f);
+      store.push(f);
+    });
+
+    // Procesar archivos duplicados: ofrecer renombrar o descartar
+    duplicates.forEach((f) => {
+      // Utilizamos prompt() para pedir un nuevo nombre. Si se desea un modal más elaborado, puede implementarse de forma similar a otros modales de Bootstrap.
+      const newName = prompt(`El archivo "${f.name}" ya existe. Ingresa un nuevo nombre para subirlo o deja vacío para descartarlo:`, f.name);
+      if (newName && newName.trim()) {
+        let cleanedName = newName.trim();
+        // Conservar la extensión original si no se especifica otra
+        if (!/\.[a-z0-9]+$/i.test(cleanedName)) {
+          const ext = f.name.split('.').pop();
+          cleanedName = `${cleanedName}.${ext}`;
+        }
+        // Crear un nuevo objeto File con el nombre cambiado
+        const renamed = new File([f], cleanedName, { type: f.type });
+        dt.items.add(renamed);
+        store.push(renamed);
+        existingNames.add(cleanedName.toLowerCase());
+      }
+      // Si el usuario deja vacío o cancela, no se subirá este archivo duplicado
+    });
+
+    // Actualizar input.files y el almacenamiento en memoria (PENDING)
+    input.files = dt.files;
+    PENDING[key] = Array.from(input.files || []);
+
+    // Refrescar la interfaz
+    renderSelectedFiles(key);
+    updateDocBadge(key, (input.files && input.files.length > 0) ? 'subido' : 'pendiente');
   });
 }
-// Llamada inicial:
-ensureDocsEnabled();
+
+// ← elimina el '}' suelto que tenías aquí
+
+// Inicialización
+// Ejecutar inmediatamente la vinculación de inputs y el renderizado de archivos seleccionados.
+['contrato','liquidaciones','afp'].forEach(k => {
+  bindDocRow(k);
+  renderSelectedFiles(k);
+});
+updateDocsProgress();
+
+    // === Guardar Documentos ===
+    (function wireGuardarDocs() {
+      const btnGuardar = document.getElementById("btn-guardar-docs");
+      if (!btnGuardar) return;
+
+      const form = document.getElementById("form-nuevo-caso");
+      const accionEl = document.getElementById("accion");
+      const casoIdEl = document.getElementById("caso_id");
+
+      function hayCambiosDocs() {
+        const keys = ["contrato", "liquidaciones", "afp"];
+        for (const k of keys) {
+          const file = document.getElementById(`file-${k}`);
+          const estado = (document.getElementById(`hid-${k}-estado`)?.value || "pendiente").trim();
+          if (file?.files?.length) return true;
+          if (estado !== "pendiente") return true;
+        }
+        return false;
+      }
 
 
-  // ---- Ficha (validaciones + sumario)
-  function validateFechas(){
-    const inicio = clean(elInicio?.value);
-    const termino = clean(elTermino?.value);
-    elTermino?.classList.remove('is-invalid');
-    elTerminoErr.textContent = '';
-    if (inicio && termino){
-      const d1 = new Date(inicio), d2 = new Date(termino);
-      if (d2 < d1){ elTermino?.classList.add('is-invalid'); elTerminoErr.textContent = 'La fecha de término no puede ser anterior a la de inicio.'; return false; }
+      function refreshGuardarEnabled() {
+        const tieneCaso = !!casoIdEl?.value;
+        btnGuardar.disabled = !(tieneCaso && hayCambiosDocs());
+      }
+
+      ["contrato", "liquidaciones", "afp"].forEach((k) => {
+  document.getElementById(`file-${k}`)?.addEventListener("change", refreshGuardarEnabled);
+      });
+
+      refreshGuardarEnabled();
+
+      btnGuardar.addEventListener("click", () => {
+        if (!casoIdEl?.value) {
+          alert("Debes crear el Caso antes de guardar documentos.");
+          return;
+        }
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = "Guardando…";
+        accionEl.value = "guardar_docs";
+        form.submit();
+      });
+    })();
+
+    const lockDocs = document.getElementById("lock-docs");
+    if (lockDocs) lockDocs.style.display = casoIdEl?.value ? "none" : "flex";
+    function ensureDocsEnabled() {
+      const hasCaso = !!casoIdEl?.value;
+      ["contrato", "liquidaciones", "afp"].forEach((k) => {
+        const file = document.getElementById(`file-${k}`);
+        const rec = document.getElementById(`recibido-${k}`);
+        const med = document.getElementById(`medio-${k}`);
+        if (file) file.disabled = !hasCaso;
+        if (rec) rec.disabled = !hasCaso;
+        if (med) med.disabled = !hasCaso;
+      });
     }
-    return true;
-  }
-  elBase?.addEventListener('blur', ()=>{ elBase.value = formatCLP(elBase.value); elBase.classList.remove('is-invalid'); elBaseErr.textContent=''; });
-  elBase?.addEventListener('focus', ()=>{ elBase.value = deformatCLP(elBase.value); });
-  elBase?.addEventListener('input', ()=>{ elBase.classList.remove('is-invalid'); elBaseErr.textContent=''; setText('sum-base', formatCLP(elBase.value) ? '$ '+formatCLP(elBase.value) : '—'); });
-  [elInicio, elTermino].forEach(el => el?.addEventListener('change', ()=>{
-    validateFechas();
-    setText('sum-inicio', clean(elInicio.value) || '—'); setText('sum-termino', clean(elTermino.value) || '—');
-  }));
-  elTipo?.addEventListener('change', ()=>{ const txt = elTipo.options[elTipo.selectedIndex]?.text || '—'; setText('sum-tipo', txt); setText('sum2-tipo', txt); });
-  elCausal?.addEventListener('input', ()=>{ const v = clean(elCausal.value) || '—'; setText('sum-causal', v); setText('sum2-causal', v); });
+    ensureDocsEnabled();
 
-  // Inicial sumarios (sidebar y final)
-  setText('sum-tipo',   elTipo?.options[elTipo.selectedIndex]?.text || '—');
-  setText('sum2-tipo',  elTipo?.options[elTipo.selectedIndex]?.text || '—');
-  setText('sum-causal', clean(elCausal?.value) || '—');
-  setText('sum2-causal',clean(elCausal?.value) || '—');
-  setText('sum-inicio', clean(elInicio?.value) || '—');
-  setText('sum-termino',clean(elTermino?.value) || '—');
-  setText('sum-base',   elBase?.value ? ('$ ' + formatCLP(elBase.value)) : '—');
-
-  // Inicial: trabajador / empleador al resumen final (si vienen del servidor)
-  (function initNamesFromServer(){
-    const tN = $('#resumen-trabajador')?.textContent.trim();
-    const tR = $('#resumen-trabajador-rut')?.textContent.trim();
-    if (tN && tN !== '—'){ setText('sum2-trabajador', tN); setText('sum2-trabajador-rut', tR || '—'); updateStepStatus(1,true); $('#btn-clear-trabajador')?.removeAttribute('disabled'); }
-
-    const eN = $('#resumen-empleador')?.textContent.trim();
-    const eR = $('#resumen-empleador-rut')?.textContent.trim();
-    if (eN && eN !== '—'){ setText('sum2-empleador', eN); setText('sum2-empleador-rut', eR || '—'); updateStepStatus(2,true); $('#btn-clear-empleador')?.removeAttribute('disabled'); }
-  })();
-
-  // ===== Estado del caso (derivado) =====
-  function refreshEstadoGlobal(){
-    const trabOK = !!$('#trabajador_id')?.value || ($('#resumen-trabajador')?.textContent.trim() !== '—');
-    const empOK  = !!$('#empleador_id')?.value || ($('#resumen-empleador')?.textContent.trim() !== '—');
-
-    // contar documentos hechos
-    let done = 0;
-    ['contrato','liquidaciones','afp'].forEach(k => {
-      const st = document.getElementById(`hid-${k}-estado`)?.value || 'pendiente';
-      if (st !== 'pendiente') done += 1;
+    // ---- Ficha (validaciones + sumario)
+    function validateFechas() {
+      const inicio = clean(elInicio?.value);
+      const termino = clean(elTermino?.value);
+      elTermino?.classList.remove("is-invalid");
+      elTerminoErr.textContent = "";
+      if (inicio && termino) {
+        const d1 = new Date(inicio),
+          d2 = new Date(termino);
+        if (d2 < d1) {
+          elTermino?.classList.add("is-invalid");
+          elTerminoErr.textContent =
+            "La fecha de término no puede ser anterior a la de inicio.";
+          return false;
+        }
+      }
+      return true;
+    }
+    elBase?.addEventListener("blur", () => {
+      elBase.value = formatCLP(elBase.value);
+      elBase.classList.remove("is-invalid");
+      elBaseErr.textContent = "";
+    });
+    elBase?.addEventListener("focus", () => {
+      elBase.value = deformatCLP(elBase.value);
+    });
+    elBase?.addEventListener("input", () => {
+      elBase.classList.remove("is-invalid");
+      elBaseErr.textContent = "";
+      setText(
+        "sum-base",
+        formatCLP(elBase.value) ? "$ " + formatCLP(elBase.value) : "—"
+      );
+    });
+    [elInicio, elTermino].forEach((el) =>
+      el?.addEventListener("change", () => {
+        validateFechas();
+        setText("sum-inicio", clean(elInicio.value) || "—");
+        setText("sum-termino", clean(elTermino.value) || "—");
+      })
+    );
+    elTipo?.addEventListener("change", () => {
+      const txt = elTipo.options[elTipo.selectedIndex]?.text || "—";
+      setText("sum-tipo", txt);
+      setText("sum2-tipo", txt);
+    });
+    elCausal?.addEventListener("input", () => {
+      const v = clean(elCausal.value) || "—";
+      setText("sum-causal", v);
+      setText("sum2-causal", v);
     });
 
-    let estado = 'Sin iniciar';
-    if (trabOK || empOK) estado = 'Datos iniciales';
-    if (done > 0 && done < 3) estado = 'Recolección de documentos';
-    if (done === 3) estado = 'Fase de cálculo';
+    // Inicial sumarios (sidebar y final)
+    setText("sum-tipo", elTipo?.options[elTipo.selectedIndex]?.text || "—");
+    setText("sum2-tipo", elTipo?.options[elTipo.selectedIndex]?.text || "—");
+    setText("sum-causal", clean(elCausal?.value) || "—");
+    setText("sum2-causal", clean(elCausal?.value) || "—");
+    setText("sum-inicio", clean(elInicio?.value) || "—");
+    setText("sum-termino", clean(elTermino?.value) || "—");
+    setText("sum-base", elBase?.value ? "$ " + formatCLP(elBase.value) : "—");
 
-    setText('sum2-estado', estado);
-  }
+    // Inicial: trabajador / empleador al resumen final (si vienen del servidor)
+    (function initNamesFromServer() {
+      const tN = $("#resumen-trabajador")?.textContent.trim();
+      const tR = $("#resumen-trabajador-rut")?.textContent.trim();
+      if (tN && tN !== "—") {
+        setText("sum2-trabajador", tN);
+        setText("sum2-trabajador-rut", tR || "—");
+        updateStepStatus(1, true);
+        $("#btn-clear-trabajador")?.removeAttribute("disabled");
+      }
 
-  // Llamadas iniciales
-  refreshEstadoGlobal();
+      const eN = $("#resumen-empleador")?.textContent.trim();
+      const eR = $("#resumen-empleador-rut")?.textContent.trim();
+      if (eN && eN !== "—") {
+        setText("sum2-empleador", eN);
+        setText("sum2-empleador-rut", eR || "—");
+        updateStepStatus(2, true);
+        $("#btn-clear-empleador")?.removeAttribute("disabled");
+      }
+    })();
 
-  // Submit final
-  form.addEventListener('submit', (e)=>{
-    if (!validateFechas()){
-      e.preventDefault();
-      e.stopPropagation();
-      window.scrollTo({top:0, behavior:'smooth'});
+    // ===== Estado del caso (derivado) =====
+    function refreshEstadoGlobal() {
+      const trabOK =
+        !!$("#trabajador_id")?.value ||
+        $("#resumen-trabajador")?.textContent.trim() !== "—";
+      const empOK =
+        !!$("#empleador_id")?.value ||
+        $("#resumen-empleador")?.textContent.trim() !== "—";
+
+      // contar documentos hechos
+      let done = 0;
+      ["contrato", "liquidaciones", "afp"].forEach((k) => {
+        const st =
+          document.getElementById(`hid-${k}-estado`)?.value || "pendiente";
+        if (st !== "pendiente") done += 1;
+      });
+
+      let estado = "Sin iniciar";
+      if (trabOK || empOK) estado = "Datos iniciales";
+      if (done > 0 && done < 3) estado = "Recolección de documentos";
+      if (done === 3) estado = "Fase de cálculo";
+
+      setText("sum2-estado", estado);
     }
-    if (elBase) elBase.value = deformatCLP(elBase.value);
+
+    // Llamadas iniciales
+    refreshEstadoGlobal();
+
+    // Submit final
+    form.addEventListener("submit", (e) => {
+      if (!validateFechas()) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (elBase) elBase.value = deformatCLP(elBase.value);
+    });
   });
-});
 </script>
+
 <script>
-(() => {
-  const byId = id => document.getElementById(id);
-  const safe = v => (v ?? '').toString().trim();
-  const set  = (id, val) => { const el = byId(id); if (el) el.textContent = val; };
+  (function wireGuardarCaso() {
+    const btn = document.getElementById("btn-guardar-caso");
+    if (!btn) return;
 
-  const box = byId('box-empleador');
-  if (!box) { console.warn('No se encontró #box-empleador'); return; }
+    const form = document.getElementById("form-nuevo-caso");
+    const accion = document.getElementById("accion");
+    const casoId = document.getElementById("caso_id");
 
-  // Asegurar estructura correcta: nombre en la fila, RUT debajo, sin IDs duplicados
-  const flex = box.querySelector('.d-flex.align-items-center.gap-2') || box.querySelector('.d-flex.gap-2');
-
-  let nameEl = byId('resumen-empleador');
-  if (!nameEl) {
-    nameEl = document.createElement('div');
-    nameEl.id = 'resumen-empleador';
-    nameEl.className = 'fw-semibold mb-0';
-    if (flex) flex.insertAdjacentElement('afterbegin', nameEl);
-    else (box.querySelector('div') || box).prepend(nameEl);
-  }
-
-  let rutEl = byId('resumen-empleador-rut');
-  const dups = box.querySelectorAll('#resumen-empleador-rut');
-  if (!rutEl && dups.length) rutEl = dups[0];
-  if (!rutEl) {
-    rutEl = document.createElement('div');
-    rutEl.id = 'resumen-empleador-rut';
-    rutEl.className = 'text-muted small';
-    if (flex) flex.insertAdjacentElement('afterend', rutEl);
-    else (box.querySelector('div') || box).appendChild(rutEl);
-  } else if (flex && rutEl.parentElement === flex) {
-    flex.insertAdjacentElement('afterend', rutEl);
-  }
-  box.querySelectorAll('#resumen-empleador-rut').forEach(n => { if (n !== rutEl) n.id = ''; });
-
-  const empleadorId = safe(byId('empleador_id')?.value);
-  const nombreUI = safe(nameEl.textContent) || safe(byId('sum-empleador')?.textContent) || safe(byId('sum2-empleador')?.textContent);
-
-  async function tryJSON(url) {
-    try {
-      const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!r.ok) return null;
-      return await r.json();
-    } catch { return null; }
-  }
-
-  // Solo rutas válidas: ?id= y ?q= (NO usa /api/empleadores/<id>)
-  async function fetchEmpleador() {
-    if (empleadorId) {
-      let d = await tryJSON('/api/empleadores?id=' + encodeURIComponent(empleadorId));
-      if (d && (Array.isArray(d) ? d.length : Object.keys(d).length)) {
-        return Array.isArray(d) ? d[0] : d;
+    btn.addEventListener("click", () => {
+      if (!casoId?.value) {
+        alert("Debes crear el Caso antes de guardar cambios.");
+        return;
       }
-    }
-    if (nombreUI && nombreUI !== '—') {
-      const arr = await tryJSON('/api/empleadores?q=' + encodeURIComponent(nombreUI));
-      if (Array.isArray(arr) && arr.length) {
-        if (empleadorId) {
-          const hit = arr.find(x => String(x.id) === String(empleadorId)) || arr[0];
-          return hit;
-        }
-        return arr[0];
-      }
-    }
-    return null;
-  }
-
-  (async () => {
-    const d = await fetchEmpleador();
-    const nombre = d?.razon_social || d?.nombre_completo || d?.nombre_fantasia || d?.nombre || safe(nameEl.textContent) || '—';
-    const rut    = d?.rut || d?.rut_formateado || d?.rut_empresa || d?.rut_empleador || d?.run || safe(rutEl.textContent) || '—';
-
-    set('resumen-empleador', nombre);
-    set('resumen-empleador-rut', rut);
-    set('sum-empleador', nombre);
-    set('sum-empleador-rut', rut);
-    set('sum2-empleador', nombre);
-    set('sum2-empleador-rut', rut);
-
-    console.log('✅ Empleador rellenado →', { nombre, rut });
+      accion.value = "guardar_caso";
+      form.submit();
+    });
   })();
-})();
-</script>
-<script>
-(function wireGuardarCaso(){
-  const btn     = document.getElementById('btn-guardar-caso');
-  if (!btn) return;
-
-  const form    = document.getElementById('form-nuevo-caso');
-  const accion  = document.getElementById('accion');
-  const casoId  = document.getElementById('caso_id');
-
-  btn.addEventListener('click', () => {
-    if (!casoId?.value) {
-      alert('Debes crear el Caso preliminar antes de guardar cambios.');
-      return;
-    }
-    accion.value = 'guardar_caso';
-    form.submit();
-  });
-})();
 </script>
 
 {% endblock %}

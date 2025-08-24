@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 13-08-2025 a las 20:50:02
+-- Tiempo de generación: 23-08-2025 a las 15:37:47
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -83,14 +83,59 @@ CREATE TABLE IF NOT EXISTS `caso` (
   KEY `idx_caso_fecha_inicio` (`fecha_inicio`),
   KEY `idx_caso_codigo` (`codigo`),
   KEY `idx_caso_estado` (`estado`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `caso`
 --
 
 INSERT INTO `caso` (`id`, `codigo`, `trabajador_id`, `empleador_id`, `fecha_inicio`, `estado`, `resumen`, `tipo`, `nombre_caso`, `fecha_creacion`, `fecha_cierre`) VALUES
-(2, '2982081e-786b-11f0-8903-005056c00001', 3, 1, '2025-08-13', 'abierto', NULL, 'autodespido', 'Norambuena/Mariela Farias Leyton - 2982081e-786b-11f0-8903-005056c00001', '2025-08-13 13:30:10', NULL);
+(2, '2982081e-786b-11f0-8903-005056c00001', 3, 1, '2025-08-13', 'abierto', NULL, 'autodespido', 'Norambuena/Mariela Farias Leyton - 2982081e-786b-11f0-8903-005056c00001', '2025-08-13 13:30:10', NULL),
+(3, 'f1ae741a-7b8b-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'asjapjfalskjalkfjalsjfdlasjdlalskdjlakjd', '', 'Norambuena/Mariela Farias Leyton - f1ae741a-7b8b-11f0-8b2e-005056c00001', NULL, NULL),
+(4, 'c41b0b48-7b8e-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'alsdkjadlkjaldkjalkdjlas', '', 'Norambuena/Mariela Farias Leyton - c41b0b48-7b8e-11f0-8b2e-005056c00001', NULL, NULL),
+(5, '50d4ce31-7b91-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'kdjalsdkjalskdalkdjalkdjlakdjaldjlakdjalkdjaldjaldjacasdasdasdasdadadsadasda', '', 'Norambuena/Mariela Farias Leyton - 50d4ce31-7b91-11f0-8b2e-005056c00001', NULL, NULL),
+(6, 'a0b2fb08-7bb5-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'ñfljkwafkjsc wosfdnsñcnañofnwvsoñcjlqna{cqkm{aclnkwsñlfknqal', '', 'Norambuena/Mariela Farias Leyton - a0b2fb08-7bb5-11f0-8b2e-005056c00001', NULL, NULL),
+(7, 'b29db1be-7ca2-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'sdlñfksdfñlkjsdfsldkjfsldñkfjslfkjlsñdfvjnñkjnbasdkñJABNSASÑALSKNFÑLSDKFNSLSKNDAKAJNDKAJFN{SLDKV{LAKSXXS,DMNDS,A,SM', '', 'Norambuena/Mariela Farias Leyton - b29db1be-7ca2-11f0-8b2e-005056c00001', NULL, NULL),
+(8, 'acd0be46-7cb2-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'aaaajjapospdfosfñdlkj{slñfjs{fdñlkjs{lkfj{lfksjflskjflsñkdfjñsldkjfsñlkjsñldkfjsñlfkjsñflkjsñlkjdfñlksjdfñlskfjsñlfkjsñlkfjsñlfkjslfkjsldkfjslñfkjslkfjsldkjslñdfkjslkfjsñlkfjsñlfkjslfkjsñlfkjl', '', 'Norambuena/Mariela Farias Leyton - acd0be46-7cb2-11f0-8b2e-005056c00001', NULL, NULL),
+(9, '89041390-7db4-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', '.mz.,cmz.xc,mz.,mz.xcmz.x,cm.z,m.z,xc', '', 'Norambuena/Mariela Farias Leyton - 89041390-7db4-11f0-8b2e-005056c00001', NULL, NULL),
+(10, '2b38b241-7dcd-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', '.mz.,cmz.xc,mz.,mz.xcmz.x,cm.z,m.z,xc', '', 'Norambuena/Mariela Farias Leyton - 2b38b241-7dcd-11f0-8b2e-005056c00001', NULL, NULL),
+(11, 'ce711fe5-7dcd-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', '.mz.,cmz.xc,mz.,mz.xcmz.x,cm.z,m.z,xc', '', 'Norambuena/Mariela Farias Leyton - ce711fe5-7dcd-11f0-8b2e-005056c00001', NULL, NULL),
+(12, '8296fe81-7dd7-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'añlkañdslkañdlkañdlkañsldkañlkañdkañsldkañsldkañsdlkañsldk', '', 'Norambuena/Mariela Farias Leyton - 8296fe81-7dd7-11f0-8b2e-005056c00001', NULL, NULL),
+(13, 'cd8b11f1-7dde-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'lsldakjdlkjsalkjdlakjsdlakjdslakjddsddfsf{sasñwpod{askgñtjgeojd kac mvñnñpejiwouhdbh ckldñfkgpwfjaon', '', 'Norambuena/Mariela Farias Leyton - cd8b11f1-7dde-11f0-8b2e-005056c00001', NULL, NULL),
+(14, 'c241915d-7de3-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'hola', '', 'Norambuena/Mariela Farias Leyton - c241915d-7de3-11f0-8b2e-005056c00001', NULL, NULL),
+(15, '52436039-7de6-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'sfdsdsd', '', 'Norambuena/Mariela Farias Leyton - 52436039-7de6-11f0-8b2e-005056c00001', NULL, NULL),
+(16, '55a95121-7deb-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'sfdsdsd', '', 'Norambuena/Mariela Farias Leyton - 55a95121-7deb-11f0-8b2e-005056c00001', NULL, NULL),
+(17, '640e3c12-7deb-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hola2', '', 'Norambuena/Mariela Farias Leyton - 640e3c12-7deb-11f0-8b2e-005056c00001', NULL, NULL),
+(18, 'd407d813-7df9-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hola', '', 'Norambuena/Mariela Farias Leyton - d407d813-7df9-11f0-8b2e-005056c00001', NULL, NULL),
+(19, '2072f2b1-7e2f-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hola3', '', 'Norambuena/Mariela Farias Leyton - 2072f2b1-7e2f-11f0-8b2e-005056c00001', NULL, NULL),
+(20, '9f7dd78c-7e30-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'asdadas', '', 'Norambuena/Mariela Farias Leyton - 9f7dd78c-7e30-11f0-8b2e-005056c00001', NULL, NULL),
+(21, '4bfcbf26-7e31-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', '<saas', '', 'Norambuena/Mariela Farias Leyton - 4bfcbf26-7e31-11f0-8b2e-005056c00001', NULL, NULL),
+(22, '89473a58-7e33-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'ssss', '', 'Norambuena/Mariela Farias Leyton - 89473a58-7e33-11f0-8b2e-005056c00001', NULL, NULL),
+(23, 'c3929022-7e33-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'hola', '', 'Norambuena/Mariela Farias Leyton - c3929022-7e33-11f0-8b2e-005056c00001', NULL, NULL),
+(24, '3edf36ff-7e8a-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'holahola', '', 'Norambuena/Mariela Farias Leyton - 3edf36ff-7e8a-11f0-8b2e-005056c00001', NULL, NULL),
+(25, 'a4d14ca6-7e91-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hola', '', 'Norambuena/Mariela Farias Leyton - a4d14ca6-7e91-11f0-8b2e-005056c00001', NULL, NULL),
+(26, 'c3d6299c-7e99-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hlola', '', 'Norambuena/Mariela Farias Leyton - c3d6299c-7e99-11f0-8b2e-005056c00001', NULL, NULL),
+(27, '3fe8b9bd-7ea4-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'AFDSLKDFSLDKJSDLKFJLSDJ', '', 'Norambuena/Mariela Farias Leyton - 3fe8b9bd-7ea4-11f0-8b2e-005056c00001', NULL, NULL),
+(28, '96434602-7ea6-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hola pruefa final', '', 'Norambuena/Mariela Farias Leyton - 96434602-7ea6-11f0-8b2e-005056c00001', NULL, NULL),
+(29, '19b71363-7eaa-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'prueba hotfix', '', 'Norambuena/Mariela Farias Leyton - 19b71363-7eaa-11f0-8b2e-005056c00001', NULL, NULL),
+(30, 'fef5b821-7eaa-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Prueba final 2', '', 'Norambuena/Mariela Farias Leyton - fef5b821-7eaa-11f0-8b2e-005056c00001', NULL, NULL),
+(31, 'a38a6fce-7eab-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Prueba 3', '', 'Norambuena/Mariela Farias Leyton - a38a6fce-7eab-11f0-8b2e-005056c00001', NULL, NULL),
+(32, '876730b1-7ed5-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hola prueba de caso preliminar', '', 'Norambuena/Mariela Farias Leyton - 876730b1-7ed5-11f0-8b2e-005056c00001', NULL, NULL),
+(33, 'cf65f57c-7ed5-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Prueba de scripts', '', 'Norambuena/Mariela Farias Leyton - cf65f57c-7ed5-11f0-8b2e-005056c00001', NULL, NULL),
+(34, 'eda02086-7ed5-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Historia de prueba para habilitar el caso preliminar.', '', 'Norambuena/Mariela Farias Leyton - eda02086-7ed5-11f0-8b2e-005056c00001', NULL, NULL),
+(35, '5c2a44c2-7ed8-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Hostoria', '', 'Norambuena/Mariela Farias Leyton - 5c2a44c2-7ed8-11f0-8b2e-005056c00001', NULL, NULL),
+(36, '79b2c267-7edc-11f0-8b2e-005056c00001', 3, 1, NULL, 'Recolección documental', 'Prueba end to end', '', 'Norambuena/Mariela Farias Leyton - 79b2c267-7edc-11f0-8b2e-005056c00001', NULL, NULL),
+(37, 'd42594fa-7efc-11f0-8e17-005056c00001', 3, 1, NULL, 'Recolección documental', 'end to end', '', 'Norambuena/Mariela Farias Leyton - d42594fa-7efc-11f0-8e17-005056c00001', NULL, NULL),
+(38, 'c94c765b-7efe-11f0-8e17-005056c00001', 3, 1, NULL, 'Recolección documental', 'end  to end 22:21', '', 'Norambuena/Mariela Farias Leyton - c94c765b-7efe-11f0-8e17-005056c00001', NULL, NULL),
+(39, 'cb2e62da-7f08-11f0-8e17-005056c00001', 3, 1, NULL, 'Recolección documental', 'PRUEBA E2E 23:33', '', 'Norambuena/Mariela Farias Leyton - cb2e62da-7f08-11f0-8e17-005056c00001', NULL, NULL),
+(40, '19129fc7-7f12-11f0-8e17-005056c00001', 3, 1, NULL, 'Recolección documental', 'Prueba E2E 00:40sdfdfsdfsd', '', 'Norambuena/Mariela Farias Leyton - 19129fc7-7f12-11f0-8e17-005056c00001', NULL, NULL),
+(41, 'b8e3cd51-7f5d-11f0-b641-005056c00001', 4, 2, NULL, 'Recolección documental', 'Prueba E2E para revision total y general del template \"casos\" xxxxxx', '', 'Norambuena/Mariela Farias Leyton - b8e3cd51-7f5d-11f0-b641-005056c00001', NULL, NULL),
+(42, '3b8d4c69-7f91-11f0-869b-005056c00001', 3, 1, NULL, 'Recolección documental', 'e2e final 15:50', '', 'Norambuena/Mariela Farias Leyton - 3b8d4c69-7f91-11f0-869b-005056c00001', NULL, NULL),
+(43, '3af35078-7fb5-11f0-869b-005056c00001', 3, 1, NULL, 'Recolección documental', 'e2e 20:07', '', 'Norambuena/Mariela Farias Leyton - 3af35078-7fb5-11f0-869b-005056c00001', NULL, NULL),
+(44, 'aa5bce50-7fb7-11f0-869b-005056c00001', 3, 1, NULL, 'Recolección documental', 'hola e2e 2025', '', 'Norambuena/Mariela Farias Leyton - aa5bce50-7fb7-11f0-869b-005056c00001', NULL, NULL),
+(45, '91531047-8024-11f0-8046-005056c00001', 3, 1, NULL, 'Recolección documental', 'e2e prueba 23 de agosto 9:24', '', 'Norambuena/Mariela Farias Leyton - 91531047-8024-11f0-8046-005056c00001', NULL, NULL),
+(46, '86b23660-8028-11f0-8046-005056c00001', 3, 1, NULL, 'Recolección documental', 'e2e prueba 9:53', '', 'Norambuena/Mariela Farias Leyton - 86b23660-8028-11f0-8046-005056c00001', NULL, NULL),
+(47, 'be86fe2b-802d-11f0-8046-005056c00001', 3, 1, NULL, 'Recolección documental', 'E2E prueba 10:30', '', 'Norambuena/Mariela Farias Leyton - be86fe2b-802d-11f0-8046-005056c00001', NULL, NULL);
 
 --
 -- Disparadores `caso`
@@ -228,14 +273,15 @@ CREATE TABLE IF NOT EXISTS `empleador` (
   `fecha_actualizacion` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `rut_unico` (`rut_cuerpo`,`rut_dv`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `empleador`
 --
 
 INSERT INTO `empleador` (`id`, `razon_social`, `rut_cuerpo`, `rut_dv`, `direccion`, `telefono`, `email`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 'Mariela Farias Leyton', '15130287', '4', 'Ruta J55 km 13', '997718963', 'marelafariasleyton@gmail.com', NULL, NULL);
+(1, 'Mariela Farias Leyton', '15130287', '4', 'Ruta J55 km 13', '997718963', 'marelafariasleyton@gmail.com', NULL, NULL),
+(2, 'Alfredo Norambuena Cerda SPA', '6906337', '3', 'Liquidambar 2045', '993241494', 'alfredonorambuenac@gmail.com', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -445,14 +491,15 @@ CREATE TABLE IF NOT EXISTS `trabajador` (
   `tipo_contribuyente` enum('persona','empresa') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'persona',
   PRIMARY KEY (`id`),
   UNIQUE KEY `rut_unico` (`rut_cuerpo`,`rut_dv`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `trabajador`
 --
 
 INSERT INTO `trabajador` (`id`, `rut_cuerpo`, `rut_dv`, `nombre`, `apellido_paterno`, `apellido_materno`, `fecha_nacimiento`, `email`, `telefono`, `direccion`, `fecha_creacion`, `fecha_actualizacion`, `activo`, `tipo_contribuyente`) VALUES
-(3, '14326078', 'K', 'Jean', 'Norambuena', 'Chávez', '1977-05-07', 'jeannorambuena@gmail.com', '997718963', 'Ruta J55 km 13', '2025-08-03 17:14:30', NULL, 0, 'persona');
+(3, '14326078', 'K', 'Jean', 'Norambuena', 'Chávez', '1977-05-07', 'jeannorambuena@gmail.com', '997718963', 'Ruta J55 km 13', '2025-08-03 17:14:30', NULL, 0, 'persona'),
+(4, '7309224', '8', 'Maria Elena', 'Leyton ', 'Diaz', '1956-08-23', 'mariae.leytond@gmail.com', '997718962', 'Isla Victoria 1914', '2025-08-22 09:53:12', NULL, 1, 'persona');
 
 -- --------------------------------------------------------
 
