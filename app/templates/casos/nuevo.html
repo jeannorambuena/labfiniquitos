@@ -1,19 +1,22 @@
 {% extends "base.html" %} {% block content %}
 <div class="container py-4">
+  <!-- Envoltorio de tarjeta oscura para una experiencia coherente -->
+  <div class="card formulario-amplio shadow-lg border-0 rounded mx-auto" style="background-color: #2F4858; max-width: 98vw; width: 100%;">
+    <div class="card-body">
   <!-- Encabezado -->
   <div
     class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3"
   >
     <div>
-      <h1 class="h3 mb-1">Nuevo caso</h1>
-      <p class="text-muted mb-0">
+      <h1 class="h3 mb-1 text-white">Nuevo caso</h1>
+      <p class="text-light mb-0">
         Completa los pasos en orden (vertical). Campos con
         <span class="badge bg-danger">Obligatorio</span> deben completarse.
       </p>
     </div>
-    <a href="{{ url_for('casos.index') }}" class="btn btn-outline-secondary"
-      >← Volver</a
-    >
+    <a href="{{ url_for('casos.index') }}" class="btn btn-light btn-lg shadow-sm">
+      ← Volver
+    </a>
   </div>
 
   <!-- Flash -->
@@ -199,9 +202,7 @@
 
     <div class="row">
       <!-- Columna principal -->
-      <div
-        class="{{ 'col-12' if not show_resumen else 'col-lg-8' }} timeline-vert"
-      >
+      <div class="col-12 timeline-vert">
         <!-- Paso 1: Trabajador -->
         <section class="step-wrap step-pane" data-step="1">
           <div class="step-title">
@@ -849,287 +850,41 @@
           </div>
         </section>
 
-        <!-- Paso 5: Ficha de Remuneraciones y Parámetros -->
-        <section class="step-wrap step-pane position-relative" data-step="5">
-          <div class="step-title">
-            <span>5. Ficha de Remuneraciones y Parámetros</span>
-            <span
-              ><span class="badge bg-secondary"
-                >Completar después de Documentos</span
-              ></span
-            >
-          </div>
-          <div class="step-body position-relative">
-            <div
-              class="lock-overlay {{ 'd-none' if (docs_done_total == 3) else 'd-flex' }}"
-              id="lock-ficha"
-            >
-              <div>
-                <span class="lock">🔒</span>
-                <div class="fw-semibold mb-1">
-                  Completa los 3 documentos obligatorios para habilitar esta
-                  sección
-                </div>
-                <div class="text-muted">
-                  Contrato, Liquidaciones y Cartola AFP.
-                </div>
-              </div>
-            </div>
+            
 
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label for="{{ form.tipo_caso.id }}" class="form-label"
-                  >Tipo de caso</label
-                >
-                {{ form.tipo_caso(class="form-select", id=form.tipo_caso.id) }}
-                {% if form.tipo_caso.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ form.tipo_caso.errors[0] }}
-                </div>
-                {% endif %}
-              </div>
-
-              <div class="col-md-8">
-                <label for="{{ form.causal.id }}" class="form-label"
-                  >Causal legal / descripción breve</label
-                >
-                {{ form.causal(class="form-control", id=form.causal.id,
-                placeholder="Ej: Despido, renuncia, no pago de cotizaciones…",
-                autocomplete="off") }} {% if form.causal.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ form.causal.errors[0] }}
-                </div>
-                {% endif %}
-              </div>
-
-              <div class="col-md-6">
-                <label for="{{ form.fecha_inicio.id }}" class="form-label"
-                  >Fecha inicio</label
-                >
-                {{ form.fecha_inicio(class="form-control",
-                id=form.fecha_inicio.id) }} {% if form.fecha_inicio.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ form.fecha_inicio.errors[0] }}
-                </div>
-                {% endif %}
-              </div>
-
-              <div class="col-md-6">
-                <label for="{{ form.fecha_termino.id }}" class="form-label"
-                  >Fecha término</label
-                >
-                {{ form.fecha_termino(class="form-control",
-                id=form.fecha_termino.id) }}
-                <div class="invalid-feedback" id="fecha_termino_error"></div>
-                {% if form.fecha_termino.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ form.fecha_termino.errors[0] }}
-                </div>
-                {% endif %}
-              </div>
-
-              <div class="col-md-6">
-                <label for="{{ form.base_calculo.id }}" class="form-label"
-                  >Base de cálculo (CLP)</label
-                >
-                {{ form.base_calculo(class="form-control",
-                id=form.base_calculo.id, placeholder="Monto base",
-                inputmode="numeric", autocomplete="off") }}
-                <div class="form-text">
-                  Se formatea automáticamente como CLP. Se enviará sin puntos al
-                  servidor.
-                </div>
-                <div class="invalid-feedback" id="base_calculo_error"></div>
-                {% if form.base_calculo.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ form.base_calculo.errors[0] }}
-                </div>
-                {% endif %}
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end gap-2 mt-3">
-              <a
-                href="{{ url_for('casos.index') }}"
-                class="btn btn-outline-secondary"
-                >Cancelar</a
-              >
-              <button
-                type="submit"
-                class="btn btn-primary"
-                id="btn-submit-caso"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Paso 6: Resumen completo del caso -->
-        <section class="step-wrap step-pane" data-step="6">
-          <div class="step-title">
-            <span>Resumen completo del caso</span>
-            <span><span class="badge bg-info">Solo informativo</span></span>
-          </div>
-          <div class="step-body">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <div class="text-muted">Caso</div>
-                <div class="fw-semibold" id="sum2-caso">
-                  {% if caso %}#{{ caso.id }}{% else %}—{% endif %}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="text-muted">Progreso documentos</div>
-                <div class="fw-semibold" id="sum2-docs">0/3</div>
-              </div>
-              <div class="col-md-6">
-                <div class="text-muted">Trabajador</div>
-                <div class="fw-semibold" id="sum2-trabajador">
-                  {% if caso and caso.trabajador %} {{
-                  caso.trabajador.nombre_completo or ( (caso.trabajador.nombres
-                  or caso.trabajador.nombre)|default('') ~ ' ' ~
-                  (caso.trabajador.apellido_paterno or caso.trabajador.apellido
-                  or '') ~ ' ' ~ (caso.trabajador.apellido_materno or
-                  caso.trabajador.segundo_apellido or '') )|trim or (
-                  (caso.trabajador.nombres or '') ~ ' ' ~
-                  (caso.trabajador.apellidos or '') )|trim or (
-                  (caso.trabajador.nombre or '') ~ ' ' ~
-                  (caso.trabajador.apellido or '') )|trim or
-                  caso.trabajador.nombre }} {% else %}—{% endif %}
-                </div>
-                <div class="text-muted" id="sum2-trabajador-rut">
-                  {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{%
-                  else %}—{% endif %}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="text-muted">Empleador</div>
-                <div class="fw-semibold" id="sum2-empleador">
-                  {% if caso and caso.empleador %} {{
-                  caso.empleador.razon_social or caso.empleador.nombre_completo
-                  or caso.empleador.nombre_fantasia or caso.empleador.nombre or
-                  '—' }} {% else %}—{% endif %}
-                </div>
-                <div class="text-muted" id="sum2-empleador-rut">
-                  {% if caso and caso.empleador %} {{ caso.empleador.rut or
-                  caso.empleador.rut_formateado or caso.empleador.rut_empresa or
-                  caso.empleador.rut_empleador or caso.empleador.run or '—' }}
-                  {% else %}—{% endif %}
-                </div>
-              </div>
-
-              <!-- NUEVOS CAMPOS -->
-              <div class="col-md-6">
-                <div class="text-muted">Fecha de creación</div>
-                <div class="fw-semibold" id="sum2-creado">
-                  {% if caso and caso.fecha_creacion %}{{ caso.fecha_creacion
-                  }}{% else %}—{% endif %}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="text-muted">Estado del caso</div>
-                <div class="fw-semibold" id="sum2-estado">—</div>
-              </div>
-
-              <!-- Conservamos Tipo / Causal -->
-              <div class="col-12">
-                <div class="text-muted">Tipo / Causal</div>
-                <div id="sum2-tipo">—</div>
-                <div id="sum2-causal" class="text-muted">—</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {% if show_resumen %}
-      <!-- Columna lateral: Resumen (rápido) -->
-      <div class="col-lg-4">
-        <div class="card shadow-sm mb-3 sticky-summary">
-          <div class="card-header">Resumen</div>
-          <div class="card-body small">
-            <div class="mb-3">
-              <div class="text-muted">Caso</div>
-              <div id="sum-caso" class="fw-semibold">
-                {% if caso %}#{{ caso.id }}{% else %}—{% endif %}
-              </div>
-              <div class="text-muted">
-                {% if caso %}<span class="badge bg-primary"
-                  >Recolección documental</span
-                >{% else %}—{% endif %}
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <div class="text-muted">Trabajador</div>
-              <div id="sum-trabajador" class="fw-semibold">
-                {% if caso and caso.trabajador %} {{
-                caso.trabajador.nombre_completo or ((caso.trabajador.nombres or
-                caso.trabajador.nombre)|default('') ~ ' ' ~
-                (caso.trabajador.apellido_paterno or caso.trabajador.apellido or
-                '') ~ ' ' ~ (caso.trabajador.apellido_materno or
-                caso.trabajador.segundo_apellido or ''))|trim or
-                ((caso.trabajador.nombres or '') ~ ' ' ~
-                (caso.trabajador.apellidos or ''))|trim or
-                ((caso.trabajador.nombre or '') ~ ' ' ~
-                (caso.trabajador.apellido or ''))|trim or caso.trabajador.nombre
-                }} {% else %}—{% endif %}
-              </div>
-              <div id="sum-trabajador-rut" class="text-muted">
-                {% if caso and caso.trabajador %}{{ caso.trabajador.rut }}{%
-                else %}—{% endif %}
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <div class="text-muted">Empleador</div>
-              <div id="sum-empleador" class="fw-semibold">
-                {% if caso and caso.empleador %} {{ caso.empleador.razon_social
-                or caso.empleador.nombre_completo or
-                caso.empleador.nombre_fantasia or caso.empleador.nombre or '—'
-                }} {% else %}—{% endif %}
-              </div>
-              <div id="sum-empleador-rut" class="text-muted">
-                {% if caso and caso.empleador %} {{ caso.empleador.rut or
-                caso.empleador.rut_formateado or caso.empleador.rut_empresa or
-                caso.empleador.rut_empleador or caso.empleador.run or '—' }} {%
-                else %}—{% endif %}
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <div class="text-muted">Historia</div>
-              <div id="sum-historia" class="text-truncate">—</div>
-            </div>
-
-            <div class="mb-3">
-              <div class="text-muted">Documentos</div>
-              <div>Completos: <span id="sum-docs">0/3</span></div>
-            </div>
-
-            <div class="mb-3">
-              <div class="text-muted">Motivo</div>
-              <div id="sum-tipo" class="fw-semibold">—</div>
-              <div id="sum-causal" class="text-muted">—</div>
-            </div>
-
-            <div class="mb-3">
-              <div class="text-muted">Fechas</div>
-              <div>Inicio: <span id="sum-inicio">—</span></div>
-              <div>Término: <span id="sum-termino">—</span></div>
-            </div>
-
-            <div>
-              <div class="text-muted">Base de cálculo</div>
-              <div id="sum-base">—</div>
-            </div>
           </div>
         </div>
       </div>
-      {% endif %}
     </div>
   </form>
+    {% if caso and caso.trabajador_id and caso.empleador_id %}
+    <div class="mt-5 d-flex justify-content-center">
+      <a href="{{ url_for('finiquito.nuevo', caso_id=caso.id) }}"
+        class="btn btn-lg px-5 py-3 shadow-lg border-0"
+        style="
+            background: linear-gradient(145deg, #1e3c50, #2f4858);
+            color: #fff;
+            border-radius: 1rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            box-shadow: 8px 8px 16px rgba(0,0,0,0.4),
+                        -4px -4px 12px rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        "
+        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='12px 12px 24px rgba(0,0,0,0.5), -6px -6px 16px rgba(255,255,255,0.15)';"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='8px 8px 16px rgba(0,0,0,0.4), -4px -4px 12px rgba(255,255,255,0.1)';"
+      >
+        <i class="fas fa-calculator me-2"></i> Comenzar cálculo de finiquito
+      </a>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center mt-4 shadow-sm">
+      Debe seleccionar un trabajador y un empleador antes de calcular el finiquito.
+    </div>
+    {% endif %}
+
+    </div><!-- /.card-body -->
+  </div><!-- /.card -->
 </div>
 
 <!-- MODAL: Trabajador -->

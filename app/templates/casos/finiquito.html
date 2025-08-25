@@ -1,0 +1,274 @@
+{%- extends "base.html" -%}
+
+{# ---------------------------------------------------------------------------
+  Plantilla: Cálculo de finiquito con WTForms
+
+  Esta plantilla se integra con el formulario ``FiniquitoForm`` de Flask-WTF y
+  con la ruta de cálculo en ``app/routes/finiquito.py``. Todos los campos del
+  formulario se renderizan mediante los helpers de WTForms para aprovechar la
+  repoblación automática y la visualización de errores. La tabla de resumen
+  muestra los valores calculados si existen en el diccionario ``resultados``
+  o en el objeto ``finiquito``; de lo contrario, muestra un guion (—) o $0.
+--------------------------------------------------------------------------- #}
+
+{%- block title -%}Cálculo de finiquito{%- endblock title -%}
+{%- block content -%}
+<div class="container my-4">
+  <h1 class="mb-3">Cálculo de finiquito para transporte terrestre</h1>
+  <p class="text-muted mb-4">
+    Usa esta herramienta para obtener un cálculo preliminar del finiquito conforme al
+    <strong>artículo 25 bis</strong> del Código del Trabajo. Completa los datos en cada
+    sección y revisa el resumen antes de generar el documento final.
+  </p>
+
+  {# Inicia el formulario. ``form.hidden_tag()`` incluye el token CSRF. #}
+  <form method="post" class="needs-validation" novalidate>
+    {{ form.hidden_tag() }}
+
+    <!-- Datos del trabajador y empleador -->
+    <div class="card mb-4">
+      <div class="card-header">1. Identificación</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="trabajador_nombre">{{ form.trabajador_nombre.label }}</label>
+            {{ form.trabajador_nombre(class_='form-control', id='trabajador_nombre', placeholder='Ej: Juan Pérez') }}
+            {% for error in form.trabajador_nombre.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="trabajador_rut">{{ form.trabajador_rut.label }}</label>
+            {{ form.trabajador_rut(class_='form-control', id='trabajador_rut', placeholder='12.345.678-9') }}
+            {% for error in form.trabajador_rut.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="empleador_nombre">{{ form.empleador_nombre.label }}</label>
+            {{ form.empleador_nombre(class_='form-control', id='empleador_nombre', placeholder='Ej: Transportes XYZ Ltda.') }}
+            {% for error in form.empleador_nombre.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="empleador_rut">{{ form.empleador_rut.label }}</label>
+            {{ form.empleador_rut(class_='form-control', id='empleador_rut', placeholder='76.123.456-7') }}
+            {% for error in form.empleador_rut.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos de contrato y causal -->
+    <div class="card mb-4">
+      <div class="card-header">2. Datos del contrato</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="fecha_inicio">{{ form.fecha_inicio.label }}</label>
+            {{ form.fecha_inicio(class_='form-control', id='fecha_inicio') }}
+            {% for error in form.fecha_inicio.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="fecha_termino">{{ form.fecha_termino.label }}</label>
+            {{ form.fecha_termino(class_='form-control', id='fecha_termino') }}
+            {% for error in form.fecha_termino.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="causal_termino">{{ form.causal_termino.label }}</label>
+            {{ form.causal_termino(class_='form-select', id='causal_termino') }}
+            {% for error in form.causal_termino.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="tipo_jornada">{{ form.tipo_jornada.label }}</label>
+            {{ form.tipo_jornada(class_='form-select', id='tipo_jornada') }}
+            {% for error in form.tipo_jornada.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="remuneracion_base">{{ form.remuneracion_base.label }}</label>
+            {{ form.remuneracion_base(class_='form-control', id='remuneracion_base') }}
+            {% for error in form.remuneracion_base.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remuneraciones variables y horas -->
+    <div class="card mb-4">
+      <div class="card-header">3. Haberes y tiempos</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="gratificacion">{{ form.gratificacion.label }}</label>
+            {{ form.gratificacion(class_='form-control', id='gratificacion') }}
+            {% for error in form.gratificacion.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="comisiones">{{ form.comisiones.label }}</label>
+            {{ form.comisiones(class_='form-control', id='comisiones') }}
+            {% for error in form.comisiones.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="semana_corrida">{{ form.semana_corrida.label }}</label>
+            {{ form.semana_corrida(class_='form-control', id='semana_corrida') }}
+            {% for error in form.semana_corrida.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="bonos">{{ form.bonos.label }}</label>
+            {{ form.bonos(class_='form-control', id='bonos') }}
+            {% for error in form.bonos.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="horas_espera">{{ form.horas_espera.label }}</label>
+            {{ form.horas_espera(class_='form-control', id='horas_espera') }}
+            <div class="form-text">No imputables a la jornada; se pagan con base mínima de 1,5 ingresos mínimos/180 h.</div>
+            {% for error in form.horas_espera.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="horas_extra">{{ form.horas_extra.label }}</label>
+            {{ form.horas_extra(class_='form-control', id='horas_extra') }}
+            <div class="form-text">Recargo 50 % sobre sueldo base.</div>
+            {% for error in form.horas_extra.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vacaciones y descuentos -->
+    <div class="card mb-4">
+      <div class="card-header">4. Vacaciones y descuentos</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="dias_vac_pendientes">{{ form.dias_vac_pendientes.label }}</label>
+            {{ form.dias_vac_pendientes(class_='form-control', id='dias_vac_pendientes') }}
+            {% for error in form.dias_vac_pendientes.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="afp">{{ form.afp.label }}</label>
+            {{ form.afp(class_='form-control', id='afp') }}
+            {% for error in form.afp.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="salud">{{ form.salud.label }}</label>
+            {{ form.salud(class_='form-control', id='salud') }}
+            {% for error in form.salud.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="cesantia">{{ form.cesantia.label }}</label>
+            {{ form.cesantia(class_='form-control', id='cesantia') }}
+            {% for error in form.cesantia.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="otros_descuentos">{{ form.otros_descuentos.label }}</label>
+            {{ form.otros_descuentos(class_='form-control', id='otros_descuentos') }}
+            {% for error in form.otros_descuentos.errors %}
+              <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="card mb-4">
+      <div class="card-header">5. Resumen del finiquito</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <tbody>
+              <tr>
+                <th scope="row" class="w-50">Años de servicio</th>
+                <td class="text-end fw-semibold">
+                  {{ (resultados.anios_servicio if resultados else (finiquito.anios_servicio if finiquito else '—')) }}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Indemnización años de servicio</th>
+                <td class="text-end fw-semibold">
+                  {{ resultados.indemnizacion_anios if resultados else (finiquito.indemnizacion_anios if finiquito else 0) }}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Indemnización aviso previo</th>
+                <td class="text-end fw-semibold">
+                  {{ resultados.indemnizacion_aviso if resultados else (finiquito.indemnizacion_aviso if finiquito else 0) }}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Vacaciones proporcionales</th>
+                <td class="text-end fw-semibold">
+                  {{ resultados.vacaciones if resultados else (finiquito.vacaciones if finiquito else 0) }}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Pago tiempo de espera</th>
+                <td class="text-end fw-semibold">
+                  {{ resultados.pago_espera if resultados else (finiquito.pago_espera if finiquito else 0) }}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Total haberes</th>
+                <td class="text-end fw-semibold">
+                  {{ resultados.total_haberes if resultados else (finiquito.total_haberes if finiquito else 0) }}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Total descuentos</th>
+                <td class="text-end fw-semibold">
+                  {{ resultados.total_descuentos if resultados else (finiquito.total_descuentos if finiquito else 0) }}
+                </td>
+              </tr>
+              <tr class="table-active">
+                <th scope="row">Total a pagar</th>
+                <td class="text-end fw-bold">
+                  {{ resultados.total_pagar if resultados else (finiquito.total_pagar if finiquito else 0) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary btn-lg">
+        Calcular finiquito
+      </button>
+    </div>
+  </form>
+</div>
+{%- endblock content -%}

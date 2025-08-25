@@ -3,7 +3,7 @@ Módulo principal de inicialización de la aplicación Flask.
 
 - Carga las variables de entorno desde `.env`
 - Configura la aplicación y la base de datos SQLAlchemy
-- Registra los blueprints del sistema
+- Registra los blueprints del sistema, incluido el de finiquitos
 """
 
 import os
@@ -39,7 +39,7 @@ def create_app():
 
     # Importación de modelos (obligatorio para inicializar relaciones y migraciones)
     try:
-        from app.models import Trabajador
+        from app.models import Trabajador  # noqa: F401
     except Exception:
         from app.models.trabajador import Trabajador  # noqa: F401
 
@@ -49,11 +49,14 @@ def create_app():
     from app.routes.empleador import empleador_bp
     from app.routes.casos import casos_bp
     from app.routes.api import api_bp
+    from app.routes.finiquito import finiquito_bp  # ← nuevo blueprint de finiquitos
 
     app.register_blueprint(casos_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(trabajadores_bp)
     app.register_blueprint(empleador_bp)
     app.register_blueprint(api_bp)
+    # ← registro del blueprint de finiquitos
+    app.register_blueprint(finiquito_bp)
 
     return app
