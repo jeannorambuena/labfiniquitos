@@ -9,6 +9,7 @@ Incluye:
 - Detalle y generar (placeholder).
 - Guardado y listado de documentos de un caso (contratos, liquidaciones, cartolas).
 - Descarga/visualización de archivos guardados.
+- Finiquito: vista que pre-puebla identificación del trabajador y empleador.
 
 Nota: Se aplica "Opción B" para ocultar el módulo "Resumen" en la vista /casos/nuevo
 mediante la bandera show_resumen=False enviada al template.
@@ -32,6 +33,7 @@ from flask import (
 )
 
 from app.forms.casos_form import CasoForm
+from app.forms.finiquito_form import FiniquitoForm
 from app.extensions.extensions import db
 from app.models.trabajador import Trabajador
 from app.models.empleador import Empleador
@@ -147,6 +149,48 @@ def _scan_docs_state(case_id: int) -> Tuple[Dict[str, List[str]], Dict[str, str]
     done_total = sum(1 for k in ("contrato", "liquidaciones",
                      "afp") if docs_estados[k] != "pendiente")
     return docs_files, docs_estados, done_total
+
+
+def _formatea_rut(rut_cuerpo: Any = None, rut_dv: Any = None, rut_str: Optional[str] = None) -> str:
+    """
+    Devuelve un RUT con formato 12.345.678-9 a partir de (rut_cuerpo, rut_dv)
+    o desde un string 'XXXXXXXXD'/'XXXXXXXX-D'. Si no hay datos, retorna ''.
+    """
+    try:
+        if rut_str:
+            s = str(rut_str).strip()
+            if "-" in s:
+                return s
+            cuerpo, dv = s[:-1], s[-1]
+            return f"{int(cuerpo):,}".replace(",", ".") + f"-{dv.upper()}"
+        if rut_cuerpo is not None and rut_dv is not None:
+            s = f"{int(rut_cuerpo):,}".replace(",", ".")
+            return f"{s}-{str(rut_dv).upper()}"
+    except Exception:
+        pass
+    return ""
+
+
+def _nombre_trabajador(t: Any) -> str:
+    """
+    Construye el nombre completo del trabajador según los campos disponibles.
+    """
+    nombres = getattr(t, "nombres", "") or ""
+    apellidos = getattr(t, "apellidos", "") or ""
+    full = f"{nombres} {apellidos}".strip()
+    return full or getattr(t, "nombre_completo", "") or ""
+
+
+def _nombre_empleador(e: Any) -> str:
+    """
+    Usa razon_social si existe; si no, nombres + apellidos.
+    """
+    razon = getattr(e, "razon_social", "") or ""
+    if razon.strip():
+        return razon.strip()
+    nombres = getattr(e, "nombres", "") or ""
+    apellidos = getattr(e, "apellidos", "") or ""
+    return f"{nombres} {apellidos}".strip()
 
 
 # (Compatibilidad: si en algún lugar te sirve solo el estado)
@@ -428,3 +472,60 @@ def descargar_archivo(id: int, tipo: str, filename: str):
 
     folder = rutas[tipo]
     return send_from_directory(folder, filename, as_attachment=False)
+
+
+# --------- NUEVA RUTA: FINIQUITO (pre-poblado desde el caso) ----------
+
+@casos_bp.route("/casos/<int:id>/finiquito", methods=["GET", "POST"])
+def finiquito(id: int):
+    """
+    Muestra el formulario de finiquito del caso y pre-puebla identificación
+    (trabajador y empleador) desde los datos del caso.
+
+    GET:
+        - Prellena trabajador_nombre, trabajador_rut, empleador_nombre, empleador_rut.
+    POST:
+        - Por ahora no calcula; deja preparado para conectar la lógica de cálculo.
+    """
+    caso = Caso.query.get_or_404(id)
+
+    t = getattr(caso, "trabajador", None)
+    e = getattr(caso, "empleador", None)
+    if not t or not e:
+        flash("Debes asociar un trabajador y un empleador al caso antes de iniciar el finiquito.", "warning")
+        return redirect(url_for("casos.editar", id=caso.id))
+
+    form = FiniquitoForm()
+
+    # Prefill en GET o cuando el POST no valida
+    if request.method == "GET" or not form.validate_on_submit():
+        # Nombres
+        form.trabajador_nombre.data = _nombre_trabajador(t)
+        form.empleador_nombre.data = _nombre_empleador(e)
+
+        # RUT trabajador
+        if hasattr(t, "rut_cuerpo") and hasattr(t, "rut_dv"):
+            form.trabajador_rut.data = _formatea_rut(t.rut_cuerpo, t.rut_dv)
+        else:
+            form.trabajador_rut.data = _formatea_rut(
+                rut_str=getattr(t, "rut", ""))
+
+        # RUT empleador
+        if hasattr(e, "rut_cuerpo") and hasattr(e, "rut_dv"):
+            form.empleador_rut.data = _formatea_rut(e.rut_cuerpo, e.rut_dv)
+        else:
+            form.empleador_rut.data = _formatea_rut(
+                rut_str=getattr(e, "rut", ""))
+
+    if form.validate_on_submit():
+        # Aquí conectarás tu cálculo y armado de resultados
+        # resultados = calcular_finiquito(form.data)
+        flash("Datos de identificación cargados. Continúa con el llenado del finiquito.", "info")
+
+    return render_template(
+        "casos/finiquito.html",
+        form=form,
+        caso=caso,
+        trabajador=t,
+        empleador=e,
+    )

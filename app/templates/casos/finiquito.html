@@ -3,26 +3,26 @@
 {# ---------------------------------------------------------------------------
   Plantilla: Cálculo de finiquito con WTForms
 
-  Esta plantilla se integra con el formulario ``FiniquitoForm`` de Flask-WTF y
-  con la ruta de cálculo en ``app/routes/finiquito.py``. Todos los campos del
-  formulario se renderizan mediante los helpers de WTForms para aprovechar la
-  repoblación automática y la visualización de errores. La tabla de resumen
-  muestra los valores calculados si existen en el diccionario ``resultados``
-  o en el objeto ``finiquito``; de lo contrario, muestra un guion (—) o $0.
+  Integración:
+  - Ruta: finiquito.nuevo (/finiquito/nuevo?caso_id=<id>)
+  - El template recibe: form, caso, trabajador, empleador (desde la vista)
 --------------------------------------------------------------------------- #}
 
 {%- block title -%}Cálculo de finiquito{%- endblock title -%}
 {%- block content -%}
 <div class="container my-4">
-  <h1 class="mb-3">Cálculo de finiquito para transporte terrestre</h1>
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <h1 class="mb-0">Cálculo de finiquito para transporte terrestre</h1>
+    <span class="badge bg-secondary">Caso #{{ caso.id }}</span>
+  </div>
   <p class="text-muted mb-4">
     Usa esta herramienta para obtener un cálculo preliminar del finiquito conforme al
-    <strong>artículo 25 bis</strong> del Código del Trabajo. Completa los datos en cada
+    <strong>artículo 25 bis</strong> del Código del Trabajo. Completa los datos en cada
     sección y revisa el resumen antes de generar el documento final.
   </p>
 
   {# Inicia el formulario. ``form.hidden_tag()`` incluye el token CSRF. #}
-  <form method="post" class="needs-validation" novalidate>
+  <form method="post" action="{{ url_for('finiquito.nuevo', caso_id=caso.id) }}" class="needs-validation" novalidate>
     {{ form.hidden_tag() }}
 
     <!-- Datos del trabajador y empleador -->
@@ -32,28 +32,52 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label" for="trabajador_nombre">{{ form.trabajador_nombre.label }}</label>
-            {{ form.trabajador_nombre(class_='form-control', id='trabajador_nombre', placeholder='Ej: Juan Pérez') }}
+            {{ form.trabajador_nombre(
+                 class_='form-control',
+                 id='trabajador_nombre',
+                 placeholder='Ej: Juan Pérez',
+                 value=form.trabajador_nombre.data,
+                 readonly=True
+            ) }}
             {% for error in form.trabajador_nombre.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
           <div class="col-md-6">
             <label class="form-label" for="trabajador_rut">{{ form.trabajador_rut.label }}</label>
-            {{ form.trabajador_rut(class_='form-control', id='trabajador_rut', placeholder='12.345.678-9') }}
+            {{ form.trabajador_rut(
+                 class_='form-control',
+                 id='trabajador_rut',
+                 placeholder='12.345.678-9',
+                 value=form.trabajador_rut.data,
+                 readonly=True
+            ) }}
             {% for error in form.trabajador_rut.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
           <div class="col-md-6">
             <label class="form-label" for="empleador_nombre">{{ form.empleador_nombre.label }}</label>
-            {{ form.empleador_nombre(class_='form-control', id='empleador_nombre', placeholder='Ej: Transportes XYZ Ltda.') }}
+            {{ form.empleador_nombre(
+                 class_='form-control',
+                 id='empleador_nombre',
+                 placeholder='Ej: Transportes XYZ Ltda.',
+                 value=form.empleador_nombre.data,
+                 readonly=True
+            ) }}
             {% for error in form.empleador_nombre.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
           <div class="col-md-6">
             <label class="form-label" for="empleador_rut">{{ form.empleador_rut.label }}</label>
-            {{ form.empleador_rut(class_='form-control', id='empleador_rut', placeholder='76.123.456-7') }}
+            {{ form.empleador_rut(
+                 class_='form-control',
+                 id='empleador_rut',
+                 placeholder='76.123.456-7',
+                 value=form.empleador_rut.data,
+                 readonly=True
+            ) }}
             {% for error in form.empleador_rut.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
@@ -142,7 +166,7 @@
           <div class="col-md-4">
             <label class="form-label" for="horas_espera">{{ form.horas_espera.label }}</label>
             {{ form.horas_espera(class_='form-control', id='horas_espera') }}
-            <div class="form-text">No imputables a la jornada; se pagan con base mínima de 1,5 ingresos mínimos/180 h.</div>
+            <div class="form-text">No imputables a la jornada; se pagan con base mínima de 1,5 ingresos mínimos/180 h.</div>
             {% for error in form.horas_espera.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
@@ -150,7 +174,7 @@
           <div class="col-md-4">
             <label class="form-label" for="horas_extra">{{ form.horas_extra.label }}</label>
             {{ form.horas_extra(class_='form-control', id='horas_extra') }}
-            <div class="form-text">Recargo 50 % sobre sueldo base.</div>
+            <div class="form-text">Recargo 50 % sobre sueldo base.</div>
             {% for error in form.horas_extra.errors %}
               <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
